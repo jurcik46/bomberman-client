@@ -6,9 +6,13 @@
 void nacitajMapu(){
     FILE * vstup;
     if ((vstup = fopen("mapa.txt", "r")) == NULL)
-    {
+    {}
     int riadok,stlpec;
-    while();
+    int c;
+    while ((c = fgetc(vstup)) != EOF)
+        {
+            printf("%c ",(char)c );
+        }
 
 }
 
