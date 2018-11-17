@@ -10,7 +10,9 @@ void nacitajMapu(){
     if ((vstup = fopen("mapa.txt", "r")) == NULL)
     {
     int riadok,stlpec;
-    while();
+//    while(){};
+
+}
 
 }
 
@@ -29,14 +31,29 @@ char** createM(int m, int n) {
     return mat;
 }
 
+/**
+ * Uvolnenie pamete pre mapu
+ * @param m
+ * @param mat
+ */
+
+    void deletM(int m, char ***mat) {
+        for (int i = 0; i < m; i++) {
+            free((*mat)[i]);
+        }
+        free((*mat));
+        *mat = NULL;
+
+    }
+
 int main() {
 
     log_set_quiet(0);
     log_set_level(LOG_DEBUG);
-    FILE *logFile = fopen("logs.log","w+");
+    FILE *logFile = fopen("logs.log", "w+");
     log_set_fp(logFile);
 
-    if (logFile == NULL){
+    if (logFile == NULL) {
         printf("Error! opening file");
         // Program exits if the file pointer returns NULL.
         return 1;
@@ -55,26 +72,14 @@ int main() {
     log_error("Hello %s", "world");
 
 
-    initscr();			/* Start curses mode 		  */
-    printw("Hello Wdsadasdorld !!!");	/* Print Hello World		  */
-    refresh();			/* Print it on to the real screen */
-    getch();			/* Wait for user input */
+    initscr();            /* Start curses mode 		  */
+    printw("Hello Wdsadasdorld !!!");    /* Print Hello World		  */
+    refresh();            /* Print it on to the real screen */
+    getch();            /* Wait for user input */
     endwin();
 
     fclose(logFile);
     return 0;
-/**
- * Uvolnenie pamete pre mapu
- * @param m
- * @param mat
- */
 
-void deletM(int m, char*** mat) {
-    for (int i = 0; i < m; i++) {
-        free((*mat)[i]);
-    }
-    free((*mat));
-    *mat = NULL;
 
 }
-
