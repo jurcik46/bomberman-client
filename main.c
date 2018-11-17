@@ -59,6 +59,7 @@ int main() {
         return 1;
     }
 
+
 //    log_trace(const char *fmt, ...);
 //    log_debug(const char *fmt, ...);
 //    log_info(const char *fmt, ...);
