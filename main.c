@@ -46,7 +46,73 @@ char** createM(int m, int n) {
 
     }
 
+/**
+* Inicializovane ncurse kniznic
+*/
+
+void initCurses() {
+
+    initscr(); //pre vytvorenie ncurse win
+    start_color(); //aktivacia farieb
+    curs_set(0);
+//    nodelay(stdscr, TRUE); //getch bez pauzy
+    nonl();
+    cbreak();
+    noecho(); //nezobrazovat vstupne tlacitka
+    init_color(COLOR_WHITE, 0, 255, 0);
+
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_WHITE, COLOR_WHITE);
+
+}
+
+/*
+ * Vytvorenie okna pre ncurse na knzolu
+ * Parametre velkost okna
+ */
+WINDOW * win;
+
+WINDOW * status;
+
+void createWindows(int y, int x, int y0, int x0) {
+    //vytvorenie okien na hru a na konzolu
+//    status = newwin(3, 50, y, 1);
+    win = newwin(y, x, y0, x0);
+    wrefresh(win);
+}
+
+
+
+/**
+ * Funckia na vypis moznosti urovne
+ */
+
+
+
+void setUroven() {
+
+//    wattron(win, COLOR_PAIR(PACMAN));
+    attron(COLOR_PAIR(1));
+    mvwprintw(win, 1, 15, "Vytajte v hre Pacman ");
+    mvwprintw(win, 3, 1, "Vyberte si uroven hry");
+    mvwprintw(win, 5, 5, "Easy [0]");
+    mvwprintw(win, 6, 5, "Medium [1]");
+    mvwprintw(win, 7, 5, "Hard [2]");
+    mvwprintw(win, 8, 5, "Ukoncit aplikaciu [3]");
+    wrefresh(win);
+
+
+
+}
+
 int main() {
+    initCurses(); //Pre zapnutie ncurse
+    WINDOW * win;
+    win = newwin(50, 50, 1, 1);
+    wrefresh(win);
+//    createWindows(40, 40, 1, 1); // vytvorenie okna
+//    initscr(); //pre vytvorenie ncurse win
+//    createWindows(40, 40, 1, 1); // vytvorenie okna
 
     log_set_quiet(0);
     log_set_level(LOG_DEBUG);
@@ -58,7 +124,7 @@ int main() {
         // Program exits if the file pointer returns NULL.
         return 1;
     }
-
+    refresh();
 
 //    log_trace(const char *fmt, ...);
 //    log_debug(const char *fmt, ...);
@@ -67,18 +133,21 @@ int main() {
 //    log_error(const char *fmt, ...);
 //    log_fatal(const char *fmt, ...);
 
-    log_debug("Hello %s", "world");
-    log_info("Hello %s", "world");
-    log_warn("Hello %s", "world");
-    log_error("Hello %s", "world");
 
 
-    initscr();            /* Start curses mode 		  */
-    printw("Hello Wdsadasdorld !!!");    /* Print Hello World		  */
-    refresh();            /* Print it on to the real screen */
+//    log_debug("Hello %s", "world");
+//    log_info("Hello %s", "world");
+//    log_warn("Hello %s", "world");
+//    log_error("Hello %s", "world");
+//    mvprintw(1, 15, "Vytajte v hre Pacman ");
+//    setUroven();
+    attron(COLOR_PAIR(1));
+    mvwprintw(win, 1, 15, "Vytajte v hre Pacman ");
+    wrefresh(win);
     getch();            /* Wait for user input */
-    endwin();
 
+    delwin(win);
+    endwin();
     fclose(logFile);
     return 0;
 
