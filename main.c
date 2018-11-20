@@ -1,65 +1,3 @@
-#include <stdio.h>
-#include <curses.h>
-#include "logging/log.h"
-#include <unistd.h>
-#include <stdlib.h>
-#define DELAY 30000
-
-void nacitajMapu(){
-    FILE * vstup;
-    if ((vstup = fopen("mapa.txt", "r")) == NULL)
-    {
-    int riadok,stlpec;
-//    while(){};
-
-}
-
-}
-
-/**
- * alokovanie pamete pre mapu
- * @param m riadok
- * @param n stlpec
- * @return smernik dvojrozmerne pole
- */
-char** createM(int m, int n) {
-    char **mat;
-    mat = malloc(m * sizeof (*mat));
-    for (int i = 0; i < m; i++) {
-        mat[i] = calloc(n, sizeof (char));
-    }
-    return mat;
-}
-
-/**
- * Uvolnenie pamete pre mapu
- * @param m
- * @param mat
- */
-
-    void deletM(int m, char ***mat) {
-        for (int i = 0; i < m; i++) {
-            free((*mat)[i]);
-        }
-        free((*mat));
-        *mat = NULL;
-
-    }
-
-int main() {
-
-    log_set_quiet(0);
-    log_set_level(LOG_DEBUG);
-    FILE *logFile = fopen("logs.log", "w+");
-    log_set_fp(logFile);
-
-    if (logFile == NULL) {
-        printf("Error! opening file");
-        // Program exits if the file pointer returns NULL.
-        return 1;
-    }
-
-
 //    log_trace(const char *fmt, ...);
 //    log_debug(const char *fmt, ...);
 //    log_info(const char *fmt, ...);
@@ -67,20 +5,80 @@ int main() {
 //    log_error(const char *fmt, ...);
 //    log_fatal(const char *fmt, ...);
 
-    log_debug("Hello %s", "world");
-    log_info("Hello %s", "world");
-    log_warn("Hello %s", "world");
-    log_error("Hello %s", "world");
+//    log_debug("Hello %s", "world");
+//    log_info("Hello %s", "world");
+//    log_warn("Hello %s", "world");
+//    log_error("Hello %s", "world");
+
+#include <stdio.h>
+#include <curses.h>
+#include "logging/log.h"
+#include <unistd.h>
+#include <stdlib.h>
+#include "Menu/menu.h"
+#include <string.h>
+
+WINDOW *create_newwin(int height, int width, int starty, int startx)
+{	WINDOW *local_win;
+
+    local_win = newwin(height, width, starty, startx);
+    box(local_win, 0 , 0);		/* 0, 0 gives default characters
+					 * for the vertical and horizontal
+					 * lines			*/
+    wrefresh(local_win);		/* Show that box 		*/
+
+    return local_win;
+}
 
 
-    initscr();            /* Start curses mode 		  */
-    printw("Hello Wdsadasdorld !!!");    /* Print Hello World		  */
-    refresh();            /* Print it on to the real screen */
-    getch();            /* Wait for user input */
+
+int main() {
+
+//    log_set_quiet(0);
+//    log_set_level(LOG_DEBUG);
+//    FILE *logFile = fopen("logs.log", "w+");
+//    log_set_fp(logFile);
+//
+//    if (logFile == NULL) {
+//        printf("Error! opening file");
+//        // Program exits if the file pointer returns NULL.
+//        return 1;
+//    }
+
+    WINDOW *my_window;
+    int startX, startY, width, heigh;
+
+    initscr();
+    cbreak();
+
+    heigh = 20;
+    width = 24;
+    startX = (COLS - width) / 2;
+    startY = (LINES - heigh) / 2;
+
+    refresh();
+    my_window = newwin(heigh, width, startY, startX);
+    keypad(my_window, true);
+    wprintw(my_window, "\n\tBOMBERMAN\n\n");
+    wprintw(my_window, "\t  MENU\n");
+    wprintw(my_window, "________________________\n");
+    //wborder(my_window,'|','|','-','-','+','+','+','+');
+    wrefresh(my_window);
+    mainMenu(my_window);
+    wrefresh(my_window);
+
+    refresh();
+    getch();
     endwin();
 
-    fclose(logFile);
+
+//        box(stdscr,0,0);
+//        wborder(stdscr,'|','|','-','-','+','+','+','+');
+//        refresh();
+//        getch();
+//        endwin();
+
+    //fclose(logFile);
     return 0;
-
-
 }
+
