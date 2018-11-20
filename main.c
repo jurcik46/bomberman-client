@@ -11,12 +11,12 @@
 //    log_error("Hello %s", "world");
 
 #include <stdio.h>
-#include <curses.h>
-#include "logging/log.h"
-#include <unistd.h>
 #include <stdlib.h>
-#include "Menu/menu.h"
+#include <unistd.h>
+#include <curses.h>
 #include <string.h>
+#include "logging/log.h"
+#include "Menu/menu.h"
 
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {	WINDOW *local_win;
@@ -29,8 +29,6 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 
     return local_win;
 }
-
-
 
 int main() {
 
@@ -46,29 +44,27 @@ int main() {
 //    }
 
     WINDOW *my_window;
-    int startX, startY, width, heigh;
+    int startX, startY, width, heigh, parentY, parentX;
 
     initscr();
     cbreak();
 
+//    getmaxyx(stdscr, heigh, width);
     heigh = 20;
-    width = 24;
-    startX = (COLS - width) / 2;
-    startY = (LINES - heigh) / 2;
+    width = 50;
+    startX = (COLS - width ) / 2;
+    startY = (LINES - heigh ) / 2;
 
     refresh();
     my_window = newwin(heigh, width, startY, startX);
     keypad(my_window, true);
-    wprintw(my_window, "\n\tBOMBERMAN\n\n");
-    wprintw(my_window, "\t  MENU\n");
-    wprintw(my_window, "________________________\n");
-    //wborder(my_window,'|','|','-','-','+','+','+','+');
-    wrefresh(my_window);
+    //loginUser(my_window);
     mainMenu(my_window);
     wrefresh(my_window);
 
     refresh();
     getch();
+    delwin(my_window);
     endwin();
 
 
