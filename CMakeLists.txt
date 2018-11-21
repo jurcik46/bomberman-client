@@ -3,6 +3,6 @@ project(bomberman_client C)
 
 set(CMAKE_C_STANDARD 99)
 link_libraries(ncurses)
-
+link_libraries(pthread)
 add_executable(bomberman_server main.c logging/log.c logging/log.h)
 
