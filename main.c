@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <curses.h>
-#include "logging/log.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,16 +7,20 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+
+
+#include "logging/log.h"
+#include "communication.h"
+
 #define DELAY 30000
 
-void nacitajMapu(){
-    FILE * vstup;
-    if ((vstup = fopen("mapa.txt", "r")) == NULL)
-    {
-    int riadok,stlpec;
+void nacitajMapu() {
+    FILE *vstup;
+    if ((vstup = fopen("mapa.txt", "r")) == NULL) {
+        int riadok, stlpec;
 //    while(){};
 
-}
+    }
 
 }
 
@@ -27,11 +30,11 @@ void nacitajMapu(){
  * @param n stlpec
  * @return smernik dvojrozmerne pole
  */
-char** createM(int m, int n) {
+char **createM(int m, int n) {
     char **mat;
-    mat = malloc(m * sizeof (*mat));
+    mat = malloc(m * sizeof(*mat));
     for (int i = 0; i < m; i++) {
-        mat[i] = calloc(n, sizeof (char));
+        mat[i] = calloc(n, sizeof(char));
     }
     return mat;
 }
@@ -42,17 +45,16 @@ char** createM(int m, int n) {
  * @param mat
  */
 
-    void deletM(int m, char ***mat) {
-        for (int i = 0; i < m; i++) {
-            free((*mat)[i]);
-        }
-        free((*mat));
-        *mat = NULL;
-
+void deletM(int m, char ***mat) {
+    for (int i = 0; i < m; i++) {
+        free((*mat)[i]);
     }
+    free((*mat));
+    *mat = NULL;
 
-void error(const char *msg)
-{
+}
+
+void error(const char *msg) {
     perror(msg);
     exit(0);
 }
@@ -70,64 +72,52 @@ int main(int argc, char *argv[]) {
         // Program exits if the file pointer returns NULL.
         return 1;
     }
-
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-
-    char buffer[256];
-//    if (argc < 3) {
-//        fprintf(stderr,"usage %s hostname port\n", argv[0]);
+//
+//    int sockfd, portno, n;
+//    struct sockaddr_in serv_addr;
+//    struct hostent *server;
+//
+//    char buffer[256];
+////    if (argc < 3) {
+////        fprintf(stderr,"usage %s hostname port\n", argv[0]);
+////        exit(0);
+////    }
+//    portno = atoi("2666");
+//    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+//    if (sockfd < 0)
+//        error("ERROR opening socket");
+//    server = gethostbyname("localhost");
+//    if (server == NULL) {
+//        fprintf(stderr, "ERROR, no such host\n");
 //        exit(0);
 //    }
-    portno = atoi("2666");
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-        error("ERROR opening socket");
-    server = gethostbyname("localhost");
-    if (server == NULL) {
-        fprintf(stderr,"ERROR, no such host\n");
-        exit(0);
-    }
-    bzero((char *) &serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr,
-          (char *)&serv_addr.sin_addr.s_addr,
-          server->h_length);
-    serv_addr.sin_port = htons(portno);
-    if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-        error("ERROR connecting");
-    printf("Please enter the message: ");
-    bzero(buffer,256);
-    fgets(buffer,255,stdin);
-    n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0)
-        error("ERROR writing to socket");
-    bzero(buffer,256);
-    n = read(sockfd,buffer,255);
-    if (n < 0)
-        error("ERROR reading from socket");
-    printf("%s\n",buffer);
-    close(sockfd);
+//    bzero((char *) &serv_addr, sizeof(serv_addr));
+//    serv_addr.sin_family = AF_INET;
+//    bcopy((char *) server->h_addr,
+//          (char *) &serv_addr.sin_addr.s_addr,
+//          server->h_length);
+//    serv_addr.sin_port = htons(portno);
+//    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+//        error("ERROR connecting");
+//    printf("Please enter the message: ");
+//    bzero(buffer, 256);
+//    fgets(buffer, 255, stdin);
+//    n = write(sockfd, buffer, strlen(buffer));
+//    if (n < 0)
+//        error("ERROR writing to socket");
+//    bzero(buffer, 256);
+//    n = read(sockfd, buffer, 255);
+//    if (n < 0)
+//        error("ERROR reading from socket");
+//    printf("%s\n", buffer);
+//    close(sockfd);
 
-//    log_trace(const char *fmt, ...);
-//    log_debug(const char *fmt, ...);
-//    log_info(const char *fmt, ...);
-//    log_warn(const char *fmt, ...);
-//    log_error(const char *fmt, ...);
-//    log_fatal(const char *fmt, ...);
-
-    log_debug("Hello %s", "world");
-    log_info("Hello %s", "world");
-    log_warn("Hello %s", "world");
-    log_error("Hello %s", "world");
-
-
-    initscr();            /* Start curses mode 		  */
-    printw("Hello Wdsadasdorld !!!");    /* Print Hello World		  */
-    refresh();            /* Print it on to the real screen */
-    getch();            /* Wait for user input */
-    endwin();
+    initSocket("127.0.0.1", 8080);
+    char *hello = "Hello from client";
+    send(sock, hello, strlen(hello), 0);
+    printf("Hello message sent\n");
+    read(sock, buffer, BUFFER_SIZE);
+    printf("%s\n", buffer);
 
     fclose(logFile);
     return 0;
