@@ -1,0 +1,8 @@
+//
+// Created by Jurco on 22. 11. 2018.
+//
+
+#ifndef BOMBERMAN_CLIENT_CONSTANTS_H
+#define BOMBERMAN_CLIENT_CONSTANTS_H
+
+#endif //BOMBERMAN_CLIENT_CONSTANTS_H
