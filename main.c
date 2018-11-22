@@ -31,20 +31,19 @@ void closingApp(FILE *logFile) {
 };
 
 int main(int argc, char *argv[]) {
-
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
+
     loggerInit(logFile);
 
-    initSocket("127.0.0.1", PORT);
-    char *hello = "Hello from client";
-    send(sock, hello, strlen(hello), 0);
-    printf("Hello message sent\n");
-    read(sock, buffer, BUFFER_SIZE);
-    printf("%s\n", buffer);
-    sleep(10);
-
-    closingApp(logFile);
     initNcurses();
+
+    initSocket("127.0.0.1", PORT);
+//    char *hello = "Hello from client";
+//    send(sock, hello, strlen(hello), 0);
+//    printf("Hello message sent\n");
+//    read(sock, buffer, BUFFER_SIZE);
+//    printf("%s\n", buffer);
+//    sleep(10);
     loginUser(my_window);
 
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
@@ -75,10 +74,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-
-    delwin(my_window);
-    endwin();
-
+    closingApp(logFile);
     return 0;
 
 

@@ -3,6 +3,7 @@
 void initNcurses() {
     initscr();
     cbreak();
+    choice = 0;
     startX = (COLS - WIN_WIDTH) / 2;
     startY = (LINES - WIN_HEIGHT) / 2;
     my_window = newwin(WIN_HEIGHT, WIN_WIDTH, startY, startX);

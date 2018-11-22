@@ -32,7 +32,7 @@ struct Games {
 
 WINDOW *my_window;
 int startX, startY;
-int choice = 0;
+int choice;
 bool success;
 
 void initNcurses();
