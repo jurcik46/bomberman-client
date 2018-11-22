@@ -6,6 +6,7 @@
 
 #include "logging/log.h"
 #include "communication.h"
+#include "Menu/menu.h"
 
 #define LOG_FILE_PATH "logs.log"
 #define PORT 8080
@@ -24,6 +25,8 @@ void loggerInit(FILE *logFile) {
 
 void closingApp(FILE *logFile) {
     closeSocket();
+    delwin(my_window);
+    endwin();
     fclose(logFile);
 };
 
@@ -41,6 +44,41 @@ int main(int argc, char *argv[]) {
     sleep(10);
 
     closingApp(logFile);
+    initNcurses();
+    loginUser(my_window);
+
+////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
+////Ak opustil lobby vrati ho do mainMenu inak spusti hru
+
+    choice = mainMenu(my_window);
+    while (choice != 15) {
+        if (choice == 0) {
+            success = menuNewGame(my_window);
+            if (success) {
+                choice = menuLobby(my_window, startY, startX);
+                if (choice == 0) {
+                    //START GAME
+                } else if (choice == 1) {
+                    choice = mainMenu(my_window);
+                }
+            } else {
+                wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
+                wrefresh(my_window);
+                choice = menuNewGame(my_window);
+            }
+        } else if (choice == 1) {
+            menuFindServer(my_window);
+        } else if (choice == 2) {
+            menuLeaderBoard(my_window);
+        } else if (choice == 3) {
+            choice = 15;//preto 15 lebo taka moznost sa nepouziva nikde
+        }
+    }
+
+
+    delwin(my_window);
+    endwin();
+
     return 0;
 
 
