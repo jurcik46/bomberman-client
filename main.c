@@ -44,22 +44,88 @@ int main() {
 //    }
 
     WINDOW *my_window;
-    int startX, startY, width, heigh, parentY, parentX;
+//    WINDOW *menuLobbyWin;
+    int startX, startY;
+    //int LobbyWinSize = 3;
+    int choice = 0;
+    bool success;
 
     initscr();
     cbreak();
 
-//    getmaxyx(stdscr, heigh, width);
-    heigh = 20;
-    width = 50;
-    startX = (COLS - width ) / 2;
-    startY = (LINES - heigh ) / 2;
+//    heigh = 20;
+//    width = 90;
+    startX = (COLS - WIN_WIDTH ) / 2;
+    startY = (LINES - WIN_HEIGHT ) / 2;
 
-    refresh();
-    my_window = newwin(heigh, width, startY, startX);
+    my_window = newwin(WIN_HEIGHT, WIN_WIDTH, startY, startX);
+//    menuLobbyWin = newwin(LobbyWinSize, width, startY + heigh, startX);
     keypad(my_window, true);
-    //loginUser(my_window);
-    mainMenu(my_window);
+//    keypad(menuLobbyWin, true);
+
+////Funkcia sluzi na prihlasenie uzivatela do hry
+////Ak nema vytvoreny ucet tak ho registruje
+//    loginUser(my_window);
+
+////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
+////Ak opustil lobby vrati ho do mainMenu inak spusti hru
+//    choice = menuLobby(my_window, startY, startX);
+//    if(choice == 0){
+//        printw("Start Game");
+//        //TODO treba dorobit spustenie hry
+//    }else if(choice == 1){
+//        mainMenu(my_window);
+//    }
+
+    choice = mainMenu(my_window);
+while(choice != 3){
+    if(choice == 0){
+        success = menuNewGame(my_window);
+        if(success){
+            choice = menuLobby(my_window, startY, startX);
+            if(choice == 0){
+                //START GAME
+            }else if(choice == 1){
+                choice = mainMenu(my_window);
+            }
+        } else{
+            wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
+            wrefresh(my_window);
+            choice = menuNewGame(my_window);
+        }
+    } else if(choice == 1){
+        menuFindServer(my_window);
+    } else if(choice == 2){
+        menuLeaderBoard(my_window);
+    }
+}
+
+printw("END GAME!");
+
+
+////Funkcia spusti uvodne menu kde si hrac vyberie z moznosti
+//    choice = mainMenu(my_window);
+//    if(choice == 0){
+//       success = menuNewGame(my_window);
+//       if(success){
+//           choice = menuLobby(my_window, startY, startX);
+//           if(choice == 0){
+//               //START GAME
+//           }else if(choice == 1){
+//               mainMenu(my_window);
+//           }
+//       } else{
+//           wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
+//           wrefresh(my_window);
+//           menuNewGame(my_window);
+//       }
+//    } else if(choice == 1){
+//        menuFindServer(my_window);
+//    } else if(choice == 2){
+//        menuLeaderBoard(my_window);
+//    } else if(choice == 3){
+//        return 1;
+//    }
     wrefresh(my_window);
 
     refresh();
