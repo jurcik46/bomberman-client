@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);
 
-    initSocket("127.0.0.1", 8080);
+    initSocket("127.0.0.1", PORT);
     char *hello = "Hello from client";
     send(sock, hello, strlen(hello), 0);
     printf("Hello message sent\n");
