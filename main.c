@@ -78,7 +78,7 @@ int main() {
 //    }
 
     choice = mainMenu(my_window);
-while(choice != 3){
+while(choice != 15){
     if(choice == 0){
         success = menuNewGame(my_window);
         if(success){
@@ -97,6 +97,8 @@ while(choice != 3){
         menuFindServer(my_window);
     } else if(choice == 2){
         menuLeaderBoard(my_window);
+    }else if(choice == 3){
+        choice = 15;//preto 15 lebo taka moznost sa nepouziva nikde
     }
 }
 
