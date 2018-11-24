@@ -73,7 +73,8 @@ int main(int argc, char *argv[]) {
             choice = 15;//preto 15 lebo taka moznost sa nepouziva nikde
         }
     }
-
+    //TODO: zmenit cisla v menu na ENUM
+    //TODO: prerobit if podmienky na switch pre prehladnost
     closingApp(logFile);
     return 0;
 
