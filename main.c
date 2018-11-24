@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
     }
     //TODO: zmenit cisla v menu na ENUM
     //TODO: prerobit if podmienky na switch pre prehladnost
+    //TODO: vytvorit na to vlasnu funkciu v main file
     closingApp(logFile);
     return 0;
 
