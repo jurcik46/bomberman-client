@@ -28,8 +28,29 @@ void loginUser(WINDOW *my_window) {
     wrefresh(my_window);
     noecho();
     wgetstr(my_window, user.password);
-    //TODO treba doplniť aby user odoslal meno a heslo na server
-    //TODO ten mu odpovie ci sa prihlasil alebo nie a nasledne bud spusti mainMenu alebo ho presmeruje znova na login
+
+    char data[BUFFER_SIZE];
+    sprintf(data, "%s %s", user.name, user.password);
+
+    enum result_code result = communication(LOGIN, data);
+    switch (result) {
+        case OKEJ:
+            break;
+        case CREATED:
+            log_debug("Acc was created");
+            break;
+        case UNAUTHORIZED:
+            log_debug("Login failed");
+            break;
+        case INTERNAL_SERVER_ERROR:
+            log_debug("Server Error");
+            break;
+        default:;
+
+    }
+    sleep(10);
+
+    //TODO: opravit reagovanie na spravy od servera a vypisat info pre uzivatela
 }
 
 bool menuNewGame(WINDOW *my_window) {
@@ -52,7 +73,7 @@ bool menuNewGame(WINDOW *my_window) {
 
     //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
 
-    //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OK tak funkcia vrati hodnotu (true) a v maine
+    //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
     //TODO treba zmenit aj navratovu hodnotu funkcie
     return true;
