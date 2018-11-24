@@ -49,7 +49,7 @@ void loginUser(WINDOW *my_window) {
 
     }
     sleep(10);
-
+    //TODO: ostertit prazdny vstup a meno dat na 50 znako
     //TODO: opravit reagovanie na spravy od servera a vypisat info pre uzivatela
 }
 
