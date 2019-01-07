@@ -19,7 +19,6 @@ static struct {
     int quiet;
 } L;
 
-
 static const char *level_names[] = {
         "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 };
@@ -30,13 +29,11 @@ static const char *level_colors[] = {
 };
 #endif
 
-
 static void lock(void)   {
     if (L.lock) {
         L.lock(L.udata, 1);
     }
 }
-
 
 static void unlock(void) {
     if (L.lock) {
@@ -44,31 +41,25 @@ static void unlock(void) {
     }
 }
 
-
 void log_set_udata(void *udata) {
     L.udata = udata;
 }
-
 
 void log_set_lock(log_LockFn fn) {
     L.lock = fn;
 }
 
-
 void log_set_fp(FILE *fp) {
     L.fp = fp;
 }
-
 
 void log_set_level(int level) {
     L.level = level;
 }
 
-
 void log_set_quiet(int enable) {
     L.quiet = enable ? 1 : 0;
 }
-
 
 void log_log(int level, const char *file, int line, const char *fmt, ...) {
     if (level < L.level) {

@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
+#include <pthread.h>
+#include <assert.h>
 
 #include "../logging/log.h"
 #include "../communication.h"
@@ -35,6 +37,14 @@ struct Games {
     int pocetHracov;
     struct Users users[4];
 } game;
+
+//Struktura pre druhe vlakno na obsluzenie vstupu od uztivatela
+typedef struct choice {
+    pthread_mutex_t mutex;
+    int choice;
+    WINDOW *lobby_Win;
+    _Bool result;
+}CHOICE;
 
 WINDOW *my_window;
 int startX, startY;

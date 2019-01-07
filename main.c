@@ -52,34 +52,35 @@ int main(int argc, char *argv[]) {
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
 
     choice = mainMenu(my_window);
-    while (choice != 15) {
-        if (choice == 0) {
-            success = menuNewGame(my_window);
-            if (success) {
-                choice = menuLobby(my_window, startY, startX);
-                if (choice == 0) {
-                    //START GAME
-                } else if (choice == 1) {
-                    choice = mainMenu(my_window);
+    while (choice != EXIT){
+        switch (choice){
+            case MENU_NEW_GAME:
+                success = menuNewGame(my_window);
+                if (success) {
+                    choice = menuLobby(my_window, startY, startX);
+                    if (choice == START_GAME) {
+                        //START GAME
+                        printf("START GAME");
+                    } else if (choice == MAIN_MENU) {
+                        choice = mainMenu(my_window);
+                    }
+                } else {
+                    wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
+                    wrefresh(my_window);
+                    choice = menuNewGame(my_window);
                 }
-            } else {
-                wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
-                wrefresh(my_window);
-                choice = menuNewGame(my_window);
-            }
-        } else if (choice == 1) {
-            menuFindServer(my_window);
-        } else if (choice == 2) {
-            menuLeaderBoard(my_window);
-        } else if (choice == 3) {
-            choice = 15;//preto 15 lebo taka moznost sa nepouziva nikde
+                break;
+            case MENU_FIND_SERVER:
+                menuFindServer(my_window);
+                break;
+            case MENU_LEADER_BOARD:
+                menuLeaderBoard(my_window);
+                break;
+            case MENU_EXIT:
+                choice = EXIT;
+                break;
+            default :
+                printf("Invalid choice!");
         }
     }
-    //TODO: zmenit cisla v menu na ENUM
-    //TODO: prerobit if podmienky na switch pre prehladnost
-    //TODO: vytvorit na to vlasnu funkciu v menu file
-    closingApp(logFile);
-    return 0;
-
-
 }

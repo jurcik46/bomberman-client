@@ -1,5 +1,9 @@
 #include "menu.h"
 
+/**
+ * Funkcia nainicializuje kniznicu ncurses t.j. nastaví obrazovku, pociatocne X a Y hodnoty (rozmery okna) a
+ * povolí pouzivanie klaves
+ */
 void initNcurses() {
     initscr();
     cbreak();
@@ -11,8 +15,8 @@ void initNcurses() {
 }
 
 /**
- * ////Funkcia sluzi na prihlasenie uzivatela do hry
-////Ak nema vytvoreny ucet tak ho registruje
+ * Funkcia sluzi na prihlasenie uzivatela do hry
+ * Ak nema vytvoreny ucet tak ho registruje
  * @param my_window
  */
 void loginUser(WINDOW *my_window) {
@@ -24,10 +28,22 @@ void loginUser(WINDOW *my_window) {
     mvwprintw(my_window, 6, 1, "Zadaj meno(nick): ");
     wrefresh(my_window);
     wgetstr(my_window, user.name);
+    //Osetrenie prazdneho vstupu mena
+    while (strlen(user.name) == 0){
+        mvwprintw(my_window, 6, 1, "Zadaj meno(nick): ");
+        wgetstr(my_window, user.name);
+    }
     mvwprintw(my_window, 8, 1, "Zadaj heslo: ");
     wrefresh(my_window);
     noecho();
     wgetstr(my_window, user.password);
+    //Osetrenie prazdneho vstupu hesla
+    while (strlen(user.password) == 0){
+        mvwprintw(my_window, 8, 1, "Zadaj heslo: ");
+        wrefresh(my_window);
+        noecho();
+        wgetstr(my_window, user.password);
+    }
 
     char data[BUFFER_SIZE];
     sprintf(data, "%s %s", user.name, user.password);
@@ -35,22 +51,23 @@ void loginUser(WINDOW *my_window) {
     enum result_code result = communication(LOGIN, data);
     switch (result) {
         case OKEJ:
+            mvwprintw(my_window, 10, 1, "Prihlasenie prebehlo USPESNE!\n");
             break;
         case CREATED:
             log_debug("Acc was created");
+            mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
             break;
         case UNAUTHORIZED:
             log_debug("Login failed");
+            mvwprintw(my_window, 10, 1, "Prihlasenie bolo NEUSPESNE!\n");
             break;
         case INTERNAL_SERVER_ERROR:
             log_debug("Server Error");
+            mvwprintw(my_window, 10, 1, "Problem pri komunikacii so serverom.\n");
             break;
         default:;
-
     }
     sleep(1);
-    //TODO: ostertit prazdny vstup a meno dat na 50 znako
-    //TODO: opravit reagovanie na spravy od servera a vypisat info pre uzivatela
 }
 
 bool menuNewGame(WINDOW *my_window) {
@@ -97,12 +114,28 @@ bool menuNewGame(WINDOW *my_window) {
     //TODO treba zmenit aj navratovu hodnotu funkcie
 }
 
+void *handleUserInput(void* param) {
+    CHOICE *choice = (CHOICE*)param;
+    int moznost;
+
+    pthread_mutex_lock(&choice->mutex);
+    _Bool result = choice->result;
+    WINDOW *window = choice->lobby_Win;
+    pthread_mutex_unlock(&choice->mutex);
+
+    while(!result){
+        moznost = wgetch(window);
+
+        pthread_mutex_lock(&choice->mutex);
+        result = choice->result;
+        choice->choice = moznost;
+        pthread_mutex_unlock(&choice->mutex);
+    }
+    pthread_exit(0);
+}
+
 int menuLobby(WINDOW *my_window, int startY, int startX) {
-    WINDOW *lobby_Win;
-    lobby_Win = newwin(LOBBY_WIN_SIZE, WIN_WIDTH, startY + WIN_HEIGHT, startX);
-    keypad(lobby_Win, true);
     wclear(my_window);
-    wclear(lobby_Win);
 
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
     mvwprintw(my_window, 3, 10, "LOBBY\n");
@@ -113,18 +146,33 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     const char *choices[2];
     choices[0] = "Start Game";
     choices[1] = "Leave Game";
-    int choice;
+
     int highlight = 0;
+
+    CHOICE param;
+    param.mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+
+    pthread_mutex_lock(&param.mutex);
+    param.lobby_Win = newwin(LOBBY_WIN_SIZE, WIN_WIDTH, startY + WIN_HEIGHT, startX);
+    keypad(param.lobby_Win, true);
+    wclear(param.lobby_Win);
+    param.result = false;
+    pthread_mutex_unlock(&param.mutex);
+
+    pthread_t userInputThread;
+    pthread_create(&userInputThread, NULL, handleUserInput, (void *)&param);
 
     while (1) {
         for (int i = 0; i < 2; i++) {
             if (i == highlight)
-                wattron(lobby_Win, A_REVERSE);
-            mvwprintw(lobby_Win, i + 1, 1, choices[i]);
-            wattroff(lobby_Win, A_REVERSE);
+                wattron(param.lobby_Win, A_REVERSE);
+            mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+            wattroff(param.lobby_Win, A_REVERSE);
         }
 
-        choice = wgetch(lobby_Win);
+    pthread_mutex_lock(&param.mutex);
+    int choice = param.choice;
+    pthread_mutex_unlock(&param.mutex);
 
         switch (choice) {
             case KEY_UP:
@@ -137,20 +185,21 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 if (highlight == 2)
                     highlight = 1;
                 break;
+            case ENTER:
+                pthread_mutex_lock(&param.mutex);
+                mvwprintw(param.lobby_Win, 1, 1, "             ");
+                mvwprintw(param.lobby_Win, 2, 1, "             ");
+                wrefresh(param.lobby_Win);
+                delwin(param.lobby_Win);
+                param.result = true;
+                pthread_mutex_unlock(&param.mutex);
+                pthread_join(userInputThread, NULL);
+                pthread_mutex_destroy(&param.mutex);
+                return highlight;
             default:
                 break;
         }
-
-        if (choice == 10) {
-            mvwprintw(lobby_Win, 1, 1, "             ");
-            mvwprintw(lobby_Win, 2, 1, "             ");
-            wrefresh(lobby_Win);
-            delwin(lobby_Win);
-            break;
-        }
     }
-    return highlight;
-    //TODO: Vypisovat zoznam hracou
     //printw("Vybral si moznost: %d -> %s\n", highlight, choices[highlight]);
 }
 
@@ -219,7 +268,7 @@ int mainMenu(WINDOW *my_window) {
             default:
                 break;
         }
-        if (choice == 10)
+        if (choice == ENTER)
             break;
     }
     return highlight;
