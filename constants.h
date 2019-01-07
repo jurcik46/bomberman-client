@@ -13,5 +13,15 @@ enum communication_type {
     LOGIN,
 };
 
+enum menu_choices {
+    EXIT = 15, //preto 15 lebo taka moznost sa nepouziva nikde v menu
+    MENU_NEW_GAME = 0,
+    MENU_FIND_SERVER = 1,
+    MENU_LEADER_BOARD = 2,
+    MENU_EXIT = 3,
+    START_GAME = 0,
+    MAIN_MENU = 1,
+    ENTER = 10
+};
 
 #endif //BOMBERMAN_CLIENT_CONSTANTS_H

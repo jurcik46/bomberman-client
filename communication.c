@@ -28,8 +28,6 @@ void initSocket(char *ipAddress, u_int16_t port) {
         log_error("Connection Failed ");
         exit(EXIT_FAILURE);
     }
-
-
 };
 
 
