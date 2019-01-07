@@ -32,25 +32,7 @@ void closingApp(FILE *logFile) {
     fclose(logFile);
 };
 
-int main(int argc, char *argv[]) {
-    FILE *logFile = fopen(LOG_FILE_PATH, "w+");
-
-    loggerInit(logFile);
-
-    initNcurses();
-
-    initSocket(ADDRESS, PORT);
-//    char *hello = "Hello from client";
-//    send(sock, hello, strlen(hello), 0);
-//    printf("Hello message sent\n");
-//    read(sock, buffer, BUFFER_SIZE);
-//    printf("%s\n", buffer);
-//    sleep(10);
-    loginUser(my_window);
-
-////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
-////Ak opustil lobby vrati ho do mainMenu inak spusti hru
-
+void menu(){
     choice = mainMenu(my_window);
     while (choice != EXIT){
         switch (choice){
@@ -83,4 +65,25 @@ int main(int argc, char *argv[]) {
                 printf("Invalid choice!");
         }
     }
+}
+
+int main(int argc, char *argv[]) {
+    FILE *logFile = fopen(LOG_FILE_PATH, "w+");
+
+    loggerInit(logFile);
+
+    initNcurses();
+
+    initSocket(ADDRESS, PORT);
+//    char *hello = "Hello from client";
+//    send(sock, hello, strlen(hello), 0);
+//    printf("Hello message sent\n");
+//    read(sock, buffer, BUFFER_SIZE);
+//    printf("%s\n", buffer);
+//    sleep(10);
+    loginUser(my_window);
+////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
+////Ak opustil lobby vrati ho do mainMenu inak spusti hru
+    menu();
+    closingApp(logFile);
 }
