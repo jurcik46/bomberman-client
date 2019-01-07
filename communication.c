@@ -69,7 +69,6 @@ _Bool socketReady(){
 
 
 enum result_code communication(enum communication_type commuType, char *data) {
-
     switch (commuType) {
         case LOGIN:
             log_debug("LOGIN");

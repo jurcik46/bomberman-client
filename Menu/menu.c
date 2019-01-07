@@ -47,15 +47,17 @@ void loginUser(WINDOW *my_window) {
 
     char data[BUFFER_SIZE];
     sprintf(data, "%s %s", user.name, user.password);
-
+    int pom = 0;
     enum result_code result = communication(LOGIN, data);
     switch (result) {
         case OKEJ:
+            sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Prihlasenie prebehlo USPESNE!\n");
             break;
         case CREATED:
-            log_debug("Acc was created");
+            sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
+            log_debug("Acc was created");
             break;
         case UNAUTHORIZED:
             log_debug("Login failed");
@@ -96,18 +98,14 @@ bool menuNewGame(WINDOW *my_window) {
     switch (result) {
         case CREATED:
             game.users[0] = user;
-            game.users[0].admin = true;
+            game.admin = true;
             log_debug("Game was created");
             return true;
-        case UNAUTHORIZED:
-            log_debug("Create game failed");
-            return false;
-        case INTERNAL_SERVER_ERROR:
-            log_debug("Server Error");
+        case SERVICE_UNAVAILABLE:
+            log_debug("Server Full");
             return false;
         default:;
             return false;
-
     }
     //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
