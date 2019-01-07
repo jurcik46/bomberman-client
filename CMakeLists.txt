@@ -6,4 +6,5 @@ link_libraries(ncurses)
 link_libraries(pthread)
 
 add_executable(bomberman_client main.c logging/log.c logging/log.h communication.c communication.h Menu/menu.c Menu/menu.h constants.h)
+target_link_libraries(bomberman_client pthread)
 

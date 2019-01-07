@@ -9,7 +9,9 @@
 #include "Menu/menu.h"
 
 #define LOG_FILE_PATH "logs.log"
+#define ADDRESS "127.0.0.1"
 #define PORT 8080
+
 
 void loggerInit(FILE *logFile) {
 
@@ -30,7 +32,25 @@ void closingApp(FILE *logFile) {
     fclose(logFile);
 };
 
-void menu(){
+int main(int argc, char *argv[]) {
+    FILE *logFile = fopen(LOG_FILE_PATH, "w+");
+
+    loggerInit(logFile);
+
+    initNcurses();
+
+    initSocket(ADDRESS, PORT);
+//    char *hello = "Hello from client";
+//    send(sock, hello, strlen(hello), 0);
+//    printf("Hello message sent\n");
+//    read(sock, buffer, BUFFER_SIZE);
+//    printf("%s\n", buffer);
+//    sleep(10);
+    loginUser(my_window);
+
+////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
+////Ak opustil lobby vrati ho do mainMenu inak spusti hru
+
     choice = mainMenu(my_window);
     while (choice != EXIT){
         switch (choice){
@@ -63,30 +83,4 @@ void menu(){
                 printf("Invalid choice!");
         }
     }
-}
-
-int main(int argc, char *argv[]) {
-    FILE *logFile = fopen(LOG_FILE_PATH, "w+");
-
-    loggerInit(logFile);
-
-    initNcurses();
-
-    //initSocket("127.0.0.1", PORT);
-
-//    char *hello = "Hello from client";
-//    send(sock, hello, strlen(hello), 0);
-//    printf("Hello message sent\n");
-//    read(sock, buffer, BUFFER_SIZE);
-//    printf("%s\n", buffer);
-//    sleep(10);
-
-    //loginUser(my_window);
-
-    menu();
-
-    closingApp(logFile);
-    return 0;
-
-
 }

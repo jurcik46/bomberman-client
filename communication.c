@@ -6,9 +6,10 @@
 
 
 void initSocket(char *ipAddress, u_int16_t port) {
-    sock = 0;
-    memset(buffer, '\0', sizeof buffer);
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    sock.sock = 0;
+
+    memset(sock.buffer, '\0', sizeof sock.buffer);
+    if ((sock.sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
         exit(EXIT_FAILURE);
     }
@@ -24,11 +25,47 @@ void initSocket(char *ipAddress, u_int16_t port) {
         exit(EXIT_FAILURE);
     }
 
-    if (connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-        log_error("Connection Failed ");
+    if (connect(sock.sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+        log_error("Connection to server Failed  ");
         exit(EXIT_FAILURE);
     }
+    sd = sock.sock;
+
 };
+
+_Bool socketReady(){
+    FD_ZERO(&socketDs);
+    FD_SET(sd, &socketDs);
+    struct timeval tv;
+    tv.tv_usec = 1;
+
+    activity = select(sd + 1, &socketDs, NULL, NULL, &tv);
+
+    if ((activity < 0) && (errno != EINTR)) {
+        log_error("Select Socket Activity error");
+    }
+    if ( sd != 0 && FD_ISSET(sd, &socketDs)) {
+        if (recv(sock.sock, sock.buffer, BUFFER_SIZE, 0) == 0) {
+
+            log_fatal("Server disconnected");
+            //Close the socket and mark as 0 in list for reuse
+            close(sock.sock);
+            sock.sock = 0;
+            sleep(10);
+            exit(EXIT_FAILURE);
+        } else {
+//            sscanf(sock.buffer, "%d ", &pomType);
+            log_debug("data %s", sock.buffer);
+            return true;
+//            communication((enum communication_type) pomType,
+//                          &cSockets.client[i]);
+
+//            send(sd, sock.buffer, BUFFER_SIZE, 0);
+        }
+    }
+
+    return false;
+}
 
 
 enum result_code communication(enum communication_type commuType, char *data) {
@@ -37,6 +74,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case LOGIN:
             log_debug("LOGIN");
             return loginToServer(data);
+        case CREATE_GAME:
+            log_debug("CREATE GAME");
+            return createGameToServer(data);
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -45,22 +85,39 @@ enum result_code communication(enum communication_type commuType, char *data) {
 
 enum result_code loginToServer(char *data) {
     log_debug("Data: %s", data);
-    sprintf(buffer, "%d %d %s", LOGIN, ZERO, data);
-    log_debug("Sending to Server: %s", buffer);
+    sprintf(sock.buffer, "%d %d %s", LOGIN, ZERO, data);
+    log_debug("Sending to Server for LOGIN: %s", sock.buffer);
 
-    send(sock, buffer, BUFFER_SIZE, 0);
-    log_debug("Sent and Waiting to response");
-    recv(sock, buffer, BUFFER_SIZE, 0);
-    log_debug("Response %s", buffer);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Sent and Waiting to response for LOGIN");
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Response %s", sock.buffer);
 
     int pomT, pomR;
-//    char serverData[BUFFER_SIZE];
-    sscanf(buffer, "%d %d", &pomT, &pomR);
+    sscanf(sock.buffer, "%d %d", &pomT, &pomR);
     if ((enum communication_type) pomT == LOGIN) {
         return (enum result_code) pomR;
     }
 }
 
+enum result_code createGameToServer(char *data) {
+    log_debug("Data: %s", data);
+    sprintf(sock.buffer, "%d %d %s", CREATE_GAME, ZERO, data);
+    log_debug("Sending to Server for CREATE GAME: %s", sock.buffer);
+
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Sent and Waiting to response CREATE GAME");
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Response %s", sock.buffer);
+
+    int pomT, pomR;
+    sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+    if ((enum communication_type) pomT == CREATE_GAME) {
+        return (enum result_code) pomR;
+    }
+}
+
+
 void closeSocket() {
-    close(sock);
+    close(sock.sock);
 }

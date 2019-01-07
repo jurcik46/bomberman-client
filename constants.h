@@ -10,7 +10,7 @@ enum result_code {
 };
 
 enum communication_type {
-    LOGIN,
+    LOGIN, CREATE_GAME, GET_LOBBY_PLAYER
 };
 
 enum menu_choices {

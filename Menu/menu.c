@@ -67,7 +67,7 @@ void loginUser(WINDOW *my_window) {
             break;
         default:;
     }
-    sleep(10);
+    sleep(1);
 }
 
 bool menuNewGame(WINDOW *my_window) {
@@ -89,8 +89,29 @@ bool menuNewGame(WINDOW *my_window) {
     wscanw(my_window, "%d", &game.pocetHracov);
 
     //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
+    char data[BUFFER_SIZE];
+    sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.pocetHracov);
 
-    return true;
+    enum result_code result = communication(CREATE_GAME, data);
+    switch (result) {
+        case CREATED:
+            game.users[0] = user;
+            game.users[0].admin = true;
+            log_debug("Game was created");
+            return true;
+        case UNAUTHORIZED:
+            log_debug("Create game failed");
+            return false;
+        case INTERNAL_SERVER_ERROR:
+            log_debug("Server Error");
+            return false;
+        default:;
+            return false;
+
+    }
+    //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
+    //TODO sa zavola funkcia menuLobby
+    //TODO treba zmenit aj navratovu hodnotu funkcie
 }
 
 void *handleUserInput(void* param) {
