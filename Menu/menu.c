@@ -48,7 +48,7 @@ void loginUser(WINDOW *my_window) {
         default:;
 
     }
-    sleep(10);
+    sleep(1);
     //TODO: ostertit prazdny vstup a meno dat na 50 znako
     //TODO: opravit reagovanie na spravy od servera a vypisat info pre uzivatela
 }
@@ -72,11 +72,29 @@ bool menuNewGame(WINDOW *my_window) {
     wscanw(my_window, "%d", &game.pocetHracov);
 
     //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
+    char data[BUFFER_SIZE];
+    sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.pocetHracov);
 
+    enum result_code result = communication(CREATE_GAME, data);
+    switch (result) {
+        case CREATED:
+            game.users[0] = user;
+            game.users[0].admin = true;
+            log_debug("Game was created");
+            return true;
+        case UNAUTHORIZED:
+            log_debug("Create game failed");
+            return false;
+        case INTERNAL_SERVER_ERROR:
+            log_debug("Server Error");
+            return false;
+        default:;
+            return false;
+
+    }
     //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
     //TODO treba zmenit aj navratovu hodnotu funkcie
-    return true;
 }
 
 int menuLobby(WINDOW *my_window, int startY, int startX) {
@@ -105,6 +123,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             mvwprintw(lobby_Win, i + 1, 1, choices[i]);
             wattroff(lobby_Win, A_REVERSE);
         }
+
         choice = wgetch(lobby_Win);
 
         switch (choice) {
@@ -121,6 +140,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             default:
                 break;
         }
+
         if (choice == 10) {
             mvwprintw(lobby_Win, 1, 1, "             ");
             mvwprintw(lobby_Win, 2, 1, "             ");
@@ -130,6 +150,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
         }
     }
     return highlight;
+    //TODO: Vypisovat zoznam hracou
     //printw("Vybral si moznost: %d -> %s\n", highlight, choices[highlight]);
 }
 
