@@ -75,12 +75,7 @@ int main(int argc, char *argv[]) {
     initNcurses();
 
     initSocket(ADDRESS, PORT);
-//    char *hello = "Hello from client";
-//    send(sock, hello, strlen(hello), 0);
-//    printf("Hello message sent\n");
-//    read(sock, buffer, BUFFER_SIZE);
-//    printf("%s\n", buffer);
-//    sleep(10);
+
     loginUser(my_window);
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
