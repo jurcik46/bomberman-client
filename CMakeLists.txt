@@ -5,4 +5,5 @@ set(CMAKE_C_STANDARD 99)
 link_libraries(ncurses)
 
 add_executable(bomberman_client main.c logging/log.c logging/log.h communication.c communication.h Menu/menu.c Menu/menu.h constants.h)
+target_link_libraries(bomberman_client pthread)
 

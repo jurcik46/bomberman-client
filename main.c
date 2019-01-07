@@ -9,7 +9,9 @@
 #include "Menu/menu.h"
 
 #define LOG_FILE_PATH "logs.log"
+#define ADDRESS "127.0.0.1"
 #define PORT 8080
+
 
 void loggerInit(FILE *logFile) {
 
@@ -37,7 +39,7 @@ int main(int argc, char *argv[]) {
 
     initNcurses();
 
-    initSocket("127.0.0.1", PORT);
+    initSocket(ADDRESS, PORT);
 //    char *hello = "Hello from client";
 //    send(sock, hello, strlen(hello), 0);
 //    printf("Hello message sent\n");
@@ -75,7 +77,7 @@ int main(int argc, char *argv[]) {
     }
     //TODO: zmenit cisla v menu na ENUM
     //TODO: prerobit if podmienky na switch pre prehladnost
-    //TODO: vytvorit na to vlasnu funkciu v main file
+    //TODO: vytvorit na to vlasnu funkciu v menu file
     closingApp(logFile);
     return 0;
 
