@@ -81,39 +81,101 @@ bool menuNewGame(WINDOW *my_window) {
     mvwprintw(my_window, 6, 1, "Zadaj nazov hry: ");
     wrefresh(my_window);
     wgetstr(my_window, game.nazovHry);
-    mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
-    wrefresh(my_window);
-    wscanw(my_window, "%d", &game.cisloMapy);
-    mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
-    wrefresh(my_window);
-    wscanw(my_window, "%d", &game.pocetHracov);
+    _Bool isSaved = false;
+    int value = 0;
+    int input;
 
-    //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
+//Osetrenie vstupu pre zadavanie cisla mapy (len INT-y)
+    while (!isSaved){
+
+        mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
+        wrefresh(my_window);
+        input = wscanw(my_window, "%d", &value);
+        if (input == EOF){
+            log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
+            isSaved = false;
+            break;
+        } else if (input == 0) {
+            mvwprintw(my_window, 9, 1, "Zadat mozes iba CISLA!");
+            wrefresh(my_window);
+            isSaved = false;
+        } else {
+            game.cisloMapy = value;
+            isSaved = true;
+        }
+    }
+
+    isSaved = false;
+
+//Osetrenie vstupu pre zadavanie poctu hracov (len INT-y)
+    while (!isSaved){
+
+        mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
+        wrefresh(my_window);
+        input = wscanw(my_window, "%d", &value);
+        if (input == EOF){
+            log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
+            isSaved = false;
+            break;
+        } else if (input == 0) {
+            mvwprintw(my_window, 11, 1, "Zadat mozes iba CISLA!");
+            wrefresh(my_window);
+            isSaved = false;
+        } else if (value > 4) {
+            mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4!");
+            wrefresh(my_window);
+            isSaved = false;
+        } else if (value < 1){
+            mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1!");
+            wrefresh(my_window);
+            isSaved = false;
+        } else {
+            game.pocetHracov = value;
+            isSaved = true;
+        }
+    }
+
+//    mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
+//    wrefresh(my_window);
+//    wscanw(my_window, "%d", &game.cisloMapy);
+//    mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
+//    wrefresh(my_window);
+//    wscanw(my_window, "%d", &game.pocetHracov);
+
+//    printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
+//    log_debug("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
+//    sleep(5);
     char data[BUFFER_SIZE];
     sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.pocetHracov);
 
-    enum result_code result = communication(CREATE_GAME, data);
-    switch (result) {
-        case CREATED:
-            game.users[0] = user;
-            game.users[0].admin = true;
-            log_debug("Game was created");
-            return true;
-        case UNAUTHORIZED:
-            log_debug("Create game failed");
-            return false;
-        case INTERNAL_SERVER_ERROR:
-            log_debug("Server Error");
-            return false;
-        default:;
-            return false;
-
-    }
+//    enum result_code result = communication(CREATE_GAME, data);
+//    switch (result) {
+//        case CREATED:
+//            game.users[0] = user;
+//            game.users[0].admin = true;
+//            log_debug("Game was created");
+//            return true;
+//        case UNAUTHORIZED:
+//            log_debug("Create game failed");
+//            return false;
+//        case INTERNAL_SERVER_ERROR:
+//            log_debug("Server Error");
+//            return false;
+//        default:;
+//            return false;
+//
+//    }
     //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
     //TODO treba zmenit aj navratovu hodnotu funkcie
 }
 
+/**
+ * Funkcia ktoru pouziva vedlajsie vlakno na obsluzenie vstupu od uzivatela
+ * ktory si môže vybrat si hru spusti alebo z hry odide.
+ * @param param
+ * @return
+ */
 void *handleUserInput(void* param) {
     CHOICE *choice = (CHOICE*)param;
     int moznost;
@@ -134,6 +196,13 @@ void *handleUserInput(void* param) {
     pthread_exit(0);
 }
 
+/**
+ *
+ * @param my_window - okno v ktorom sa maju vykreslit informacie o hre
+ * @param startY - index od ktoreho ma zacinat okno na Y osi
+ * @param startX - index od ktoreho ma zacinat okno na X osi
+ * @return - vracia volbu od uzivatela ci si praje spustit hru alebo hru opustit
+ */
 int menuLobby(WINDOW *my_window, int startY, int startX) {
     wclear(my_window);
 
@@ -203,19 +272,118 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     //printw("Vybral si moznost: %d -> %s\n", highlight, choices[highlight]);
 }
 
-void menuFindServer(WINDOW *my_window) {
+/**
+ * Funkciu vyuziva vlakno, ktore caka na vstup od uzivatela.
+ * Ak uzivatel stlaci ESC tak sa vrati do mainMenu inak sa moze pohybovat
+ * sipkami po dostupnych hrach a vybrat si do ktorej sa chce pripojit pomocou stlacenia ENTER
+ * @param param - struktura, ktora obsahuje informacie o vstupe od uzivatela
+ */
+void *handleEsc(void* param){
+        CHOICE *choice = (CHOICE*)param;
+        int value;
+
+        pthread_mutex_lock(&choice->mutex);
+        _Bool result = choice->result;
+        WINDOW *window = choice->lobby_Win;
+        pthread_mutex_unlock(&choice->mutex);
+
+        while(!result){
+            value = wgetch(window);
+
+            pthread_mutex_lock(&choice->mutex);
+            result = choice->result;
+            choice->choice = value;
+            pthread_mutex_unlock(&choice->mutex);
+        }
+        pthread_exit(0);
+}
+
+/**
+ * Funkcia sluzi na vypisanie dostupnych (vytvorenych) hier, do ktorych sa môze
+ * uzivatel prihlasit.
+ * @param my_window - okno v ktorom sa ma vykreslit obsah
+ */
+int menuFindServer(WINDOW *my_window) {
+    CHOICE param;
+    pthread_t userInputThread;
+    pthread_create(&userInputThread, NULL, handleEsc, (void *)&param);
+    param.mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+
+    pthread_mutex_lock(&param.mutex);
+    param.lobby_Win = my_window;
+    keypad(param.lobby_Win, true);
+    wclear(param.lobby_Win);
+    param.result = false;
+    pthread_mutex_unlock(&param.mutex);
+
     wclear(my_window);
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
     mvwprintw(my_window, 3, 10, "FINDING GAME\n");
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
+
+    int *idOfGame;
+    idOfGame = (int *) malloc(sizeof(int));
+    int highlight = 0;
+
+
+
+    const char *choices[1];
+    for(int i = 0; i < 1; i++){
+        choices[i] = game.nazovHry + game.cisloMapy + game.pocetHracov;
+    }
+
+    int lengthOfChoices = sizeof(choices) / sizeof(const char*);
+
+
+
+
+    while (1){
+        for (int i = 0; i < lengthOfChoices; i++) {
+            if (i == highlight)
+                wattron(param.lobby_Win, A_REVERSE);
+            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
+            wattroff(param.lobby_Win, A_REVERSE);
+        }
+        pthread_mutex_lock(&param.mutex);
+        int choice = param.choice;
+        param.choice = RESET_CHOICE;
+        pthread_mutex_unlock(&param.mutex);
+
+        switch (choice) {
+            case KEY_UP:
+                highlight--;
+                if (highlight == -1)
+                    highlight = 0;
+                break;
+            case KEY_DOWN:
+                highlight++;
+                if (highlight == lengthOfChoices)
+                    highlight = lengthOfChoices - 1;
+                break;
+            case ESC:
+                pthread_mutex_lock(&param.mutex);
+                param.result = true;
+                pthread_mutex_unlock(&param.mutex);
+                pthread_join(userInputThread, NULL);
+                pthread_mutex_destroy(&param.mutex);
+                return ESC;
+            default:
+                break;
+        }
+        wrefresh(my_window);
+    }
+
     //TODO Dorobit funkciu na prijmanie sprav od servera o vytvorenych hrach
     //TODO a nasledne ich vypisat
-    //TODO doplnit ze ked stlaci ESC tak ho da Back To MainMenu
-
+    //TODO opravit ESC aby reagoval rychlejsie
 }
 
+/**
+ * Funkcia sluzi na vypis jednotlivych statistik.
+ * @param my_window - okno v ktorom sa ma vypisat obsah.
+ */
 void menuLeaderBoard(WINDOW *my_window) {
     wclear(my_window);
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -226,9 +394,13 @@ void menuLeaderBoard(WINDOW *my_window) {
     //TODO Treba vytvoriť funkciu pre vypis statistiky z databazy
     //TODO dorobiť nove okno s moznostami vyberu zoradenia statistiky
     wrefresh(my_window);
-
 }
 
+/**
+ * Funkcia vypise do okna uvodne menu pre hru BOMBERMAN
+ * @param my_window - okno v ktorom sa ma vykreslit obsah
+ * @return - vracia hodnotu (volbu) ktoru si zvolil uzivatel
+ */
 int mainMenu(WINDOW *my_window) {
 
     const char *choices[4];

@@ -21,7 +21,8 @@ enum menu_choices {
     MENU_EXIT = 3,
     START_GAME = 0,
     MAIN_MENU = 1,
-    ENTER = 10
+    ENTER = 10,
+    ESC = 27
 };
 
 #endif //BOMBERMAN_CLIENT_CONSTANTS_H

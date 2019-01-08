@@ -53,7 +53,9 @@ void menu(){
                 }
                 break;
             case MENU_FIND_SERVER:
-                menuFindServer(my_window);
+                choice = menuFindServer(my_window);
+                if (choice == ESC)
+                    choice = mainMenu(my_window);
                 break;
             case MENU_LEADER_BOARD:
                 menuLeaderBoard(my_window);
@@ -74,9 +76,9 @@ int main(int argc, char *argv[]) {
 
     initNcurses();
 
-    initSocket(ADDRESS, PORT);
+    //initSocket(ADDRESS, PORT);
 
-    loginUser(my_window);
+    //loginUser(my_window);
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
     menu();

@@ -118,6 +118,8 @@ enum result_code createGameToServer(char *data) {
 }
 
 
+
+
 void closeSocket() {
     close(sock.sock);
 }
