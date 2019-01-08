@@ -39,7 +39,7 @@ _Bool socketReady(){
     struct timeval tv;
     tv.tv_usec = 1;
 
-    activity = select(sd + 1, &socketDs, NULL, NULL, &tv);
+    activity = select(sd + 1, &socketDs, NULL, NULL, NULL);
 
     if ((activity < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
@@ -76,6 +76,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case CREATE_GAME:
             log_debug("CREATE GAME");
             return createGameToServer(data);
+        case FIND_SERVERS:
+            findGameFromServer(data);
+            return ZERO;
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -116,6 +119,24 @@ enum result_code createGameToServer(char *data) {
     }
 }
 
+
+void findGameFromServer(char *data){
+    log_debug("Data: %s", data);
+    sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
+    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+
+}
+
+enum result_code resultFromRequest(){
+    int pomT, pomR;
+    sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+    return (enum result_code) pomR;
+}
+
+char* dataFromRequest(){
+    return sock.buffer;
+}
 
 void closeSocket() {
     close(sock.sock);

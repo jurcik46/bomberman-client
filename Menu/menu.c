@@ -208,10 +208,28 @@ void menuFindServer(WINDOW *my_window) {
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
+    int count = 0;
+    char data[BUFFER_SIZE];
+    sprintf(data, "%d", count);
+    communication(FIND_SERVERS, data);
+    while (1){
+//        sleep(1);
+        if(socketReady()){
+            log_debug("sadasdasdasdasda");
+            if(resultFromRequest() !=  DONE){
+                count++;
+                log_debug("%s", dataFromRequest());
+                sprintf(data, "%d", count);
+                communication(FIND_SERVERS, data);
+            } else{
+//              count = 0;
+                log_debug("KONEEEEEC");
+            }
+        }
+    }
     //TODO Dorobit funkciu na prijmanie sprav od servera o vytvorenych hrach
     //TODO a nasledne ich vypisat
     //TODO doplnit ze ked stlaci ESC tak ho da Back To MainMenu
-
 }
 
 void menuLeaderBoard(WINDOW *my_window) {
