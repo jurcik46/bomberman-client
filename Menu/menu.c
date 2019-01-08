@@ -69,7 +69,6 @@ void loginUser(WINDOW *my_window) {
             break;
         default:;
     }
-    sleep(1);
 }
 
 bool menuNewGame(WINDOW *my_window) {
@@ -215,7 +214,6 @@ void menuFindServer(WINDOW *my_window) {
     while (1){
 //        sleep(1);
         if(socketReady()){
-            log_debug("sadasdasdasdasda");
             if(resultFromRequest() !=  DONE){
                 count++;
                 log_debug("%s", dataFromRequest());
