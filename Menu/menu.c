@@ -14,25 +14,18 @@ void initNcurses() {
     keypad(my_window, true);
 }
 
-void menu(enum menu_choices cho, enum menu_choices subCho) {
-    if (cho == DEFAULT) {
-        choice = mainMenu(my_window);
-    } else {
-        choice = cho;
-    }
+void menu() {
+    choice = mainMenu(my_window);
     while (choice != EXIT) {
         switch (choice) {
             case MENU_NEW_GAME:
-                if (subCho != JOIN) {
+                if (!success) {
                     success = menuNewGame(my_window);
-                } else {
-                    success = true;
                 }
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
-                        //START GAME
-                        printf("START GAME");
+                        //TODO HRAAAA
                     } else if (choice == MAIN_MENU) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d %d %d", game.gameId, user.id, game.admin);
@@ -40,6 +33,7 @@ void menu(enum menu_choices cho, enum menu_choices subCho) {
                         game = emptyGame;
                         choice = mainMenu(my_window);
                     }
+                    success = false;
                 } else {
                     wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
                     wrefresh(my_window);
@@ -48,6 +42,11 @@ void menu(enum menu_choices cho, enum menu_choices subCho) {
                 break;
             case MENU_FIND_SERVER:
                 choice = menuFindServer(my_window);
+                if (choice == JOIN) {
+                    success = true;
+                    choice = MENU_NEW_GAME;
+                    break;
+                }
                 if (choice == ESC)
                     choice = mainMenu(my_window);
                 break;
@@ -194,11 +193,13 @@ bool menuNewGame(WINDOW *my_window) {
     char data[BUFFER_SIZE];
     sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.maxPocetHracov);
     enum result_code result = communication(CREATE_GAME, data);
+    log_debug("result %d", result);
     switch (result) {
         case CREATED:
 //            game.users[0] = user;
 //            game.pocetHracov++;
             game.admin = true;
+            log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
             //TODO vypisat majitela servera a nazov lobby
             log_debug("Game was created");
@@ -207,6 +208,7 @@ bool menuNewGame(WINDOW *my_window) {
             log_debug("Server Full");
             return false;
         default:;
+            log_debug("DEFAULT  ");
             return false;
     }
     //TODO sa zavola funkcia menuLobby
@@ -326,9 +328,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             }
         }
 
-        pthread_mutex_lock(&param.mutex);
+//        pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
-        pthread_mutex_unlock(&param.mutex);
+//        pthread_mutex_unlock(&param.mutex);
 
         switch (choice) {
             case KEY_UP:
@@ -348,6 +350,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 break;
         }
         wrefresh(my_window);
+        wrefresh(param.lobby_Win);
         usleep(30);
     }
 }
@@ -454,10 +457,10 @@ int menuFindServer(WINDOW *my_window) {
                       pomPointerArray[i].nazovHry);
             wattroff(param.lobby_Win, A_REVERSE);
         }
-        pthread_mutex_lock(&param.mutex);
+//        pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         param.choice = RESET_CHOICE;
-        pthread_mutex_unlock(&param.mutex);
+//        pthread_mutex_unlock(&param.mutex);
         int ch = 0;
         switch (choice) {
             case KEY_UP:
@@ -479,8 +482,9 @@ int menuFindServer(WINDOW *my_window) {
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
                         game.pocetHracov++;
-                        menu(MENU_NEW_GAME, JOIN);
-                        return ESC;
+                        return JOIN;
+//                        menu(MENU_NEW_GAME, JOIN);
+                        result = ESC;
 //                        ch = menuLobby(my_window, startY, startX);
 //                        if (ch == START_GAME) {
 //                            //START GAME
@@ -511,8 +515,8 @@ int menuFindServer(WINDOW *my_window) {
             default:
                 break;
         }
-//        wclear(param.lobby_Win);
         wrefresh(param.lobby_Win);
+        wrefresh(my_window);
         usleep(30);
     }
 }
@@ -574,11 +578,10 @@ int mainMenu(WINDOW *my_window) {
                 if (highlight == 4)
                     highlight = 3;
                 break;
+            case ENTER:
+                return highlight;
             default:
                 break;
         }
-        if (choice == ENTER)
-            break;
     }
-    return highlight;
 }

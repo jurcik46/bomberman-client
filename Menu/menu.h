@@ -64,7 +64,7 @@ User user;
 
 void initNcurses();
 
-void menu(enum menu_choices cho, enum menu_choices subCho);
+void menu();
 
 void loginUser(WINDOW *my_window);
 

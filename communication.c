@@ -55,7 +55,7 @@ _Bool socketReady() {
             exit(EXIT_FAILURE);
         } else {
 //            sscanf(sock.buffer, "%d ", &pomType);
-            log_debug("data %s", sock.buffer);
+//            log_debug("data %s", sock.buffer);
             return true;
 //            communication((enum communication_type) pomType,
 //                          &cSockets.client[i]);
@@ -133,12 +133,14 @@ void findGameFromServer(char *data) {
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
 //    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
 }
 
 void getPlayerInLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
+
 }
 
 
@@ -164,6 +166,8 @@ void leaveLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", LEAVE_LOBBY, ZERO, data);
     log_debug("Sending to Server for LEAVE LOBBY: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
+
 }
 
 
