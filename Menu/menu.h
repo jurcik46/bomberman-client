@@ -22,6 +22,8 @@
 #define NAME_LENGTH 50
 #define PASSWORD_LENGTH 50
 #define GAME_NAME_LENGTH 20
+#define RESET_CHOICE -1
+#define MAX_GAMES 20
 
 //Struktura pre usera
 typedef struct user {
@@ -64,7 +66,7 @@ int mainMenu(WINDOW *my_window);
 
 bool menuNewGame(WINDOW *my_window);
 
-void menuFindServer(WINDOW *my_window);
+int menuFindServer(WINDOW *my_window);
 
 void menuLeaderBoard(WINDOW *my_window);
 
