@@ -62,6 +62,8 @@ User user;
 
 void initNcurses();
 
+void menu();
+
 void loginUser(WINDOW *my_window);
 
 int mainMenu(WINDOW *my_window);

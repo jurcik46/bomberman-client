@@ -14,6 +14,43 @@ void initNcurses() {
     keypad(my_window, true);
 }
 
+void menu() {
+    choice = mainMenu(my_window);
+    while (choice != EXIT) {
+        switch (choice) {
+            case MENU_NEW_GAME:
+                success = menuNewGame(my_window);
+                if (success) {
+                    choice = menuLobby(my_window, startY, startX);
+                    if (choice == START_GAME) {
+                        //START GAME
+                        printf("START GAME");
+                    } else if (choice == MAIN_MENU) {
+                        choice = mainMenu(my_window);
+                    }
+                } else {
+                    wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
+                    wrefresh(my_window);
+                    choice = menuNewGame(my_window);
+                }
+                break;
+            case MENU_FIND_SERVER:
+                choice = menuFindServer(my_window);
+                if (choice == ESC)
+                    choice = mainMenu(my_window);
+                break;
+            case MENU_LEADER_BOARD:
+                menuLeaderBoard(my_window);
+                break;
+            case MENU_EXIT:
+                choice = EXIT;
+                break;
+            default :
+                printf("Invalid choice!");
+        }
+    }
+}
+
 /**
  * Funkcia sluzi na prihlasenie uzivatela do hry
  * Ak nema vytvoreny ucet tak ho registruje
@@ -144,12 +181,13 @@ bool menuNewGame(WINDOW *my_window) {
 
     char data[BUFFER_SIZE];
     sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.maxPocetHracov);
-
     enum result_code result = communication(CREATE_GAME, data);
     switch (result) {
         case CREATED:
-            game.users[0] = user;
+//            game.users[0] = user;
+//            game.pocetHracov++;
             game.admin = true;
+            sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
             //TODO vypisat majitela servera a nazov lobby
             log_debug("Game was created");
             return true;
@@ -223,6 +261,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     pthread_t userInputThread;
     pthread_create(&userInputThread, NULL, handleUserInput, (void *) &param);
     char data[BUFFER_SIZE];
+    int count = 0;
+    sprintf(data, "%d %d", count, game.gameId);
+    communication(GET_LOBBY_PLAYER, data);
     int i = 0;
     while (1) {
         for (int i = 0; i < 2; i++) {
@@ -232,14 +273,30 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             wattroff(param.lobby_Win, A_REVERSE);
         }
         if (socketReady()) {
-            int pom;
-            game.pocetHracov++;
-            sscanf(dataFromRequest(), "%d %d %d %s", &pom, &pom,
-                   &game.users[game.pocetHracov].id,
-                   game.users[game.pocetHracov].name);
-            mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
-            i++;
+
+            int pomT, pomR;
+            sscanf(dataFromRequest(), "%d %d", &pomT, &pomR);
+
+            if ((enum communication_type) pomT == JOIN_LOBBY && (enum communication_type) pomR == CREATED) {
+                game.pocetHracov++;
+                sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
+                       &game.users[game.pocetHracov].id,
+                       game.users[game.pocetHracov].name);
+                mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
+                i++;
+            }
+            if ((enum communication_type) pomT == GET_LOBBY_PLAYER && (enum communication_type) pomR != DONE) {
+                sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
+                       &game.users[count].id,
+                       game.users[count].name);
+                mvwprintw(my_window, i + 6, 1, "%s", game.users[count].name);
+                i++;
+                count++;
+                sprintf(data, "%d %d", count, game.gameId);
+                communication(GET_LOBBY_PLAYER, data);
+            }
         }
+
         pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         pthread_mutex_unlock(&param.mutex);
@@ -338,7 +395,7 @@ int menuFindServer(WINDOW *my_window) {
         if (socketReady()) {
             if (resultFromRequest() != DONE) {
                 int pom;
-                char name[GAME_NAME_LENGTH];
+//                char name[GAME_NAME_LENGTH];
                 sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &pom, &pom, &arrayOfGameId->gameId,
                        arrayOfGameId->nazovHry, &arrayOfGameId->cisloMapy,
                        &arrayOfGameId->maxPocetHracov, &pom);
@@ -366,6 +423,7 @@ int menuFindServer(WINDOW *my_window) {
         int choice = param.choice;
         param.choice = RESET_CHOICE;
         pthread_mutex_unlock(&param.mutex);
+        int ch = 0;
         switch (choice) {
             case KEY_UP:
                 highlight--;
@@ -378,19 +436,29 @@ int menuFindServer(WINDOW *my_window) {
                     highlight = count - 1;
                 break;
             case ENTER:
-
                 sprintf(data, "%d", pomPointerArray[highlight].gameId);
                 enum result_code result = communication(JOIN_LOBBY, data);
                 switch (result) {
                     case OKEJ:
+                        sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
+                               &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
+                               &game.maxPocetHracov);
+                        game.pocetHracov++;
+                        ch = menuLobby(my_window, startY, startX);
+                        if (ch == START_GAME) {
+                            //START GAME
+                            printf("START GAME");
+                        } else if (ch == MAIN_MENU) {
+                            menu();
+                        }
                         //TODO vypytat si hracou v lobby
                         //vstupil
                         break;
                     case SERVICE_UNAVAILABLE:
-                        //fulll lobby
+                        //TODO full lobby
                         break;
                     case NOT_FOUND:
-                        //asdasdsa
+                        //TODO not FOund
                         break;
                     default:
                         break;

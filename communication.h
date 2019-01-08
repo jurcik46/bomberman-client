@@ -48,6 +48,8 @@ enum result_code loginToServer(char *data);
 
 enum result_code createGameToServer(char *data);
 
+void getPlayerInLobby(char *data);
+
 void findGameFromServer(char *data);
 
 enum result_code joinLobbyToServer(char *data);

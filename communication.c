@@ -81,6 +81,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
             return ZERO;
         case JOIN_LOBBY:
             return joinLobbyToServer(data);
+        case GET_LOBBY_PLAYER:
+            getPlayerInLobby(data);
+            return ZERO;
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -129,6 +132,12 @@ void findGameFromServer(char *data) {
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
 
 }
+
+void getPlayerInLobby(char *data) {
+    sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+}
+
 
 enum result_code joinLobbyToServer(char *data) {
     log_debug("Data: %s", data);

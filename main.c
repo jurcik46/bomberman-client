@@ -32,42 +32,7 @@ void closingApp(FILE *logFile) {
     fclose(logFile);
 };
 
-void menu() {
-    choice = mainMenu(my_window);
-    while (choice != EXIT) {
-        switch (choice) {
-            case MENU_NEW_GAME:
-                success = menuNewGame(my_window);
-                if (success) {
-                    choice = menuLobby(my_window, startY, startX);
-                    if (choice == START_GAME) {
-                        //START GAME
-                        printf("START GAME");
-                    } else if (choice == MAIN_MENU) {
-                        choice = mainMenu(my_window);
-                    }
-                } else {
-                    wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
-                    wrefresh(my_window);
-                    choice = menuNewGame(my_window);
-                }
-                break;
-            case MENU_FIND_SERVER:
-                choice = menuFindServer(my_window);
-                if (choice == ESC)
-                    choice = mainMenu(my_window);
-                break;
-            case MENU_LEADER_BOARD:
-                menuLeaderBoard(my_window);
-                break;
-            case MENU_EXIT:
-                choice = EXIT;
-                break;
-            default :
-                printf("Invalid choice!");
-        }
-    }
-}
+//
 
 int main(int argc, char *argv[]) {
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
