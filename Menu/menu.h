@@ -38,6 +38,7 @@ typedef struct game {
     char nazovHry[GAME_NAME_LENGTH];
     int cisloMapy;
     int pocetHracov;
+    int maxPocetHracov;
     _Bool admin;
     User users[4];
 } Game;
@@ -72,5 +73,6 @@ int menuFindServer(WINDOW *my_window);
 void menuLeaderBoard(WINDOW *my_window);
 
 int menuLobby(WINDOW *my_window, int startY, int startX);
+
 
 #endif

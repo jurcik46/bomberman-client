@@ -49,8 +49,13 @@ enum result_code loginToServer(char *data);
 enum result_code createGameToServer(char *data);
 
 void findGameFromServer(char *data);
+
+enum result_code joinLobbyToServer(char *data);
+
 enum result_code resultFromRequest();
-char* dataFromRequest();
+
+char *dataFromRequest();
+
 void initSocket(char *ipAddress, u_int16_t port);
 
 _Bool socketReady();

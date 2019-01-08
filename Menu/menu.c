@@ -137,27 +137,20 @@ bool menuNewGame(WINDOW *my_window) {
             wrefresh(my_window);
             isSaved = false;
         } else {
-            game.pocetHracov = value;
+            game.maxPocetHracov = value;
             isSaved = true;
         }
     }
 
-//    mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
-//    wrefresh(my_window);
-//    wscanw(my_window, "%d", &game.cisloMapy);
-//    mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
-//    wrefresh(my_window);
-//    wscanw(my_window, "%d", &game.pocetHracov);
-
-    //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
     char data[BUFFER_SIZE];
-    sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.pocetHracov);
+    sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.maxPocetHracov);
 
     enum result_code result = communication(CREATE_GAME, data);
     switch (result) {
         case CREATED:
             game.users[0] = user;
             game.admin = true;
+            //TODO vypisat majitela servera a nazov lobby
             log_debug("Game was created");
             return true;
         case SERVICE_UNAVAILABLE:
@@ -166,9 +159,7 @@ bool menuNewGame(WINDOW *my_window) {
         default:;
             return false;
     }
-    //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
-    //TODO treba zmenit aj navratovu hodnotu funkcie
 }
 
 /**
@@ -216,7 +207,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     const char *choices[2];
     choices[0] = "Start Game";
     choices[1] = "Leave Game";
-
+//TODO  START GAME LEN PRE ADMINA
     int highlight = 0;
 
     CHOICE param;
@@ -231,7 +222,8 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
 
     pthread_t userInputThread;
     pthread_create(&userInputThread, NULL, handleUserInput, (void *) &param);
-
+    char data[BUFFER_SIZE];
+    int i = 0;
     while (1) {
         for (int i = 0; i < 2; i++) {
             if (i == highlight)
@@ -239,7 +231,15 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
             wattroff(param.lobby_Win, A_REVERSE);
         }
-
+        if (socketReady()) {
+            int pom;
+            game.pocetHracov++;
+            sscanf(dataFromRequest(), "%d %d %d %s", &pom, &pom,
+                   &game.users[game.pocetHracov].id,
+                   game.users[game.pocetHracov].name);
+            mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
+            i++;
+        }
         pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         pthread_mutex_unlock(&param.mutex);
@@ -269,9 +269,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             default:
                 break;
         }
+        wrefresh(my_window);
         usleep(30);
     }
-    //printw("Vybral si moznost: %d -> %s\n", highlight, choices[highlight]);
 }
 
 /**
@@ -341,13 +341,7 @@ int menuFindServer(WINDOW *my_window) {
                 char name[GAME_NAME_LENGTH];
                 sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &pom, &pom, &arrayOfGameId->gameId,
                        arrayOfGameId->nazovHry, &arrayOfGameId->cisloMapy,
-                       &arrayOfGameId->pocetHracov, &pom);
-//                if (y == highlight)
-//                    wattron(my_window, A_REVERSE);
-//                mvwprintw(my_window, y + 6, 1, "Id: %d  \t  MAX Player: %d \t Map Number: %d \t Name: %s\n",
-//                          gameId, maxPlayerCount, mapNubmer, name);
-//                wattroff(my_window, A_REVERSE);
-//                *arrayOfGameId = gameId;
+                       &arrayOfGameId->maxPocetHracov, &pom);
                 count++;
                 pomPointerArray = (Game *) realloc(pomPointerArray, ((count + 1) * sizeof(Game)));
                 arrayOfGameId++;
@@ -355,8 +349,6 @@ int menuFindServer(WINDOW *my_window) {
                 sprintf(data, "%d", count);
                 communication(FIND_SERVERS, data);
             } else {
-//              count = 0;
-//                log_debug("KONEEEEEC");
             }
 //            wrefresh(my_window);
         }
@@ -366,9 +358,8 @@ int menuFindServer(WINDOW *my_window) {
             if (i == highlight)
                 wattron(param.lobby_Win, A_REVERSE);
             mvwprintw(param.lobby_Win, i + 6, 1, "Id: %d    MAX Player: %d  Map Number: %d  Name: %s\n",
-                      pomPointerArray[i].gameId, pomPointerArray[i].pocetHracov, pomPointerArray[i].cisloMapy,
+                      pomPointerArray[i].gameId, pomPointerArray[i].maxPocetHracov, pomPointerArray[i].cisloMapy,
                       pomPointerArray[i].nazovHry);
-//            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
             wattroff(param.lobby_Win, A_REVERSE);
         }
         pthread_mutex_lock(&param.mutex);
@@ -387,8 +378,23 @@ int menuFindServer(WINDOW *my_window) {
                     highlight = count - 1;
                 break;
             case ENTER:
-//                pomPointerArray[highlight].gameId;
-                //TODO poslat na server vybratu hru
+
+                sprintf(data, "%d", pomPointerArray[highlight].gameId);
+                enum result_code result = communication(JOIN_LOBBY, data);
+                switch (result) {
+                    case OKEJ:
+                        //TODO vypytat si hracou v lobby
+                        //vstupil
+                        break;
+                    case SERVICE_UNAVAILABLE:
+                        //fulll lobby
+                        break;
+                    case NOT_FOUND:
+                        //asdasdsa
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case ESC:
                 pthread_mutex_lock(&param.mutex);
@@ -404,19 +410,6 @@ int menuFindServer(WINDOW *my_window) {
         wrefresh(param.lobby_Win);
         usleep(30);
     }
-
-//
-//    while (1){
-//        for (int i = 0; i < count; i++) {
-//            if (i == highlight)
-//                wattron(param.lobby_Win, A_REVERSE);
-//            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
-//            wattroff(param.lobby_Win, A_REVERSE);
-//        }
-//    }
-
-    //TODO opravit ESC aby reagoval rychlejsie
-    //TODO vytvorit pole na ukladanie gameID a pri vybere hry poslat na server gameID cez highlight
 }
 
 /**

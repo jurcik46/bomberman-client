@@ -79,6 +79,8 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case FIND_SERVERS:
             findGameFromServer(data);
             return ZERO;
+        case JOIN_LOBBY:
+            return joinLobbyToServer(data);
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -125,6 +127,24 @@ void findGameFromServer(char *data) {
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
 //    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+
+}
+
+enum result_code joinLobbyToServer(char *data) {
+    log_debug("Data: %s", data);
+    sprintf(sock.buffer, "%d %d %s", JOIN_LOBBY, ZERO, data);
+    log_debug("Sending to Server for JOIN LOBBY: %s", sock.buffer);
+
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Sent and Waiting to response for JOIN LOBBY");
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Response %s", sock.buffer);
+
+    int pomT, pomR;
+    sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+    if ((enum communication_type) pomT == JOIN_LOBBY) {
+        return (enum result_code) pomR;
+    }
 
 }
 
