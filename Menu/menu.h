@@ -58,11 +58,13 @@ bool success;
 
 Game game;
 
+Game emptyGame;
+
 User user;
 
 void initNcurses();
 
-void menu();
+void menu(enum menu_choices cho, enum menu_choices subCho);
 
 void loginUser(WINDOW *my_window);
 
@@ -75,6 +77,8 @@ int menuFindServer(WINDOW *my_window);
 void menuLeaderBoard(WINDOW *my_window);
 
 int menuLobby(WINDOW *my_window, int startY, int startX);
+
+int lobbyChoice(CHOICE *param, pthread_t *thread);
 
 
 #endif

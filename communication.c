@@ -55,7 +55,7 @@ _Bool socketReady() {
             exit(EXIT_FAILURE);
         } else {
 //            sscanf(sock.buffer, "%d ", &pomType);
-//            log_debug("data %s", sock.buffer);
+            log_debug("data %s", sock.buffer);
             return true;
 //            communication((enum communication_type) pomType,
 //                          &cSockets.client[i]);
@@ -83,6 +83,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
             return joinLobbyToServer(data);
         case GET_LOBBY_PLAYER:
             getPlayerInLobby(data);
+            return ZERO;
+        case LEAVE_LOBBY:
+            leaveLobby(data);
             return ZERO;
         default:
             log_debug("DEFAULT");
@@ -156,6 +159,13 @@ enum result_code joinLobbyToServer(char *data) {
     }
 
 }
+
+void leaveLobby(char *data) {
+    sprintf(sock.buffer, "%d %d %s", LEAVE_LOBBY, ZERO, data);
+    log_debug("Sending to Server for LEAVE LOBBY: %s", sock.buffer);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+}
+
 
 enum result_code resultFromRequest() {
     int pomT, pomR;

@@ -14,18 +14,30 @@ void initNcurses() {
     keypad(my_window, true);
 }
 
-void menu() {
-    choice = mainMenu(my_window);
+void menu(enum menu_choices cho, enum menu_choices subCho) {
+    if (cho == DEFAULT) {
+        choice = mainMenu(my_window);
+    } else {
+        choice = cho;
+    }
     while (choice != EXIT) {
         switch (choice) {
             case MENU_NEW_GAME:
-                success = menuNewGame(my_window);
+                if (subCho != JOIN) {
+                    success = menuNewGame(my_window);
+                } else {
+                    success = true;
+                }
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
                         //START GAME
                         printf("START GAME");
                     } else if (choice == MAIN_MENU) {
+                        char data[BUFFER_SIZE];
+                        sprintf(data, "%d %d %d", game.gameId, user.id, game.admin);
+                        communication(LEAVE_LOBBY, data);
+                        game = emptyGame;
                         choice = mainMenu(my_window);
                     }
                 } else {
@@ -46,7 +58,7 @@ void menu() {
                 choice = EXIT;
                 break;
             default :
-                printf("Invalid choice!");
+                break;
         }
     }
 }
@@ -295,6 +307,23 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 sprintf(data, "%d %d", count, game.gameId);
                 communication(GET_LOBBY_PLAYER, data);
             }
+
+            if ((enum communication_type) pomT == LEAVE_LOBBY && (enum communication_type) pomR == OKEJ) {
+                int admin;
+                sscanf(dataFromRequest(), "%d %d %d", &pomT, &pomT, &admin);
+                if (admin) {
+                    lobbyChoice(&param, &userInputThread);
+                    highlight = 1;
+                    game = emptyGame;
+                    return highlight;
+                }
+                game.pocetHracov--;
+                i = 0;
+                count = 0;
+                sprintf(data, "%d %d", count, game.gameId);
+                communication(GET_LOBBY_PLAYER, data);
+
+            }
         }
 
         pthread_mutex_lock(&param.mutex);
@@ -313,15 +342,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                     highlight = 1;
                 break;
             case ENTER:
-                pthread_mutex_lock(&param.mutex);
-                mvwprintw(param.lobby_Win, 1, 1, "             ");
-                mvwprintw(param.lobby_Win, 2, 1, "             ");
-                wrefresh(param.lobby_Win);
-                delwin(param.lobby_Win);
-                param.result = true;
-                pthread_mutex_unlock(&param.mutex);
-                pthread_join(userInputThread, NULL);
-                pthread_mutex_destroy(&param.mutex);
+                lobbyChoice(&param, &userInputThread);
                 return highlight;
             default:
                 break;
@@ -330,6 +351,20 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
         usleep(30);
     }
 }
+
+
+int lobbyChoice(CHOICE *param, pthread_t *thread) {
+    pthread_mutex_lock(&param->mutex);
+    mvwprintw(param->lobby_Win, 1, 1, "             ");
+    mvwprintw(param->lobby_Win, 2, 1, "             ");
+    wrefresh(param->lobby_Win);
+    delwin(param->lobby_Win);
+    param->result = true;
+    pthread_mutex_unlock(&param->mutex);
+    pthread_join(*thread, NULL);
+    pthread_mutex_destroy(&param->mutex);
+}
+
 
 /**
  * Funkciu vyuziva vlakno, ktore caka na vstup od uzivatela.
@@ -444,13 +479,15 @@ int menuFindServer(WINDOW *my_window) {
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
                         game.pocetHracov++;
-                        ch = menuLobby(my_window, startY, startX);
-                        if (ch == START_GAME) {
-                            //START GAME
-                            printf("START GAME");
-                        } else if (ch == MAIN_MENU) {
-                            menu();
-                        }
+                        menu(MENU_NEW_GAME, JOIN);
+                        return ESC;
+//                        ch = menuLobby(my_window, startY, startX);
+//                        if (ch == START_GAME) {
+//                            //START GAME
+//                            printf("START GAME");
+//                        } else if (ch == MAIN_MENU) {
+//                            menu(DEFAULT);
+//                        }
                         //TODO vypytat si hracou v lobby
                         //vstupil
                         break;

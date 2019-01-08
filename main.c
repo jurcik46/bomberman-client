@@ -20,7 +20,7 @@ void loggerInit(FILE *logFile) {
         // Program exits if the file pointer returns NULL.
         exit(EXIT_FAILURE);
     }
-    log_set_quiet(0);
+    log_set_quiet(5);
     log_set_level(LOG_DEBUG);
     log_set_fp(logFile);
 }
@@ -46,6 +46,6 @@ int main(int argc, char *argv[]) {
     loginUser(my_window);
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
-    menu();
+    menu(DEFAULT, DEFAULT);
     closingApp(logFile);
 }
