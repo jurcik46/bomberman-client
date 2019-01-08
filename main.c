@@ -12,7 +12,10 @@
 #define ADDRESS "127.0.0.1"
 #define PORT 8080
 
-
+/**
+ * Funkcia pomocou ktorej sa inicializuju logy (debug)
+ * @param logFile - subor ktory sluzi na logy (debug)
+ */
 void loggerInit(FILE *logFile) {
 
     if (logFile == NULL) {
@@ -25,6 +28,11 @@ void loggerInit(FILE *logFile) {
     log_set_fp(logFile);
 }
 
+/**
+ * Funkcia ukoncuje aplikaciu.
+ * Zatvara vytvoreny socket, maže vytvorene okna a ukoncuje ich.
+ * @param logFile - subor ktory sluzi na logy (debug)
+ */
 void closingApp(FILE *logFile) {
     closeSocket();
     delwin(my_window);
@@ -41,8 +49,8 @@ int main(int argc, char *argv[]) {
 
     initNcurses();
 
-    initSocket(ADDRESS, PORT);
-
+    //initSocket(ADDRESS, PORT);
+//TODO initSocket musi ist pred initNcurses aby som vedel vypisat uzivatelovi spravu
     loginUser(my_window);
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
