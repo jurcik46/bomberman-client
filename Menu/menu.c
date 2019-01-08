@@ -27,9 +27,10 @@ void loginUser(WINDOW *my_window) {
               "_________________________________________________________________________________________\n");
     mvwprintw(my_window, 6, 1, "Zadaj meno(nick): ");
     wrefresh(my_window);
+    echo();
     wgetstr(my_window, user.name);
     //Osetrenie prazdneho vstupu mena
-    while (strlen(user.name) == 0){
+    while (strlen(user.name) == 0) {
         mvwprintw(my_window, 6, 1, "Zadaj meno(nick): ");
         wgetstr(my_window, user.name);
     }
@@ -38,7 +39,7 @@ void loginUser(WINDOW *my_window) {
     noecho();
     wgetstr(my_window, user.password);
     //Osetrenie prazdneho vstupu hesla
-    while (strlen(user.password) == 0){
+    while (strlen(user.password) == 0) {
         mvwprintw(my_window, 8, 1, "Zadaj heslo: ");
         wrefresh(my_window);
         noecho();
@@ -53,19 +54,24 @@ void loginUser(WINDOW *my_window) {
         case OKEJ:
             sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Prihlasenie prebehlo USPESNE!\n");
+            sleep(1);
             break;
         case CREATED:
             sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
-            log_debug("Acc was created");
+            sleep(1);
+//            log_debug("Acc was created");
             break;
         case UNAUTHORIZED:
-            log_debug("Login failed");
+//            log_debug("Login failed");
             mvwprintw(my_window, 10, 1, "Prihlasenie bolo NEUSPESNE!\n");
+            sleep(1);
+            loginUser(my_window);
             break;
         case INTERNAL_SERVER_ERROR:
-            log_debug("Server Error");
+//            log_debug("Server Error");
             mvwprintw(my_window, 10, 1, "Problem pri komunikacii so serverom.\n");
+            sleep(1);
             break;
         default:;
     }
@@ -87,12 +93,12 @@ bool menuNewGame(WINDOW *my_window) {
     int input;
 
 //Osetrenie vstupu pre zadavanie cisla mapy (len INT-y)
-    while (!isSaved){
+    while (!isSaved) {
 
         mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
-        if (input == EOF){
+        if (input == EOF) {
             log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
             isSaved = false;
             break;
@@ -109,12 +115,12 @@ bool menuNewGame(WINDOW *my_window) {
     isSaved = false;
 
 //Osetrenie vstupu pre zadavanie poctu hracov (len INT-y)
-    while (!isSaved){
+    while (!isSaved) {
 
         mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
-        if (input == EOF){
+        if (input == EOF) {
             log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
             isSaved = false;
             break;
@@ -126,7 +132,7 @@ bool menuNewGame(WINDOW *my_window) {
             mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4!");
             wrefresh(my_window);
             isSaved = false;
-        } else if (value < 1){
+        } else if (value < 1) {
             mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1!");
             wrefresh(my_window);
             isSaved = false;
@@ -171,8 +177,8 @@ bool menuNewGame(WINDOW *my_window) {
  * @param param
  * @return
  */
-void *handleUserInput(void* param) {
-    CHOICE *choice = (CHOICE*)param;
+void *handleUserInput(void *param) {
+    CHOICE *choice = (CHOICE *) param;
     int moznost;
 
     pthread_mutex_lock(&choice->mutex);
@@ -180,7 +186,7 @@ void *handleUserInput(void* param) {
     WINDOW *window = choice->lobby_Win;
     pthread_mutex_unlock(&choice->mutex);
 
-    while(!result){
+    while (!result) {
         moznost = wgetch(window);
 
         pthread_mutex_lock(&choice->mutex);
@@ -214,7 +220,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     int highlight = 0;
 
     CHOICE param;
-    param.mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    param.mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
 
     pthread_mutex_lock(&param.mutex);
     param.lobby_Win = newwin(LOBBY_WIN_SIZE, WIN_WIDTH, startY + WIN_HEIGHT, startX);
@@ -224,7 +230,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     pthread_mutex_unlock(&param.mutex);
 
     pthread_t userInputThread;
-    pthread_create(&userInputThread, NULL, handleUserInput, (void *)&param);
+    pthread_create(&userInputThread, NULL, handleUserInput, (void *) &param);
 
     while (1) {
         for (int i = 0; i < 2; i++) {
@@ -234,9 +240,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             wattroff(param.lobby_Win, A_REVERSE);
         }
 
-    pthread_mutex_lock(&param.mutex);
-    int choice = param.choice;
-    pthread_mutex_unlock(&param.mutex);
+        pthread_mutex_lock(&param.mutex);
+        int choice = param.choice;
+        pthread_mutex_unlock(&param.mutex);
 
         switch (choice) {
             case KEY_UP:
@@ -263,6 +269,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             default:
                 break;
         }
+        usleep(30);
     }
     //printw("Vybral si moznost: %d -> %s\n", highlight, choices[highlight]);
 }
@@ -273,24 +280,25 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
  * sipkami po dostupnych hrach a vybrat si do ktorej sa chce pripojit pomocou stlacenia ENTER
  * @param param - struktura, ktora obsahuje informacie o vstupe od uzivatela
  */
-void *handleEsc(void* param){
-        CHOICE *choice = (CHOICE*)param;
-        int value;
+void *handleEsc(void *param) {
+    CHOICE *choice = (CHOICE *) param;
+    int value;
+
+    pthread_mutex_lock(&choice->mutex);
+    _Bool result = choice->result;
+    WINDOW *window = choice->lobby_Win;
+    pthread_mutex_unlock(&choice->mutex);
+
+    while (!result) {
+
+        value = wgetch(window);
 
         pthread_mutex_lock(&choice->mutex);
-        _Bool result = choice->result;
-        WINDOW *window = choice->lobby_Win;
+        result = choice->result;
+        choice->choice = value;
         pthread_mutex_unlock(&choice->mutex);
-
-        while(!result){
-            value = wgetch(window);
-
-            pthread_mutex_lock(&choice->mutex);
-            result = choice->result;
-            choice->choice = value;
-            pthread_mutex_unlock(&choice->mutex);
-        }
-        pthread_exit(0);
+    }
+    pthread_exit(0);
 }
 
 /**
@@ -301,8 +309,8 @@ void *handleEsc(void* param){
 int menuFindServer(WINDOW *my_window) {
     CHOICE param;
     pthread_t userInputThread;
-    pthread_create(&userInputThread, NULL, handleEsc, (void *)&param);
-    param.mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    pthread_create(&userInputThread, NULL, handleEsc, (void *) &param);
+    param.mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
 
     pthread_mutex_lock(&param.mutex);
     param.lobby_Win = my_window;
@@ -321,43 +329,52 @@ int menuFindServer(WINDOW *my_window) {
     char data[BUFFER_SIZE];
     sprintf(data, "%d", count);
     communication(FIND_SERVERS, data);
-    int y = 0;
     int highlight = 0;
 
-    int *arrayOfGameId;
-    arrayOfGameId = malloc(sizeof(int));
-
-    while (1){
-        if(socketReady()){
-            if(resultFromRequest() !=  DONE){
-                int gameId,mapNubmer, maxPlayerCount,adminId, pom;
+    Game *arrayOfGameId;
+    arrayOfGameId = malloc(sizeof(Game));
+    Game *pomPointerArray = arrayOfGameId;
+    while (1) {
+        if (socketReady()) {
+            if (resultFromRequest() != DONE) {
+                int pom;
                 char name[GAME_NAME_LENGTH];
-                sscanf(dataFromRequest(), "%d %d %d %s %d %d %d",&pom,&pom, &gameId, name, &mapNubmer, &maxPlayerCount, &adminId);
-                if (y == highlight)
-                    wattron(my_window, A_REVERSE);
-                mvwprintw(my_window, y + 6, 1, "Id: %d  \t  MAX Player: %d \t Map Number: %d \t Name: %s\n",
-                        gameId, maxPlayerCount, mapNubmer, name);
-                wattroff(my_window, A_REVERSE);
-                arrayOfGameId = &gameId;
-                y++;
+                sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &pom, &pom, &arrayOfGameId->gameId,
+                       arrayOfGameId->nazovHry, &arrayOfGameId->cisloMapy,
+                       &arrayOfGameId->pocetHracov, &pom);
+//                if (y == highlight)
+//                    wattron(my_window, A_REVERSE);
+//                mvwprintw(my_window, y + 6, 1, "Id: %d  \t  MAX Player: %d \t Map Number: %d \t Name: %s\n",
+//                          gameId, maxPlayerCount, mapNubmer, name);
+//                wattroff(my_window, A_REVERSE);
+//                *arrayOfGameId = gameId;
                 count++;
-                arrayOfGameId = realloc(arrayOfGameId, ((count + 1) * sizeof(int)));
+                pomPointerArray = (Game *) realloc(pomPointerArray, ((count + 1) * sizeof(Game)));
                 arrayOfGameId++;
 //                log_debug("%s", dataFromRequest());
                 sprintf(data, "%d", count);
                 communication(FIND_SERVERS, data);
-            } else{
+            } else {
 //              count = 0;
 //                log_debug("KONEEEEEC");
             }
-            wrefresh(my_window);
+//            wrefresh(my_window);
         }
 
+
+        for (int i = 0; i < count; i++) {
+            if (i == highlight)
+                wattron(param.lobby_Win, A_REVERSE);
+            mvwprintw(param.lobby_Win, i + 6, 1, "Id: %d    MAX Player: %d  Map Number: %d  Name: %s\n",
+                      pomPointerArray[i].gameId, pomPointerArray[i].pocetHracov, pomPointerArray[i].cisloMapy,
+                      pomPointerArray[i].nazovHry);
+//            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
+            wattroff(param.lobby_Win, A_REVERSE);
+        }
         pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         param.choice = RESET_CHOICE;
         pthread_mutex_unlock(&param.mutex);
-
         switch (choice) {
             case KEY_UP:
                 highlight--;
@@ -370,6 +387,7 @@ int menuFindServer(WINDOW *my_window) {
                     highlight = count - 1;
                 break;
             case ENTER:
+//                pomPointerArray[highlight].gameId;
                 //TODO poslat na server vybratu hru
                 break;
             case ESC:
@@ -382,7 +400,9 @@ int menuFindServer(WINDOW *my_window) {
             default:
                 break;
         }
-        wrefresh(my_window);
+//        wclear(param.lobby_Win);
+        wrefresh(param.lobby_Win);
+        usleep(30);
     }
 
 //

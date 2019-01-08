@@ -33,7 +33,8 @@ typedef struct user {
 } User;
 
 //Struktura pre vytvorenie hry
-typedef struct game{
+typedef struct game {
+    int gameId;
     char nazovHry[GAME_NAME_LENGTH];
     int cisloMapy;
     int pocetHracov;
@@ -47,7 +48,7 @@ typedef struct choice {
     int choice;
     WINDOW *lobby_Win;
     _Bool result;
-}CHOICE;
+} CHOICE;
 
 WINDOW *my_window;
 int startX, startY;

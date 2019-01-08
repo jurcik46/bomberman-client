@@ -33,18 +33,18 @@ void initSocket(char *ipAddress, u_int16_t port) {
 
 };
 
-_Bool socketReady(){
+_Bool socketReady() {
     FD_ZERO(&socketDs);
     FD_SET(sd, &socketDs);
     struct timeval tv;
     tv.tv_usec = 1;
 
-    activity = select(sd + 1, &socketDs, NULL, NULL, NULL);
+    activity = select(sd + 1, &socketDs, NULL, NULL, &tv);
 
     if ((activity < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
     }
-    if ( sd != 0 && FD_ISSET(sd, &socketDs)) {
+    if (sd != 0 && FD_ISSET(sd, &socketDs)) {
         if (recv(sock.sock, sock.buffer, BUFFER_SIZE, 0) == 0) {
 
             log_fatal("Server disconnected");
@@ -120,7 +120,7 @@ enum result_code createGameToServer(char *data) {
 }
 
 
-void findGameFromServer(char *data){
+void findGameFromServer(char *data) {
 //    log_debug("Data: %s", data);
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
 //    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
@@ -128,13 +128,13 @@ void findGameFromServer(char *data){
 
 }
 
-enum result_code resultFromRequest(){
+enum result_code resultFromRequest() {
     int pomT, pomR;
     sscanf(sock.buffer, "%d %d", &pomT, &pomR);
     return (enum result_code) pomR;
 }
 
-char* dataFromRequest(){
+char *dataFromRequest() {
     return sock.buffer;
 }
 

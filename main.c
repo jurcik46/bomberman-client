@@ -32,10 +32,10 @@ void closingApp(FILE *logFile) {
     fclose(logFile);
 };
 
-void menu(){
+void menu() {
     choice = mainMenu(my_window);
-    while (choice != EXIT){
-        switch (choice){
+    while (choice != EXIT) {
+        switch (choice) {
             case MENU_NEW_GAME:
                 success = menuNewGame(my_window);
                 if (success) {
@@ -76,9 +76,9 @@ int main(int argc, char *argv[]) {
 
     initNcurses();
 
-    //initSocket(ADDRESS, PORT);
+    initSocket(ADDRESS, PORT);
 
-    //loginUser(my_window);
+    loginUser(my_window);
 ////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
 ////Ak opustil lobby vrati ho do mainMenu inak spusti hru
     menu();
