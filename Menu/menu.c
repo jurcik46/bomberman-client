@@ -303,7 +303,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     wclear(my_window);
 
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
-    mvwprintw(my_window, 3, 10, "LOBBY\n");
+    mvwprintw(my_window, 3, 10, "LOBBY --> Name: %s   Id: %d   \n", game.nazovHry, game.gameId);
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
@@ -372,6 +372,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                        &game.users[game.pocetHracov].id,
                        game.users[game.pocetHracov].name);
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
+//                mvwprintw(my_window, 3, 16, "--> Name: %s   Id: %d   \n", game.nazovHry, game.gameId);
                 i++;
             }
             if ((enum communication_type) pomT == GET_LOBBY_PLAYER && (enum communication_type) pomR != DONE) {
