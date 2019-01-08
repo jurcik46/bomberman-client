@@ -328,9 +328,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             }
         }
 
-//        pthread_mutex_lock(&param.mutex);
+        pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
-//        pthread_mutex_unlock(&param.mutex);
+        pthread_mutex_unlock(&param.mutex);
 
         switch (choice) {
             case KEY_UP:
@@ -457,10 +457,10 @@ int menuFindServer(WINDOW *my_window) {
                       pomPointerArray[i].nazovHry);
             wattroff(param.lobby_Win, A_REVERSE);
         }
-//        pthread_mutex_lock(&param.mutex);
+        pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         param.choice = RESET_CHOICE;
-//        pthread_mutex_unlock(&param.mutex);
+        pthread_mutex_unlock(&param.mutex);
         int ch = 0;
         switch (choice) {
             case KEY_UP:
@@ -482,24 +482,21 @@ int menuFindServer(WINDOW *my_window) {
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
                         game.pocetHracov++;
+
+                        pthread_mutex_lock(&param.mutex);
+                        param.result = true;
+                        pthread_mutex_unlock(&param.mutex);
+                        pthread_join(userInputThread, NULL);
+                        pthread_mutex_destroy(&param.mutex);
+                        free(pomPointerArray);
                         return JOIN;
-//                        menu(MENU_NEW_GAME, JOIN);
-                        result = ESC;
-//                        ch = menuLobby(my_window, startY, startX);
-//                        if (ch == START_GAME) {
-//                            //START GAME
-//                            printf("START GAME");
-//                        } else if (ch == MAIN_MENU) {
-//                            menu(DEFAULT);
-//                        }
-                        //TODO vypytat si hracou v lobby
-                        //vstupil
-                        break;
                     case SERVICE_UNAVAILABLE:
                         //TODO full lobby
+                        free(pomPointerArray);
                         break;
                     case NOT_FOUND:
                         //TODO not FOund
+                        free(pomPointerArray);
                         break;
                     default:
                         break;
@@ -511,6 +508,7 @@ int menuFindServer(WINDOW *my_window) {
                 pthread_mutex_unlock(&param.mutex);
                 pthread_join(userInputThread, NULL);
                 pthread_mutex_destroy(&param.mutex);
+                free(pomPointerArray);
                 return ESC;
             default:
                 break;
