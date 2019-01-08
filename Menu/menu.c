@@ -211,18 +211,26 @@ void menuFindServer(WINDOW *my_window) {
     char data[BUFFER_SIZE];
     sprintf(data, "%d", count);
     communication(FIND_SERVERS, data);
+    int y = 0;
     while (1){
 //        sleep(1);
         if(socketReady()){
             if(resultFromRequest() !=  DONE){
+                int gameId,mapNubmer, maxPlayerCount,adminId, pom;
+                char name[GAME_NAME_LENGTH];
+                sscanf(dataFromRequest(), "%d %d %d %s %d %d %d",&pom,&pom, &gameId, name, &mapNubmer, &maxPlayerCount, &adminId);
+                mvwprintw(my_window, y + 6, 1, "Id: %d \t Name: %s \t  MAX Player: %d \t Map Number: %d \n",
+                        gameId, name, maxPlayerCount, mapNubmer);
+                y++;
                 count++;
-                log_debug("%s", dataFromRequest());
+//                log_debug("%s", dataFromRequest());
                 sprintf(data, "%d", count);
                 communication(FIND_SERVERS, data);
             } else{
 //              count = 0;
-                log_debug("KONEEEEEC");
+//                log_debug("KONEEEEEC");
             }
+            wrefresh(my_window);
         }
     }
     //TODO Dorobit funkciu na prijmanie sprav od servera o vytvorenych hrach

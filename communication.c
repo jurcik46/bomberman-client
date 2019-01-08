@@ -55,7 +55,7 @@ _Bool socketReady(){
             exit(EXIT_FAILURE);
         } else {
 //            sscanf(sock.buffer, "%d ", &pomType);
-            log_debug("data %s", sock.buffer);
+//            log_debug("data %s", sock.buffer);
             return true;
 //            communication((enum communication_type) pomType,
 //                          &cSockets.client[i]);
@@ -121,9 +121,9 @@ enum result_code createGameToServer(char *data) {
 
 
 void findGameFromServer(char *data){
-    log_debug("Data: %s", data);
+//    log_debug("Data: %s", data);
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
-    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
+//    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
 
 }
