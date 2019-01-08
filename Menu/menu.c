@@ -47,15 +47,17 @@ void loginUser(WINDOW *my_window) {
 
     char data[BUFFER_SIZE];
     sprintf(data, "%s %s", user.name, user.password);
-
+    int pom = 0;
     enum result_code result = communication(LOGIN, data);
     switch (result) {
         case OKEJ:
+            sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Prihlasenie prebehlo USPESNE!\n");
             break;
         case CREATED:
-            log_debug("Acc was created");
+            sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
             mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
+            log_debug("Acc was created");
             break;
         case UNAUTHORIZED:
             log_debug("Login failed");
@@ -67,7 +69,6 @@ void loginUser(WINDOW *my_window) {
             break;
         default:;
     }
-    sleep(1);
 }
 
 bool menuNewGame(WINDOW *my_window) {
@@ -142,29 +143,23 @@ bool menuNewGame(WINDOW *my_window) {
 //    wrefresh(my_window);
 //    wscanw(my_window, "%d", &game.pocetHracov);
 
-//    printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
-//    log_debug("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
-//    sleep(5);
+    //printw("nazov: %s mapa: %d hraci: %d\n", game.nazovHry, game.cisloMapy, game.pocetHracov);
     char data[BUFFER_SIZE];
     sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.pocetHracov);
 
-//    enum result_code result = communication(CREATE_GAME, data);
-//    switch (result) {
-//        case CREATED:
-//            game.users[0] = user;
-//            game.users[0].admin = true;
-//            log_debug("Game was created");
-//            return true;
-//        case UNAUTHORIZED:
-//            log_debug("Create game failed");
-//            return false;
-//        case INTERNAL_SERVER_ERROR:
-//            log_debug("Server Error");
-//            return false;
-//        default:;
-//            return false;
-//
-//    }
+    enum result_code result = communication(CREATE_GAME, data);
+    switch (result) {
+        case CREATED:
+            game.users[0] = user;
+            game.admin = true;
+            log_debug("Game was created");
+            return true;
+        case SERVICE_UNAVAILABLE:
+            log_debug("Server Full");
+            return false;
+        default:;
+            return false;
+    }
     //TODO treba tu doplnit funkciu co posle info o hre na server a ak server odpovie OKEJ tak funkcia vrati hodnotu (true) a v maine
     //TODO sa zavola funkcia menuLobby
     //TODO treba zmenit aj navratovu hodnotu funkcie
@@ -322,30 +317,42 @@ int menuFindServer(WINDOW *my_window) {
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
-
-    int *idOfGame;
-    idOfGame = (int *) malloc(sizeof(int));
+    int count = 0;
+    char data[BUFFER_SIZE];
+    sprintf(data, "%d", count);
+    communication(FIND_SERVERS, data);
+    int y = 0;
     int highlight = 0;
 
-
-
-    const char *choices[1];
-    for(int i = 0; i < 1; i++){
-        choices[i] = game.nazovHry + game.cisloMapy + game.pocetHracov;
-    }
-
-    int lengthOfChoices = sizeof(choices) / sizeof(const char*);
-
-
-
+    int *arrayOfGameId;
+    arrayOfGameId = malloc(sizeof(int));
 
     while (1){
-        for (int i = 0; i < lengthOfChoices; i++) {
-            if (i == highlight)
-                wattron(param.lobby_Win, A_REVERSE);
-            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
-            wattroff(param.lobby_Win, A_REVERSE);
+        if(socketReady()){
+            if(resultFromRequest() !=  DONE){
+                int gameId,mapNubmer, maxPlayerCount,adminId, pom;
+                char name[GAME_NAME_LENGTH];
+                sscanf(dataFromRequest(), "%d %d %d %s %d %d %d",&pom,&pom, &gameId, name, &mapNubmer, &maxPlayerCount, &adminId);
+                if (y == highlight)
+                    wattron(my_window, A_REVERSE);
+                mvwprintw(my_window, y + 6, 1, "Id: %d  \t  MAX Player: %d \t Map Number: %d \t Name: %s\n",
+                        gameId, maxPlayerCount, mapNubmer, name);
+                wattroff(my_window, A_REVERSE);
+                arrayOfGameId = &gameId;
+                y++;
+                count++;
+                arrayOfGameId = realloc(arrayOfGameId, ((count + 1) * sizeof(int)));
+                arrayOfGameId++;
+//                log_debug("%s", dataFromRequest());
+                sprintf(data, "%d", count);
+                communication(FIND_SERVERS, data);
+            } else{
+//              count = 0;
+//                log_debug("KONEEEEEC");
+            }
+            wrefresh(my_window);
         }
+
         pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
         param.choice = RESET_CHOICE;
@@ -359,8 +366,11 @@ int menuFindServer(WINDOW *my_window) {
                 break;
             case KEY_DOWN:
                 highlight++;
-                if (highlight == lengthOfChoices)
-                    highlight = lengthOfChoices - 1;
+                if (highlight == count)
+                    highlight = count - 1;
+                break;
+            case ENTER:
+                //TODO poslat na server vybratu hru
                 break;
             case ESC:
                 pthread_mutex_lock(&param.mutex);
@@ -375,9 +385,18 @@ int menuFindServer(WINDOW *my_window) {
         wrefresh(my_window);
     }
 
-    //TODO Dorobit funkciu na prijmanie sprav od servera o vytvorenych hrach
-    //TODO a nasledne ich vypisat
+//
+//    while (1){
+//        for (int i = 0; i < count; i++) {
+//            if (i == highlight)
+//                wattron(param.lobby_Win, A_REVERSE);
+//            mvwprintw(param.lobby_Win, i + 6, 1, choices[i]);
+//            wattroff(param.lobby_Win, A_REVERSE);
+//        }
+//    }
+
     //TODO opravit ESC aby reagoval rychlejsie
+    //TODO vytvorit pole na ukladanie gameID a pri vybere hry poslat na server gameID cez highlight
 }
 
 /**

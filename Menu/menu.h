@@ -26,19 +26,20 @@
 #define MAX_GAMES 20
 
 //Struktura pre usera
-struct Users {
-    _Bool admin;
+typedef struct user {
+    int id;
     char name[NAME_LENGTH];
     char password[PASSWORD_LENGTH];
-} user;
+} User;
 
 //Struktura pre vytvorenie hry
-struct Games {
+typedef struct game{
     char nazovHry[GAME_NAME_LENGTH];
     int cisloMapy;
     int pocetHracov;
-    struct Users users[4];
-} game;
+    _Bool admin;
+    User users[4];
+} Game;
 
 //Struktura pre druhe vlakno na obsluzenie vstupu od uztivatela
 typedef struct choice {
@@ -52,6 +53,10 @@ WINDOW *my_window;
 int startX, startY;
 int choice;
 bool success;
+
+Game game;
+
+User user;
 
 void initNcurses();
 
