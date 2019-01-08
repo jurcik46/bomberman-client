@@ -10,10 +10,19 @@ void initNcurses() {
     choice = 0;
     startX = (COLS - WIN_WIDTH) / 2;
     startY = (LINES - WIN_HEIGHT) / 2;
+    refresh();
     my_window = newwin(WIN_HEIGHT, WIN_WIDTH, startY, startX);
     keypad(my_window, true);
 }
 
+void refreshWindow(WINDOW* window){
+    wclear(window);
+    wrefresh(window);
+}
+
+/**
+ * Funkcia vypise po prihlaseni hraca uvodne menu
+ */
 void menu() {
     choice = mainMenu(my_window);
     while (choice != EXIT) {
@@ -90,30 +99,66 @@ void loginUser(WINDOW *my_window) {
     switch (result) {
         case OKEJ:
             sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
-            mvwprintw(my_window, 10, 1, "Prihlasenie prebehlo USPESNE!\n");
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "LOGIN\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "Prihlasenie prebehlo USPESNE!\n");
+            wrefresh(my_window);
             sleep(1);
             break;
         case CREATED:
             sscanf(sock.buffer, "%d %d %d", &pom, &pom, &user.id);
-            mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
+//            mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
+//            sleep(1);
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "LOGIN\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "Registracia prebehla USPESNE!\n");
+            wrefresh(my_window);
             sleep(1);
 //            log_debug("Acc was created");
             break;
         case UNAUTHORIZED:
 //            log_debug("Login failed");
-            mvwprintw(my_window, 10, 1, "Prihlasenie bolo NEUSPESNE!\n");
+//            mvwprintw(my_window, 10, 1, "Prihlasenie bolo NEUSPESNE!\n");
+//            sleep(1);
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "LOGIN\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "Prihlasenie bolo NEUSPESNE!\n");
+            wrefresh(my_window);
             sleep(1);
             loginUser(my_window);
             break;
         case INTERNAL_SERVER_ERROR:
 //            log_debug("Server Error");
-            mvwprintw(my_window, 10, 1, "Problem pri komunikacii so serverom.\n");
+//            mvwprintw(my_window, 10, 1, "Problem pri komunikacii so serverom.\n");
+//            sleep(1);
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "LOGIN\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "Problem pri komunikacii so serverom.\n");
+            wrefresh(my_window);
             sleep(1);
+            loginUser(my_window);
             break;
         default:;
     }
 }
 
+/**
+ * Funkcia sluzi na vytvorenie novej hry
+ * @param my_window - okno v ktorom sa ma vykreslit GUI pre uzivatela
+ * @return - navratova hodnota je true ak sa hru podarilo vytvorit a false ak nie
+ */
 bool menuNewGame(WINDOW *my_window) {
     wclear(my_window);
     echo();
@@ -122,7 +167,7 @@ bool menuNewGame(WINDOW *my_window) {
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
-    mvwprintw(my_window, 6, 1, "Zadaj nazov hry: ");
+    mvwprintw(my_window, 6, 1, "Zadaj nazov hry:                     ");
     wrefresh(my_window);
     wgetstr(my_window, game.nazovHry);
     _Bool isSaved = false;
@@ -132,15 +177,16 @@ bool menuNewGame(WINDOW *my_window) {
 //Osetrenie vstupu pre zadavanie cisla mapy (len INT-y)
     while (!isSaved) {
 
-        mvwprintw(my_window, 8, 1, "Zadaj cislo mapy: ");
+        mvwprintw(my_window, 8, 1, "Zadaj cislo mapy:                    ");
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
         if (input == EOF) {
-            log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
+            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
             isSaved = false;
             break;
         } else if (input == 0) {
-            mvwprintw(my_window, 9, 1, "Zadat mozes iba CISLA!");
+            mvwprintw(my_window, 9, 1, "Zadat mozes iba CISLA! ");
+            mvwprintw(my_window, 8, 1, "Zadaj cislo mapy:                    ");
             wrefresh(my_window);
             isSaved = false;
         } else {
@@ -153,24 +199,24 @@ bool menuNewGame(WINDOW *my_window) {
 
 //Osetrenie vstupu pre zadavanie poctu hracov (len INT-y)
     while (!isSaved) {
-
-        mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4): ");
+        mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4):           ");
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
         if (input == EOF) {
-            log_debug("Uzivatel ukoncil zadavanie z klavesnice.");
+            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
             isSaved = false;
             break;
         } else if (input == 0) {
-            mvwprintw(my_window, 11, 1, "Zadat mozes iba CISLA!");
+            mvwprintw(my_window, 11, 1, "Zadat mozes iba CISLA! ");
+
             wrefresh(my_window);
             isSaved = false;
         } else if (value > 4) {
-            mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4!");
+            mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4! ");
             wrefresh(my_window);
             isSaved = false;
         } else if (value < 1) {
-            mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1!");
+            mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1! ");
             wrefresh(my_window);
             isSaved = false;
         } else {
@@ -188,16 +234,33 @@ bool menuNewGame(WINDOW *my_window) {
 //            game.pocetHracov++;
             game.admin = true;
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
-            //TODO vypisat majitela servera a nazov lobby
+            //TODO vypisat majitela servera a nazov lobby - robil Jano sa mi zda a je hotove!
             log_debug("Game was created");
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "PODARILO sa uspesne vytvorit hru!\n");
+            wrefresh(my_window);
+            sleep(1);
             return true;
         case SERVICE_UNAVAILABLE:
             log_debug("Server Full");
+            //TODO doplnit vypis pre uzivatela ak sa nepodarilo vytvorit hru a vratit ho do mainMenu
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "NEPODARILO sa vytvorit hru! Server je plny.\n");
+            wrefresh(my_window);
+            sleep(1);
             return false;
         default:;
             return false;
     }
-    //TODO sa zavola funkcia menuLobby
+    //TODO sa zavola funkcia menuLobby - ??????
 }
 
 /**
@@ -216,6 +279,7 @@ void *handleUserInput(void *param) {
     pthread_mutex_unlock(&choice->mutex);
 
     while (!result) {
+        noecho();
         moznost = wgetch(window);
 
         pthread_mutex_lock(&choice->mutex);
@@ -223,17 +287,19 @@ void *handleUserInput(void *param) {
         choice->choice = moznost;
         pthread_mutex_unlock(&choice->mutex);
     }
+    echo();
     pthread_exit(0);
 }
 
 /**
- *
+ * Funkcia vypise Lobby pre vytvorenu hru
  * @param my_window - okno v ktorom sa maju vykreslit informacie o hre
  * @param startY - index od ktoreho ma zacinat okno na Y osi
  * @param startX - index od ktoreho ma zacinat okno na X osi
  * @return - vracia volbu od uzivatela ci si praje spustit hru alebo hru opustit
  */
 int menuLobby(WINDOW *my_window, int startY, int startX) {
+    //TODO doplnit do lobby informacie o hre a hracoch (nazov lobby, pocet hracov, kto je admin)
     wclear(my_window);
 
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -245,7 +311,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     const char *choices[2];
     choices[0] = "Start Game";
     choices[1] = "Leave Game";
-//TODO  START GAME LEN PRE ADMINA
+//TODO  START GAME LEN PRE ADMINA - malo by byt hotove ale treba otestovat
     int highlight = 0;
 
     CHOICE param;
@@ -266,14 +332,37 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     communication(GET_LOBBY_PLAYER, data);
     int i = 0;
     while (1) {
-        for (int i = 0; i < 2; i++) {
-            if (i == highlight)
-                wattron(param.lobby_Win, A_REVERSE);
-            mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
-            wattroff(param.lobby_Win, A_REVERSE);
-        }
-        if (socketReady()) {
+//        for (int i = 0; i < 2; i++) {
+//            if (i == highlight){
+//                wattron(param.lobby_Win, A_REVERSE);
+//
+//            }
+//            mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+//            wattroff(param.lobby_Win, A_REVERSE);
 
+            if(game.admin == true){
+                for(int i = 0; i < 2; i++){
+                    if (i == highlight){
+                        wattron(param.lobby_Win, A_REVERSE);
+                    }
+                    mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+                    wattroff(param.lobby_Win, A_REVERSE);
+                }
+                mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+                wattroff(param.lobby_Win, A_REVERSE);
+            } else if (game.admin == false){
+                for(int i = 1; i < 2; i++){
+                    if (i == highlight){
+                        wattron(param.lobby_Win, A_REVERSE);
+                    }
+                    mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+                    wattroff(param.lobby_Win, A_REVERSE);
+                }
+                mvwprintw(param.lobby_Win, i + 1, 1, choices[i]);
+                wattroff(param.lobby_Win, A_REVERSE);
+            }
+
+        if (socketReady()) {
             int pomT, pomR;
             sscanf(dataFromRequest(), "%d %d", &pomT, &pomR);
 
@@ -306,11 +395,24 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 highlight--;
                 if (highlight == -1)
                     highlight = 0;
+//                if(game.admin == true){
+//                    if (highlight == -1)
+//                        highlight = 0;
+//                } else {
+//                    if(highlight == )
+//                }
                 break;
             case KEY_DOWN:
                 highlight++;
-                if (highlight == 2)
-                    highlight = 1;
+//                if (highlight == 2)
+//                    highlight = 1;
+                if (game.admin == true){
+                    if (highlight == 2)
+                        highlight = 1;
+                } else {
+                    if (highlight == 1)
+                        highlight = 0;
+                }
                 break;
             case ENTER:
                 pthread_mutex_lock(&param.mutex);
@@ -347,7 +449,7 @@ void *handleEsc(void *param) {
     pthread_mutex_unlock(&choice->mutex);
 
     while (!result) {
-
+        noecho();
         value = wgetch(window);
 
         pthread_mutex_lock(&choice->mutex);
@@ -355,6 +457,7 @@ void *handleEsc(void *param) {
         choice->choice = value;
         pthread_mutex_unlock(&choice->mutex);
     }
+    echo();
     pthread_exit(0);
 }
 
@@ -443,6 +546,7 @@ int menuFindServer(WINDOW *my_window) {
                         sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
+                        game.admin = false;
                         game.pocetHracov++;
                         ch = menuLobby(my_window, startY, startX);
                         if (ch == START_GAME) {
@@ -451,14 +555,28 @@ int menuFindServer(WINDOW *my_window) {
                         } else if (ch == MAIN_MENU) {
                             menu();
                         }
-                        //TODO vypytat si hracou v lobby
+                        //TODO vypytat si hracou v lobby - je hotove?
                         //vstupil
                         break;
                     case SERVICE_UNAVAILABLE:
                         //TODO full lobby
+                        wclear(my_window);
+                        mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+                        mvwprintw(my_window, 3, 10, "FINDING GAME\n");
+                        mvwprintw(my_window, 4, 1,
+                                  "_________________________________________________________________________________________\n");
+                        mvwprintw(my_window, 7, 5, "Lobby je PLNE! Neda sa prihlasit do Hry. \n");
+                        wrefresh(my_window);
                         break;
                     case NOT_FOUND:
                         //TODO not FOund
+                        wclear(my_window);
+                        mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+                        mvwprintw(my_window, 3, 10, "FINDING GAME\n");
+                        mvwprintw(my_window, 4, 1,
+                                  "_________________________________________________________________________________________\n");
+                        mvwprintw(my_window, 7, 5, "Nie su dostupne ziadne hry! \n");
+                        wrefresh(my_window);
                         break;
                     default:
                         break;
@@ -491,6 +609,7 @@ void menuLeaderBoard(WINDOW *my_window) {
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     mvwprintw(my_window, 6, 1, "Name\t| Wins\t| Loses\t| Kills\t| Deaths | Played Games");
+    wrefresh(my_window);
     //TODO Treba vytvoriť funkciu pre vypis statistiky z databazy
     //TODO dorobiť nove okno s moznostami vyberu zoradenia statistiky
     wrefresh(my_window);

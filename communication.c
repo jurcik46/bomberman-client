@@ -22,11 +22,15 @@ void initSocket(char *ipAddress, u_int16_t port) {
     // Convert IPv4 and IPv6 addresses from text to binary form
     if (inet_pton(AF_INET, ipAddress, &serv_addr.sin_addr) <= 0) {
         log_error("Invalid address/ Address not supported ");
+        printf("Adresa servera nie je dostupna! Adresa servera neexistuje! \n");
+        sleep(1);
         exit(EXIT_FAILURE);
     }
 
     if (connect(sock.sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         log_error("Connection to server Failed  ");
+        printf("Nepodarilo sa pripojit na server! Skontrolujte pripojenie. \n");
+        sleep(1);
         exit(EXIT_FAILURE);
     }
     sd = sock.sock;
