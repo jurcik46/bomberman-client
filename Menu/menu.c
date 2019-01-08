@@ -219,8 +219,8 @@ void menuFindServer(WINDOW *my_window) {
                 int gameId,mapNubmer, maxPlayerCount,adminId, pom;
                 char name[GAME_NAME_LENGTH];
                 sscanf(dataFromRequest(), "%d %d %d %s %d %d %d",&pom,&pom, &gameId, name, &mapNubmer, &maxPlayerCount, &adminId);
-                mvwprintw(my_window, y + 6, 1, "Id: %d \t Name: %s \t  MAX Player: %d \t Map Number: %d \n",
-                        gameId, name, maxPlayerCount, mapNubmer);
+                mvwprintw(my_window, y + 6, 1, "Id: %d  \t  MAX Player: %d \t Map Number: %d \t Name: %s\n",
+                        gameId, maxPlayerCount, mapNubmer, name);
                 y++;
                 count++;
 //                log_debug("%s", dataFromRequest());
