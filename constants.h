@@ -17,7 +17,12 @@ enum result_code {
 };
 
 enum communication_type {
-    LOGIN, CREATE_GAME, REGISTRATION, GET_LOBBY_PLAYER, FIND_SERVERS, JOIN_LOBBY
+    LOGIN, CREATE_GAME,
+    REGISTRATION,
+    GET_LOBBY_PLAYER,
+    FIND_SERVERS,
+    JOIN_LOBBY,
+    LEAVE_LOBBY
 };
 
 enum menu_choices {
@@ -29,7 +34,10 @@ enum menu_choices {
     START_GAME = 0,
     MAIN_MENU = 1,
     ENTER = 10,
-    ESC = 27
+    ESC = 27,
+    DEFAULT = 1000,
+    JOIN = 1001
+
 };
 
 #endif //BOMBERMAN_CLIENT_CONSTANTS_H

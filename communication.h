@@ -22,21 +22,17 @@
 
 typedef struct socket {
     int sock;
-    int stop;
-
     char buffer[BUFFER_SIZE];
-    _Bool end;
     pthread_mutex_t mutex;
 } Socket;
 
-pthread_t socketThread;
 /**
  * Communication Select
  */
 fd_set socketDs;
 int sd;
 int activity;
-
+//////
 struct sockaddr_in address;
 struct sockaddr_in serv_addr;
 
@@ -54,6 +50,8 @@ void findGameFromServer(char *data);
 
 enum result_code joinLobbyToServer(char *data);
 
+void leaveLobby(char *data);
+
 enum result_code resultFromRequest();
 
 char *dataFromRequest();
@@ -62,7 +60,6 @@ void initSocket(char *ipAddress, u_int16_t port);
 
 _Bool socketReady();
 
-void initThreadSocket();
 
 void closeSocket();
 

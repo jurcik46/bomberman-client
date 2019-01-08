@@ -15,28 +15,26 @@ void initNcurses() {
     keypad(my_window, true);
 }
 
-void refreshWindow(WINDOW* window){
-    wclear(window);
-    wrefresh(window);
-}
-
-/**
- * Funkcia vypise po prihlaseni hraca uvodne menu
- */
 void menu() {
     choice = mainMenu(my_window);
     while (choice != EXIT) {
         switch (choice) {
             case MENU_NEW_GAME:
-                success = menuNewGame(my_window);
+                if (!success) {
+                    success = menuNewGame(my_window);
+                }
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
-                        //START GAME
-                        printf("START GAME");
+                        //TODO HRAAAA
                     } else if (choice == MAIN_MENU) {
+                        char data[BUFFER_SIZE];
+                        sprintf(data, "%d %d %d", game.gameId, user.id, game.admin);
+                        communication(LEAVE_LOBBY, data);
+                        game = emptyGame;
                         choice = mainMenu(my_window);
                     }
+                    success = false;
                 } else {
                     wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
                     wrefresh(my_window);
@@ -45,6 +43,11 @@ void menu() {
                 break;
             case MENU_FIND_SERVER:
                 choice = menuFindServer(my_window);
+                if (choice == JOIN) {
+                    success = true;
+                    choice = MENU_NEW_GAME;
+                    break;
+                }
                 if (choice == ESC)
                     choice = mainMenu(my_window);
                 break;
@@ -55,7 +58,7 @@ void menu() {
                 choice = EXIT;
                 break;
             default :
-                printf("Invalid choice!");
+                break;
         }
     }
 }
@@ -228,11 +231,13 @@ bool menuNewGame(WINDOW *my_window) {
     char data[BUFFER_SIZE];
     sprintf(data, "%s %d %d", game.nazovHry, game.cisloMapy, game.maxPocetHracov);
     enum result_code result = communication(CREATE_GAME, data);
+    log_debug("result %d", result);
     switch (result) {
         case CREATED:
 //            game.users[0] = user;
 //            game.pocetHracov++;
             game.admin = true;
+            log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
             //TODO vypisat majitela servera a nazov lobby - robil Jano sa mi zda a je hotove!
             log_debug("Game was created");
@@ -258,6 +263,7 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return false;
         default:;
+            log_debug("DEFAULT  ");
             return false;
     }
     //TODO sa zavola funkcia menuLobby - ??????
@@ -372,7 +378,6 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                        &game.users[game.pocetHracov].id,
                        game.users[game.pocetHracov].name);
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
-//                mvwprintw(my_window, 3, 16, "--> Name: %s   Id: %d   \n", game.nazovHry, game.gameId);
                 i++;
             }
             if ((enum communication_type) pomT == GET_LOBBY_PLAYER && (enum communication_type) pomR != DONE) {
@@ -384,6 +389,23 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 count++;
                 sprintf(data, "%d %d", count, game.gameId);
                 communication(GET_LOBBY_PLAYER, data);
+            }
+
+            if ((enum communication_type) pomT == LEAVE_LOBBY && (enum communication_type) pomR == OKEJ) {
+                int admin;
+                sscanf(dataFromRequest(), "%d %d %d", &pomT, &pomT, &admin);
+                if (admin) {
+                    lobbyChoice(&param, &userInputThread);
+                    highlight = 1;
+                    game = emptyGame;
+                    return highlight;
+                }
+                game.pocetHracov--;
+                i = 0;
+                count = 0;
+                sprintf(data, "%d %d", count, game.gameId);
+                communication(GET_LOBBY_PLAYER, data);
+
             }
         }
 
@@ -416,23 +438,30 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 }
                 break;
             case ENTER:
-                pthread_mutex_lock(&param.mutex);
-                mvwprintw(param.lobby_Win, 1, 1, "             ");
-                mvwprintw(param.lobby_Win, 2, 1, "             ");
-                wrefresh(param.lobby_Win);
-                delwin(param.lobby_Win);
-                param.result = true;
-                pthread_mutex_unlock(&param.mutex);
-                pthread_join(userInputThread, NULL);
-                pthread_mutex_destroy(&param.mutex);
+                lobbyChoice(&param, &userInputThread);
                 return highlight;
             default:
                 break;
         }
         wrefresh(my_window);
+        wrefresh(param.lobby_Win);
         usleep(30);
     }
 }
+
+
+int lobbyChoice(CHOICE *param, pthread_t *thread) {
+    pthread_mutex_lock(&param->mutex);
+    mvwprintw(param->lobby_Win, 1, 1, "             ");
+    mvwprintw(param->lobby_Win, 2, 1, "             ");
+    wrefresh(param->lobby_Win);
+    delwin(param->lobby_Win);
+    param->result = true;
+    pthread_mutex_unlock(&param->mutex);
+    pthread_join(*thread, NULL);
+    pthread_mutex_destroy(&param->mutex);
+}
+
 
 /**
  * Funkciu vyuziva vlakno, ktore caka na vstup od uzivatela.
@@ -549,16 +578,14 @@ int menuFindServer(WINDOW *my_window) {
                                &game.maxPocetHracov);
                         game.admin = false;
                         game.pocetHracov++;
-                        ch = menuLobby(my_window, startY, startX);
-                        if (ch == START_GAME) {
-                            //START GAME
-                            printf("START GAME");
-                        } else if (ch == MAIN_MENU) {
-                            menu();
-                        }
-                        //TODO vypytat si hracou v lobby - je hotove?
-                        //vstupil
-                        break;
+
+                        pthread_mutex_lock(&param.mutex);
+                        param.result = true;
+                        pthread_mutex_unlock(&param.mutex);
+                        pthread_join(userInputThread, NULL);
+                        pthread_mutex_destroy(&param.mutex);
+                        free(pomPointerArray);
+                        return JOIN;
                     case SERVICE_UNAVAILABLE:
                         //TODO full lobby
                         wclear(my_window);
@@ -568,6 +595,7 @@ int menuFindServer(WINDOW *my_window) {
                                   "_________________________________________________________________________________________\n");
                         mvwprintw(my_window, 7, 5, "Lobby je PLNE! Neda sa prihlasit do Hry. \n");
                         wrefresh(my_window);
+                        free(pomPointerArray);
                         break;
                     case NOT_FOUND:
                         //TODO not FOund
@@ -578,6 +606,7 @@ int menuFindServer(WINDOW *my_window) {
                                   "_________________________________________________________________________________________\n");
                         mvwprintw(my_window, 7, 5, "Nie su dostupne ziadne hry! \n");
                         wrefresh(my_window);
+                        free(pomPointerArray);
                         break;
                     default:
                         break;
@@ -589,12 +618,13 @@ int menuFindServer(WINDOW *my_window) {
                 pthread_mutex_unlock(&param.mutex);
                 pthread_join(userInputThread, NULL);
                 pthread_mutex_destroy(&param.mutex);
+                free(pomPointerArray);
                 return ESC;
             default:
                 break;
         }
-//        wclear(param.lobby_Win);
         wrefresh(param.lobby_Win);
+        wrefresh(my_window);
         usleep(30);
     }
 }
@@ -657,11 +687,10 @@ int mainMenu(WINDOW *my_window) {
                 if (highlight == 4)
                     highlight = 3;
                 break;
+            case ENTER:
+                return highlight;
             default:
                 break;
         }
-        if (choice == ENTER)
-            break;
     }
-    return highlight;
 }

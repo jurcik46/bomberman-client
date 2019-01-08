@@ -88,6 +88,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case GET_LOBBY_PLAYER:
             getPlayerInLobby(data);
             return ZERO;
+        case LEAVE_LOBBY:
+            leaveLobby(data);
+            return ZERO;
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -134,12 +137,14 @@ void findGameFromServer(char *data) {
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
 //    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
 }
 
 void getPlayerInLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
+
 }
 
 
@@ -160,6 +165,15 @@ enum result_code joinLobbyToServer(char *data) {
     }
 
 }
+
+void leaveLobby(char *data) {
+    sprintf(sock.buffer, "%d %d %s", LEAVE_LOBBY, ZERO, data);
+    log_debug("Sending to Server for LEAVE LOBBY: %s", sock.buffer);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    memset(sock.buffer, '\0', sizeof(sock.buffer));
+
+}
+
 
 enum result_code resultFromRequest() {
     int pomT, pomR;
