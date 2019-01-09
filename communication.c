@@ -164,7 +164,7 @@ void downloadMapFromServer(char *data) {
     strcat(fname, data);
     strcat(fname, ".txt");
 
-    fp = fopen(fname, "w+");
+    fp = fopen(fname, "wb+");
 //    fp = fopen(fname, "ab");
 
 
@@ -173,24 +173,33 @@ void downloadMapFromServer(char *data) {
         sleep(1);
         exit(EXIT_FAILURE);
     }
+    ssize_t bytesReceived = 0;
     do {
-        char data[BUFFER_SIZE];
-//        char *data = NULL;
-//        memset(data, '\0', sizeof(data));
+        log_debug("%d", bytesReceived);
+        fwrite(sock.buffer, 1, bytesReceived, fp);
+        memset(sock.buffer, '\0', sizeof(sock.buffer));
+    } while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0);
 
-        recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-        sscanf(sock.buffer, "%d %d %s", &pomT, &pomR, data);
-        if ((enum result_code) pomR == DONE) {
-            break;
-        }
-        log_debug("%s", data);
-//        fputs(data, fp);
-//        fprintf(fp, "%s", data);
-        fwrite(data, 1, BUFFER_SIZE, fp);
-        send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-
-
-    } while ((enum result_code) pomR != DONE);
+//    while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
+//    }
+//    do {
+////        char data[BUFFER_SIZE];
+//////        char *data = NULL;
+//////        memset(data, '\0', sizeof(data));
+////
+////        recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+////        sscanf(sock.buffer, "%d %d %s", &pomT, &pomR, data);
+////        if ((enum result_code) pomR == DONE) {
+////            break;
+////        }
+////        log_debug("%s", data);
+//////        fputs(data, fp);
+//////        fprintf(fp, "%s", data);
+////        fwrite(data, 1, BUFFER_SIZE, fp);
+////        send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+//
+//
+//    } while ((enum result_code) pomR != DONE);
 
     fclose(fp);
     sleep(100);
