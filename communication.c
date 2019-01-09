@@ -168,12 +168,26 @@ void downloadMapFromServer(char *data) {
         sleep(1);
         exit(EXIT_FAILURE);
     }
-    int bytesReceived = 0;
-    while (read(sock.sock, sock.buffer, BUFFER_SIZE) > 0) {
-        log_debug("%d", bytesReceived);
-        log_debug("%s", sock.buffer);
-        fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
-    }
+    do {
+        if (socketReady()) {
+            int pomT, pomR;
+            sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+            if (((enum communication_type) pomT == MAP_DOWNLOAD) && ((enum communication_type) pomR == DONE)) {
+                break;
+            }
+            fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
+        }
+    } while (1);
+
+//
+//    while (!(bytesReceived < BUFFER_SIZE)) {
+//
+//        log_debug("%d", bytesReceived);
+//        log_debug("%s", sock.buffer);
+//        fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
+//    }
+    log_debug("aaaaaa ");
+
     fclose(fp);
 }
 
