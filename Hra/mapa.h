@@ -20,10 +20,16 @@ void zistiVelkostMapy(char *menoMapy);
 
 void nacitajMapu(char *menoMapy);
 
-void zmenavMape(int py,int px,int c);
+void zmenavMape(int py,int px, char c);
 
 void vykresliMapu();
 
 void initMap(int cisloMapy);
+
+void initColor();
+
+void printElement(int y, int x, char pom);
+
+void printPlayer(int y, int x, char znak);
 
 #endif //BOMBERMAN_CLIENT_MAPA_H

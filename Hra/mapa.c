@@ -2,7 +2,7 @@
 #include "../Menu/menu.h"
 
 
-void zmenavMape(int py,int px,int c){
+void zmenavMape(int py,int px, char c){
 //    mapa->velkost[(py*2)][(px*4)] = (char)c;
 //    mapa->velkost[(py*2)][(px*4)+1] = (char)c;
 //    mapa->velkost[(py*2)][(px*4)+2] = (char)c;
@@ -12,10 +12,9 @@ void zmenavMape(int py,int px,int c){
 //    mapa->velkost[(py*2)+1][(px*4)+1] = (char)c;
 //    mapa->velkost[(py*2)+1][(px*4)+2] = (char)c;
 //    mapa->velkost[(py*2)+1][(px*4)+3] = (char)c;
-//    pthread_mutex_lock(hra.mapa.mutex);
-    //hra.hraci[1].smer=0;
-    hra.mapa.velkost[(py)][(px)] = (char)c;
-//    pthread_mutex_unlock(hra.mapa.mutex);
+    pthread_mutex_lock(hra.mapa.mutex);
+    hra.mapa.velkost[(py)][(px)] = c;
+    pthread_mutex_unlock(hra.mapa.mutex);
 }
 
 /**
@@ -102,47 +101,49 @@ void  vykresliMapu(){
     for (int y = 0; y < hra.mapa.y; y++) {
         for (int x = 0; x < hra.mapa.x; x++) {
             pom[0] = hra.mapa.velkost[y][x];
-            // mvprintw(y+1,x+1,&pom[0]);
 
-            if(pom[0] == WALL){
-                wattron(mapWindow, COLOR_PAIR(WALL_PAIR));
-
-//                mvwprintw(mapWindow, 0, 0, "A");
-
-                mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
-
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
-
-                wattroff(mapWindow, COLOR_PAIR(WALL_PAIR));
-
-                wrefresh(mapWindow);
-            }
-
-            if (pom[0] == EMPTY){
-                wattron(mapWindow, COLOR_PAIR(EMPTY_PAIR));
-
-                mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
-
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
-                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
-
-                wattroff(mapWindow, COLOR_PAIR(EMPTY_PAIR));
-                wrefresh(mapWindow);
-
+            switch (pom[0]){
+                case WALL:
+                    wattron(mapWindow, COLOR_PAIR(WALL_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(WALL_PAIR));
+                    break;
+                case EMPTY:
+                    wattron(mapWindow, COLOR_PAIR(EMPTY_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(EMPTY_PAIR));
+                    break;
+                case BARRIER:
+                    wattron(mapWindow, COLOR_PAIR(WALL_DESTROY_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(WALL_DESTROY_PAIR));
+                    break;
+                case PLAYER_ONE:
+                    wattron(mapWindow, COLOR_PAIR(PLAYER_ONE_PAIR));
+                    printPlayer(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(PLAYER_ONE_PAIR));
+                    break;
+                case PLAYER_TWO:
+                    wattron(mapWindow, COLOR_PAIR(PLAYER_TWO_PAIR));
+                    printPlayer(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(PLAYER_TWO_PAIR));
+                    break;
+                case PLAYER_THREE:
+                    wattron(mapWindow, COLOR_PAIR(PLAYER_THREE_PAIR));
+                    printPlayer(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(PLAYER_THREE_PAIR));
+                    break;
+                case PLAYER_FOUR:
+                    wattron(mapWindow, COLOR_PAIR(PLAYER_FOUR_PAIR));
+                    printPlayer(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(PLAYER_FOUR_PAIR));
+                    break;
+                default:
+                    break;
             }
         }
     }
+    wrefresh(mapWindow);
 }
 
 /**
@@ -155,20 +156,63 @@ void initMap(int cisloMapy){
     strcat(menoMapy, ".txt");
     int startX = 0, startY = 0;
 
-
-    zistiVelkostMapy(menoMapy);
-    nacitajMapu(menoMapy);
     refresh();
     if(has_colors() == FALSE) {
         log_debug("Konzola/terminal nepodporuje farby!");
         exit(EXIT_FAILURE);
     }
     start_color();
-    init_pair(WALL_PAIR, COLOR_WHITE, COLOR_WHITE);
-    init_pair(EMPTY_PAIR, COLOR_BLACK, COLOR_BLACK);
+    initColor();
     mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
     keypad(mapWindow, true);
 
-    vykresliMapu();
-    sleep(20);
+
+    initGame(4, menoMapy, 0);
+//    zistiVelkostMapy(menoMapy);
+//    nacitajMapu(menoMapy);
+
+//    zmenavMape(1, 1, PLAYER_ONE);
+//    zmenavMape(hra.mapa.y - 3, hra.mapa.x - 3, PLAYER_ONE);
+
+
+
+//    vykresliMapu();
+//    sleep(20);
+}
+
+void initColor(){
+    init_pair(WALL_PAIR, COLOR_WHITE, COLOR_WHITE);
+    init_pair(EMPTY_PAIR, COLOR_BLACK, COLOR_BLACK);
+    init_pair(WALL_DESTROY_PAIR, COLOR_YELLOW, COLOR_YELLOW);
+    init_pair(PLAYER_ONE_PAIR, COLOR_GREEN, COLOR_GREEN);
+    init_pair(PLAYER_TWO_PAIR, COLOR_BLUE, COLOR_BLUE);
+    init_pair(PLAYER_THREE_PAIR, COLOR_MAGENTA, COLOR_MAGENTA);
+    init_pair(PLAYER_FOUR_PAIR, COLOR_CYAN, COLOR_CYAN);
+    init_pair(BOMB_PAIR, COLOR_WHITE, COLOR_RED);
+};
+
+void printElement(int y, int x, char indicator){
+    char pom[1];
+    pom[0] = indicator;
+
+    mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
+
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
+}
+
+void printPlayer(int y, int x, char indicator){
+    char pom[1];
+    pom[0] = indicator;
+
+    mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
+
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
 }

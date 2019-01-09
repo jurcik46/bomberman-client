@@ -38,13 +38,15 @@ void menu() {
                     if (choice == START_GAME) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d", game.cisloMapy);
-                        //communication(MAP_DOWNLOAD, data);
+//                        communication(MAP_DOWNLOAD, data);
 
                         wclear(my_window);
                         mvwprintw(my_window, 8, 10, "Downloading map...");
                         wrefresh(my_window);
                         sleep(1);
                         wclear(my_window);
+
+
                         initMap(game.cisloMapy);
 
                         //TODO HRAAAA
