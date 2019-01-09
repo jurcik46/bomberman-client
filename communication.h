@@ -45,6 +45,8 @@ void leaveLobby(char *data);
 
 enum result_code resultFromRequest();
 
+void downloadMapFromServer(char * data);
+
 char *dataFromRequest();
 
 void initSocket(char *ipAddress, u_int16_t port);

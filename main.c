@@ -43,6 +43,7 @@ void closingApp(FILE *logFile) {
 
 //
 
+
 int main(int argc, char *argv[]) {
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);

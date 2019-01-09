@@ -23,7 +23,8 @@ enum communication_type {
     GET_LOBBY_PLAYER,
     FIND_SERVERS,
     JOIN_LOBBY,
-    LEAVE_LOBBY
+    LEAVE_LOBBY,
+    MAP_DOWNLOAD
 };
 
 enum menu_choices {
@@ -38,6 +39,7 @@ enum menu_choices {
     ESC = 27,
     DEFAULT = 1000,
     JOIN = 1001
+
 
 };
 

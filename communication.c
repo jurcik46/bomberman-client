@@ -102,6 +102,9 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case LEAVE_LOBBY:
             leaveLobby(data);
             return ZERO;
+        case MAP_DOWNLOAD:
+            downloadMapFromServer(data);
+            return ZERO;
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -150,6 +153,49 @@ void findGameFromServer(char *data) {
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
     memset(sock.buffer, '\0', sizeof(sock.buffer));
 }
+
+void downloadMapFromServer(char *data) {
+    sprintf(sock.buffer, "%d %d %s", MAP_DOWNLOAD, ZERO, data);
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+//    memset(sock.buffer, '\0', sizeof(sock.buffer));
+    int pomT, pomR;
+    FILE *fp;
+    char fname[20] = "../Mapy/";
+    strcat(fname, data);
+    strcat(fname, ".txt");
+
+    fp = fopen(fname, "w+");
+//    fp = fopen(fname, "ab");
+
+
+    if (NULL == fp) {
+        printf("Error opening file");
+        sleep(1);
+        exit(EXIT_FAILURE);
+    }
+    do {
+        char data[BUFFER_SIZE];
+//        char *data = NULL;
+//        memset(data, '\0', sizeof(data));
+
+        recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+        sscanf(sock.buffer, "%d %d %s", &pomT, &pomR, data);
+        if ((enum result_code) pomR == DONE) {
+            break;
+        }
+        log_debug("%s", data);
+//        fputs(data, fp);
+//        fprintf(fp, "%s", data);
+        fwrite(data, 1, BUFFER_SIZE, fp);
+        send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+
+
+    } while ((enum result_code) pomR != DONE);
+
+    fclose(fp);
+    sleep(100);
+}
+
 
 void getPlayerInLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);

@@ -36,6 +36,10 @@ void menu() {
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
+                        char data[BUFFER_SIZE];
+                        sprintf(data, "%d", game.cisloMapy);
+                        communication(MAP_DOWNLOAD, data);
+
                         //TODO HRAAAA
                     } else if (choice == MAIN_MENU) {
                         char data[BUFFER_SIZE];
