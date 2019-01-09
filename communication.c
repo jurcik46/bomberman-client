@@ -4,6 +4,17 @@
 
 #include "communication.h"
 
+/**
+ * Communication Select
+ */
+fd_set socketDs;
+int sd;
+int activity;
+//////
+struct sockaddr_in address;
+struct sockaddr_in serv_addr;
+
+Socket sock;
 
 void initSocket(char *ipAddress, u_int16_t port) {
     sock.sock = 0;

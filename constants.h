@@ -17,7 +17,8 @@ enum result_code {
 };
 
 enum communication_type {
-    LOGIN, CREATE_GAME,
+    LOGIN,
+    CREATE_GAME,
     REGISTRATION,
     GET_LOBBY_PLAYER,
     FIND_SERVERS,

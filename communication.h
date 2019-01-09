@@ -15,6 +15,8 @@
 #include <errno.h>
 
 #include "logging/log.h"
+#include "Menu/menu.h"
+
 #include "constants.h"
 
 #define BUFFER_SIZE 1024
@@ -26,19 +28,8 @@ typedef struct socket {
     pthread_mutex_t mutex;
 } Socket;
 
-/**
- * Communication Select
- */
-fd_set socketDs;
-int sd;
-int activity;
-//////
-struct sockaddr_in address;
-struct sockaddr_in serv_addr;
 
-Socket sock;
-
-enum result_code communication(enum communication_type commuType, char *data);
+extern enum result_code communication(enum communication_type commuType, char *data);
 
 enum result_code loginToServer(char *data);
 

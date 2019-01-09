@@ -5,12 +5,13 @@
 #include <stdlib.h>
 
 #include "logging/log.h"
-#include "communication.h"
+//#include "communication.h"
 #include "Menu/menu.h"
 
 #define LOG_FILE_PATH "logs.log"
 #define ADDRESS "127.0.0.1"
 #define PORT 8080
+
 
 /**
  * Funkcia pomocou ktorej sa inicializuju logy (debug)
@@ -35,7 +36,7 @@ void loggerInit(FILE *logFile) {
  */
 void closingApp(FILE *logFile) {
     closeSocket();
-    delwin(my_window);
+    closeMenu();
     endwin();
     fclose(logFile);
 };
@@ -44,16 +45,13 @@ void closingApp(FILE *logFile) {
 
 int main(int argc, char *argv[]) {
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
-
     loggerInit(logFile);
+    initSocket(ADDRESS, PORT);
 
     initNcurses();
 
-    //initSocket(ADDRESS, PORT);
-//TODO initSocket musi ist pred initNcurses aby som vedel vypisat uzivatelovi spravu
-    loginUser(my_window);
-////Funkcia zisťuje či hrač v lobby spustil hru alebo ju oputil
-////Ak opustil lobby vrati ho do mainMenu inak spusti hru
+    loginUser();
+
     menu();
     closingApp(logFile);
 }

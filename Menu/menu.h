@@ -25,12 +25,12 @@
 #define RESET_CHOICE -1
 #define MAX_GAMES 20
 
-//Struktura pre usera
 typedef struct user {
     int id;
     char name[NAME_LENGTH];
     char password[PASSWORD_LENGTH];
 } User;
+//Struktura pre usera
 
 //Struktura pre vytvorenie hry
 typedef struct game {
@@ -48,27 +48,18 @@ typedef struct choice {
     pthread_mutex_t mutex;
     int choice;
     WINDOW *lobby_Win;
-    _Bool result;
+    _Bool resultLobby;
+    _Bool resultFindeGame;
 } CHOICE;
 
-WINDOW *my_window;
-int startX, startY;
-int choice;
-bool success;
-
-Game game;
-
-Game emptyGame;
-
-User user;
 
 void initNcurses();
 
-void refreshWindow(WINDOW* window);
+void refreshWindow(WINDOW *window);
 
 void menu();
 
-void loginUser(WINDOW *my_window);
+void loginUser();
 
 int mainMenu(WINDOW *my_window);
 
@@ -81,6 +72,12 @@ void menuLeaderBoard(WINDOW *my_window);
 int menuLobby(WINDOW *my_window, int startY, int startX);
 
 int lobbyChoice(CHOICE *param, pthread_t *thread);
+
+void finishChoice(CHOICE *param, pthread_t *thread, Game *lobbyGameArray);
+
+void *handleUserInput();
+
+void closeMenu();
 
 
 #endif
