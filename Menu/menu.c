@@ -163,6 +163,17 @@ void loginUser() {
             sleep(1);
             loginUser();
             break;
+        case SERVICE_UNAVAILABLE:
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "LOGIN\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "Hrac uz je prihlaseny.\n");
+            wrefresh(my_window);
+            sleep(1);
+            loginUser();
+            break;
         default:;
     }
 }
