@@ -264,7 +264,6 @@ bool menuNewGame(WINDOW *my_window) {
             game.admin = true;
             log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
-            //TODO vypisat majitela servera a nazov lobby - robil Jano sa mi zda a je hotove!
             log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -277,7 +276,6 @@ bool menuNewGame(WINDOW *my_window) {
             return true;
         case SERVICE_UNAVAILABLE:
             log_debug("Server Full");
-            //TODO doplnit vypis pre uzivatela ak sa nepodarilo vytvorit hru a vratit ho do mainMenu
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
@@ -287,11 +285,21 @@ bool menuNewGame(WINDOW *my_window) {
             wrefresh(my_window);
             sleep(1);
             return false;
+        case NOT_FOUND:
+            log_debug("MAP NOT FOUND");
+            wclear(my_window);
+            mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
+            mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
+            mvwprintw(my_window, 4, 1,
+                      "_________________________________________________________________________________________\n");
+            mvwprintw(my_window, 7, 5, "NEPODARILO sa vytvorit hru! Mapa sa nenasla\n");
+            wrefresh(my_window);
+            sleep(1);
+            return false;
         default:;
             log_debug("DEFAULT  ");
             return false;
     }
-    //TODO sa zavola funkcia menuLobby - ??????
 }
 
 /**
