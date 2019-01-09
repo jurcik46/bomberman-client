@@ -169,10 +169,10 @@ void downloadMapFromServer(char *data) {
         exit(EXIT_FAILURE);
     }
     int bytesReceived = 0;
-    while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
+    while (read(sock.sock, sock.buffer, BUFFER_SIZE) > 0) {
         log_debug("%d", bytesReceived);
         log_debug("%s", sock.buffer);
-        fwrite(sock.buffer, 8, bytesReceived, fp);
+        fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
     }
     fclose(fp);
 }
