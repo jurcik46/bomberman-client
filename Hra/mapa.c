@@ -12,10 +12,10 @@ void zmenavMape(int py,int px,int c){
 //    mapa->velkost[(py*2)+1][(px*4)+1] = (char)c;
 //    mapa->velkost[(py*2)+1][(px*4)+2] = (char)c;
 //    mapa->velkost[(py*2)+1][(px*4)+3] = (char)c;
-    pthread_mutex_lock(hra.mapa.mutex);
+//    pthread_mutex_lock(hra.mapa.mutex);
     //hra.hraci[1].smer=0;
     hra.mapa.velkost[(py)][(px)] = (char)c;
-    pthread_mutex_unlock(hra.mapa.mutex);
+//    pthread_mutex_unlock(hra.mapa.mutex);
 }
 
 /**
@@ -28,6 +28,7 @@ void zistiVelkostMapy(char *menoMapy){
     file = fopen(menoMapy, "r");
 
     if (NULL == file) {
+        log_debug("Nepodarilo sa otvorit subor.");
         printf("Error opening file");
         sleep(1);
         exit(EXIT_FAILURE);
@@ -39,13 +40,17 @@ void zistiVelkostMapy(char *menoMapy){
     hra.mapa.y=0;
     while ((c = fgetc(file)) != EOF)
     {
+//        log_debug("C -- %d", c);
         hra.mapa.x++;
+        log_debug("X - %d", hra.mapa.x);
         if(c=='\n')
         {
             hra.mapa.y++;
+            log_debug("Y - %d", hra.mapa.y);
         }
     }
     fclose(file);
+//    log_debug("Zavrel som subor %s", menoMapy);
 };
 
 /**
@@ -57,6 +62,12 @@ void nacitajMapu(char *menoMapy){
 
     FILE * subor;
     subor = fopen(menoMapy, "r");
+    if (NULL == subor) {
+        log_debug("Nepodarilo sa otvorit subor.");
+        printf("Error opening file");
+        sleep(1);
+        exit(EXIT_FAILURE);
+    }
 
 //   mapa->x=((mapa->x)/(mapa->y+1))*4+1;
 //   mapa->y=(mapa->y+1)*2;
@@ -86,17 +97,12 @@ void nacitajMapu(char *menoMapy){
  * Funkcia na vykreslenie mapy
  * @param mapa
  */
-//TODO treba zmenit format ncurses
 void  vykresliMapu(){
     char pom[1];
     for (int y = 0; y < hra.mapa.y; y++) {
         for (int x = 0; x < hra.mapa.x; x++) {
             pom[0] = hra.mapa.velkost[y][x];
             // mvprintw(y+1,x+1,&pom[0]);
-//            mvprintw((y * 2), (x * 4), &pom[0]);
-//            mvprintw((y * 2), (x * 4) + 1, &pom[0]);
-//            mvprintw((y * 2), (x * 4) + 2, &pom[0]);
-//            mvprintw((y * 2), (x * 4) + 3, &pom[0]);
 
             mvwprintw(mapWindow,(y * 2), (x * 4), &pom[0]);
             mvwprintw(mapWindow,(y * 2), (x * 4) + 1, &pom[0]);
@@ -108,39 +114,28 @@ void  vykresliMapu(){
             mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, &pom[0]);
             mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, &pom[0]);
 
-//            mvprintw((y * 2) + 1, (x * 4), &pom[0]);
-//            mvprintw((y * 2) + 1, (x * 4) + 1, &pom[0]);
-//            mvprintw((y * 2) + 1, (x * 4) + 2, &pom[0]);
-//            mvprintw((y * 2) + 1, (x * 4) + 3, &pom[0]);
             wrefresh(mapWindow);
         }
     }
 }
 
+/**
+ * Funkcia nainicializuje  okno pre hru, vytvorí okno a vypiše mapu
+ * @param cisloMapy - cislo mapy
+ */
 void initMap(int cisloMapy){
     char menoMapy[20];
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
-
-    log_debug("Meno mapy %s", menoMapy);
-    sleep(2);
-
-    zistiVelkostMapy(menoMapy);
-    log_debug("Viem velkost mapy X=%d -- Y=%d", hra.mapa.x, hra.mapa.y);
-    nacitajMapu(menoMapy);
-    log_debug("Mam nacitanu mapu Velkost=%d", hra.mapa.velkost);
-
-    //WINDOW *map_Window;
-
-    initscr();
-    cbreak();
     int startX = 0, startY = 0;
 
+
+    zistiVelkostMapy(menoMapy);
+    nacitajMapu(menoMapy);
     refresh();
-    mapWindow = newwin(hra.mapa.y, hra.mapa.x, startY, startX);
+    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
     keypad(mapWindow, true);
 
-    log_debug("Vykreslujem mapu");
     vykresliMapu();
     sleep(10);
 }
