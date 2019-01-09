@@ -24,7 +24,15 @@ void zmenavMape(int py,int px,int c){
  */
 void zistiVelkostMapy(char *menoMapy){
     FILE *file;
+    log_debug("Meno mapy pre zistenie %s", menoMapy);
     file = fopen(menoMapy, "r");
+
+    if (NULL == file) {
+        printf("Error opening file");
+        sleep(1);
+        exit(EXIT_FAILURE);
+    }
+
     int c;
 
     hra.mapa.x=0;
@@ -110,21 +118,29 @@ void  vykresliMapu(){
 }
 
 void initMap(int cisloMapy){
-    char menoMapy[20] = "../Mapy/";
-    strcat(menoMapy, cisloMapy);
+    char menoMapy[20];
+    sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
+
     log_debug("Meno mapy %s", menoMapy);
     sleep(2);
 
     zistiVelkostMapy(menoMapy);
+    log_debug("Viem velkost mapy X=%d -- Y=%d", hra.mapa.x, hra.mapa.y);
     nacitajMapu(menoMapy);
+    log_debug("Mam nacitanu mapu Velkost=%d", hra.mapa.velkost);
 
     //WINDOW *map_Window;
+
+    initscr();
+    cbreak();
     int startX = 0, startY = 0;
 
     refresh();
     mapWindow = newwin(hra.mapa.y, hra.mapa.x, startY, startX);
     keypad(mapWindow, true);
 
+    log_debug("Vykreslujem mapu");
     vykresliMapu();
+    sleep(10);
 }

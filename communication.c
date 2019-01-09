@@ -157,59 +157,22 @@ void findGameFromServer(char *data) {
 void downloadMapFromServer(char *data) {
     sprintf(sock.buffer, "%d %d %s", MAP_DOWNLOAD, ZERO, data);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-//    memset(sock.buffer, '\0', sizeof(sock.buffer));
-    int pomT, pomR;
     FILE *fp;
     char fname[20] = "../Mapy/";
     strcat(fname, data);
     strcat(fname, ".txt");
 
     fp = fopen(fname, "wb+");
-//    fp = fopen(fname, "ab");
-
 
     if (NULL == fp) {
-        log_debug("Neda sa otvorit subor");
         printf("Error opening file");
         sleep(1);
         exit(EXIT_FAILURE);
     }
-    int bytesReceived = 0;
-//    do {
-//        log_debug("%d", bytesReceived);
-//        fwrite(sock.buffer, 1, bytesReceived, fp);
-//        memset(sock.buffer, '\0', sizeof(sock.buffer));
-//    } while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0);
-
-    while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
-//        log_debug("%d", bytesReceived);
-        log_debug("%s", sock.buffer);
-        fwrite(sock.buffer, 8, bytesReceived, fp);
-        log_debug("Zapisal som");
-//        memset(sock.buffer, '\0', sizeof(sock.buffer));
+    while (read(sock.sock, sock.buffer, BUFFER_SIZE) > 0) {
+        fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
     }
-//    do {
-////        char data[BUFFER_SIZE];
-//////        char *data = NULL;
-//////        memset(data, '\0', sizeof(data));
-////
-////        recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-////        sscanf(sock.buffer, "%d %d %s", &pomT, &pomR, data);
-////        if ((enum result_code) pomR == DONE) {
-////            break;
-////        }
-////        log_debug("%s", data);
-//////        fputs(data, fp);
-//////        fprintf(fp, "%s", data);
-////        fwrite(data, 1, BUFFER_SIZE, fp);
-////        send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
-//
-//
-//    } while ((enum result_code) pomR != DONE);
-    log_debug("zatvaram subor");
-
     fclose(fp);
-//    sleep(100);
 }
 
 
