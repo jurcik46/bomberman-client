@@ -15,6 +15,7 @@
 #include "../logging/log.h"
 #include "../communication.h"
 #include "../constants.h"
+#include "../Hra/mapa.h"
 
 #define WIN_HEIGHT 20
 #define WIN_WIDTH 90

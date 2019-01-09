@@ -40,6 +40,13 @@ void menu() {
                         sprintf(data, "%d", game.cisloMapy);
                         communication(MAP_DOWNLOAD, data);
 
+                        wclear(my_window);
+                        mvwprintw(my_window, 8, 10, "Downloading map...");
+                        wrefresh(my_window);
+                        sleep(2);
+                        wclear(my_window);
+                        initMap(game.cisloMapy);
+
                         //TODO HRAAAA
                     } else if (choice == MAIN_MENU) {
                         char data[BUFFER_SIZE];
@@ -173,7 +180,7 @@ void loginUser() {
             mvwprintw(my_window, 3, 10, "LOGIN\n");
             mvwprintw(my_window, 4, 1,
                       "_________________________________________________________________________________________\n");
-            mvwprintw(my_window, 7, 5, "Hrac uz je prihlaseny.\n");
+            mvwprintw(my_window, 7, 5, "Hra uz je prihlaseny.\n");
             wrefresh(my_window);
             sleep(1);
             loginUser();
@@ -209,7 +216,7 @@ bool menuNewGame(WINDOW *my_window) {
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
         if (input == EOF) {
-            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
+//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
             isSaved = false;
             break;
         } else if (input == 0) {
@@ -231,7 +238,7 @@ bool menuNewGame(WINDOW *my_window) {
         wrefresh(my_window);
         input = wscanw(my_window, "%d", &value);
         if (input == EOF) {
-            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
+//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
             isSaved = false;
             break;
         } else if (input == 0) {
@@ -262,10 +269,10 @@ bool menuNewGame(WINDOW *my_window) {
 //            game.users[0] = user;
 //            game.pocetHracov++;
             game.admin = true;
-            log_debug("%s", dataFromRequest());
+//            log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
             //TODO vypisat majitela servera a nazov lobby - robil Jano sa mi zda a je hotove!
-            log_debug("Game was created");
+//            log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
@@ -276,7 +283,7 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return true;
         case SERVICE_UNAVAILABLE:
-            log_debug("Server Full");
+//            log_debug("Server Full");
             //TODO doplnit vypis pre uzivatela ak sa nepodarilo vytvorit hru a vratit ho do mainMenu
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -288,7 +295,7 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return false;
         default:;
-            log_debug("DEFAULT  ");
+//            log_debug("DEFAULT  ");
             return false;
     }
     //TODO sa zavola funkcia menuLobby - ??????
@@ -310,7 +317,7 @@ void *handleUserInput() {
         noecho();
 
         moznost = wgetch(window);
-        log_debug("CYKLUS menuLobby");
+//        log_debug("CYKLUS menuLobby");
 
         pthread_mutex_lock(&param.mutex);
         result = param.resultLobby;
@@ -495,7 +502,7 @@ void *handleEsc() {
     while (!result) {
         noecho();
         value = wgetch(window);
-        log_debug("cyklus FINDserver");
+//        log_debug("cyklus FINDserver");
         pthread_mutex_lock(&param.mutex);
         result = param.resultFindeGame;
         param.choice = value;

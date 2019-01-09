@@ -169,6 +169,7 @@ void downloadMapFromServer(char *data) {
 
 
     if (NULL == fp) {
+        log_debug("Neda sa otvorit subor");
         printf("Error opening file");
         sleep(1);
         exit(EXIT_FAILURE);
@@ -181,9 +182,10 @@ void downloadMapFromServer(char *data) {
 //    } while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0);
 
     while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
-        log_debug("%d", bytesReceived);
+//        log_debug("%d", bytesReceived);
         log_debug("%s", sock.buffer);
         fwrite(sock.buffer, 8, bytesReceived, fp);
+        log_debug("Zapisal som");
 //        memset(sock.buffer, '\0', sizeof(sock.buffer));
     }
 //    do {
@@ -204,9 +206,10 @@ void downloadMapFromServer(char *data) {
 //
 //
 //    } while ((enum result_code) pomR != DONE);
+    log_debug("zatvaram subor");
 
     fclose(fp);
-    sleep(100);
+//    sleep(100);
 }
 
 
