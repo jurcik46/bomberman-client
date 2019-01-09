@@ -24,7 +24,7 @@ void zmenavMape(int py,int px,int c){
  */
 void zistiVelkostMapy(char *menoMapy){
     FILE *file;
-    log_debug("Meno mapy pre zistenie %s", menoMapy);
+//    log_debug("Meno mapy pre zistenie %s", menoMapy);
     file = fopen(menoMapy, "r");
 
     if (NULL == file) {
@@ -42,11 +42,11 @@ void zistiVelkostMapy(char *menoMapy){
     {
 //        log_debug("C -- %d", c);
         hra.mapa.x++;
-        log_debug("X - %d", hra.mapa.x);
+//        log_debug("X - %d", hra.mapa.x);
         if(c=='\n')
         {
             hra.mapa.y++;
-            log_debug("Y - %d", hra.mapa.y);
+//            log_debug("Y - %d", hra.mapa.y);
         }
     }
     fclose(file);
@@ -104,23 +104,49 @@ void  vykresliMapu(){
             pom[0] = hra.mapa.velkost[y][x];
             // mvprintw(y+1,x+1,&pom[0]);
 
-            mvwprintw(mapWindow,(y * 2), (x * 4), &pom[0]);
-            mvwprintw(mapWindow,(y * 2), (x * 4) + 1, &pom[0]);
-            mvwprintw(mapWindow,(y * 2), (x * 4) + 2, &pom[0]);
-            mvwprintw(mapWindow,(y * 2), (x * 4) + 3, &pom[0]);
+            if(pom[0] == WALL){
+                wattron(mapWindow, COLOR_PAIR(WALL_PAIR));
 
-            mvwprintw(mapWindow,(y * 2) + 1, (x * 4), &pom[0]);
-            mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, &pom[0]);
-            mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, &pom[0]);
-            mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, &pom[0]);
+//                mvwprintw(mapWindow, 0, 0, "A");
 
-            wrefresh(mapWindow);
+                mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
+
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
+
+                wattroff(mapWindow, COLOR_PAIR(WALL_PAIR));
+
+                wrefresh(mapWindow);
+            }
+
+            if (pom[0] == EMPTY){
+                wattron(mapWindow, COLOR_PAIR(EMPTY_PAIR));
+
+                mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
+
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
+                mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
+
+                wattroff(mapWindow, COLOR_PAIR(EMPTY_PAIR));
+                wrefresh(mapWindow);
+
+            }
         }
     }
 }
 
 /**
- * Funkcia nainicializuje  okno pre hru, vytvorí okno a vypiše mapu
+ * Funkcia nainicializuje farby + okno pre hru, vytvorí okno a vypiše mapu
  * @param cisloMapy - cislo mapy
  */
 void initMap(int cisloMapy){
@@ -133,9 +159,16 @@ void initMap(int cisloMapy){
     zistiVelkostMapy(menoMapy);
     nacitajMapu(menoMapy);
     refresh();
+    if(has_colors() == FALSE) {
+        log_debug("Konzola/terminal nepodporuje farby!");
+        exit(EXIT_FAILURE);
+    }
+    start_color();
+    init_pair(WALL_PAIR, COLOR_WHITE, COLOR_WHITE);
+    init_pair(EMPTY_PAIR, COLOR_BLACK, COLOR_BLACK);
     mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
     keypad(mapWindow, true);
 
     vykresliMapu();
-    sleep(10);
+    sleep(20);
 }

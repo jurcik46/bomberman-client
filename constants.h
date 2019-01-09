@@ -28,6 +28,7 @@ enum communication_type {
 };
 
 enum menu_choices {
+    //TODO pomenit hodnoty aby neboli rovnake a otestovat menu pripadne doladit
     EXIT = 15, //preto 15 lebo taka moznost sa nepouziva nikde v menu
     MENU_NEW_GAME = 0,
     MENU_FIND_SERVER = 1,

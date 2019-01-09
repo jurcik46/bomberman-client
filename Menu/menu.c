@@ -195,6 +195,7 @@ void loginUser() {
  * @return - navratova hodnota je true ak sa hru podarilo vytvorit a false ak nie
  */
 bool menuNewGame(WINDOW *my_window) {
+    //TODO osetrit prazdne vstupy pri vytvarani hry
     wclear(my_window);
     echo();
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");

@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "hra.h"
+#include "gameConstants.h"
 
 WINDOW *mapWindow;
 
