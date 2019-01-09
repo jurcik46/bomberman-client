@@ -171,10 +171,12 @@ void downloadMapFromServer(char *data) {
     do {
         if (socketReady()) {
             int pomT, pomR;
+            log_debug("Buffer --- %s", sock.buffer);
             sscanf(sock.buffer, "%d %d", &pomT, &pomR);
             if (((enum communication_type) pomT == MAP_DOWNLOAD) && ((enum communication_type) pomR == DONE)) {
                 break;
             }
+
             fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
         }
     } while (1);
@@ -189,6 +191,7 @@ void downloadMapFromServer(char *data) {
     log_debug("aaaaaa ");
 
     fclose(fp);
+    sleep(5);
 }
 
 void getPlayerInLobby(char *data) {
