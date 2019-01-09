@@ -173,15 +173,19 @@ void downloadMapFromServer(char *data) {
         sleep(1);
         exit(EXIT_FAILURE);
     }
-    ssize_t bytesReceived = 0;
-    do {
-        log_debug("%d", bytesReceived);
-        fwrite(sock.buffer, 1, bytesReceived, fp);
-        memset(sock.buffer, '\0', sizeof(sock.buffer));
-    } while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0);
+    int bytesReceived = 0;
+//    do {
+//        log_debug("%d", bytesReceived);
+//        fwrite(sock.buffer, 1, bytesReceived, fp);
+//        memset(sock.buffer, '\0', sizeof(sock.buffer));
+//    } while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0);
 
-//    while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
-//    }
+    while ((bytesReceived = read(sock.sock, sock.buffer, BUFFER_SIZE)) > 0) {
+        log_debug("%d", bytesReceived);
+        log_debug("%s", sock.buffer);
+        fwrite(sock.buffer, 8, bytesReceived, fp);
+//        memset(sock.buffer, '\0', sizeof(sock.buffer));
+    }
 //    do {
 ////        char data[BUFFER_SIZE];
 //////        char *data = NULL;
