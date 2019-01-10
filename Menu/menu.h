@@ -23,7 +23,6 @@
 #define PASSWORD_LENGTH 50
 #define GAME_NAME_LENGTH 20
 #define RESET_CHOICE -1
-#define MAX_GAMES 20
 
 typedef struct user {
     int id;

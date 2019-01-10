@@ -33,9 +33,11 @@ static _Bool startGame() {
     char ipAddress[INET_ADDRSTRLEN];
     int port;
 
+//    if (game.admin) {
     sprintf(data, "%d", game.gameId);
     switch (communication(START, data)) {
         case OKEJ:
+
             break;
         case NOT_FOUND:
             //TODO hra sa nenasla  na servery a neda sa spustit INFO PRE hraca
@@ -43,6 +45,8 @@ static _Bool startGame() {
         default :
             return false;
     }
+//    }
+
 
     sscanf(dataFromRequest(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
 
@@ -75,7 +79,7 @@ void menu() {
                 } else {
                     wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
                     wrefresh(my_window);
-                    choice = menuNewGame(my_window);
+                    choice = MENU_NEW_GAME;
                 }
                 break;
             case MENU_FIND_SERVER:
@@ -464,6 +468,11 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 }
                 sprintf(data, "%d %d", count, game.gameId);
                 communication(GET_LOBBY_PLAYER, data);
+
+            }
+
+            if ((enum communication_type) pomT == START && (enum communication_type) pomR == OKEJ) {
+                startGame();
 
             }
         }

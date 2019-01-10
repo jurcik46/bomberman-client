@@ -58,7 +58,7 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game *g) {
             gameP->users[myIndex].id,
             gameP->users[myIndex].name,
             gameP->admin);
-
+    log_debug("%s", gameSocket.buffer);
     sendto(gameSocket.sock, gameSocket.buffer, BUFFER_SIZE, 0, (struct sockaddr *) NULL, sizeof(serv_addr));
     log_debug("SLEEEEEEP SKONTROLUJ zbytok");
     sleep(10);
