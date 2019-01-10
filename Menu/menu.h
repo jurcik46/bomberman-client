@@ -11,6 +11,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <assert.h>
+#include <signal.h>
 
 #include "../logging/log.h"
 #include "../communication.h"
@@ -23,12 +24,15 @@
 #define PASSWORD_LENGTH 50
 #define GAME_NAME_LENGTH 20
 #define RESET_CHOICE -1
-#define MAX_GAMES 20
+
+
+
 
 typedef struct user {
     int id;
     char name[NAME_LENGTH];
     char password[PASSWORD_LENGTH];
+    _Bool amI;
 } User;
 //Struktura pre usera
 
@@ -52,8 +56,11 @@ typedef struct choice {
     _Bool resultFindeGame;
 } CHOICE;
 
+#include "../Hra/gameCommunication.h"
 
 void initNcurses();
+
+static _Bool startGame();
 
 void refreshWindow(WINDOW *window);
 
@@ -78,6 +85,7 @@ void finishChoice(CHOICE *param, pthread_t *thread, Game *lobbyGameArray);
 void *handleUserInput();
 
 void closeMenu();
+
 
 
 #endif

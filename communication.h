@@ -45,6 +45,8 @@ void leaveLobby(char *data);
 
 enum result_code resultFromRequest();
 
+ enum result_code startGameFromClient(char * data);
+
 void downloadMapFromServer(char * data);
 
 char *dataFromRequest();
@@ -52,6 +54,7 @@ char *dataFromRequest();
 void initSocket(char *ipAddress, u_int16_t port);
 
 _Bool socketReady();
+char *readDataFromSocket();
 
 
 void closeSocket();
