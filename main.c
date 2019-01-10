@@ -26,7 +26,7 @@ void loggerInit(FILE *logFile) {
         // Program exits if the file pointer returns NULL.
         exit(EXIT_FAILURE);
     }
-    log_set_quiet(0);
+    log_set_quiet(5);
     log_set_level(LOG_DEBUG);
     log_set_fp(logFile);
 }

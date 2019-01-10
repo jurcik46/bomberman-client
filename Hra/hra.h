@@ -53,7 +53,16 @@ typedef struct mapa{
 
 /**
  * Struktura pre bombu
- */
+ *
+ * */
+typedef struct vybuchBombyStrany{
+    int hore;
+    int dole;
+    int vlavo;
+    int vpravo;
+
+}VYBUCHBOMBYSTRANY;
+
 typedef struct bomba{
     int x_Position;
     int y_Position;
@@ -61,6 +70,7 @@ typedef struct bomba{
     char znak;
     int zijeBomba;
     int cas;
+    VYBUCHBOMBYSTRANY bombastrany;
 }BOMBA;
 
 /**
@@ -107,13 +117,15 @@ int trafilSomVBombuHracaID(HRAC *hrac);
 
 void *odpocetBomby(void * hra);
 
-void BOOM(BOMBA * bomba,int dole,int hore,int vlavo,int vpravo);
+void BOOM(BOMBA * bomba);
 
-void vymazanieBombyZObrazovky(BOMBA * bomba,int dole,int hore,int vlavo,int vpravo);
+void vymazanieBombyZObrazovky(BOMBA * bomba);
 
 void vytvorBombu(HRAC * hrac,int cisloBomby);
 
 void vytvorVlaknoPreBombu(void *(*startovaciaFunkcia)(void *),BOMBA * bomba);
+
+int trafilaHracaBomba(BOMBA *bomba, HRAC * HRAC);
 
 void vybuchBomby(BOMBA * bomba);
 

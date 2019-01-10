@@ -184,7 +184,7 @@ void initMap(int cisloMapy) {
 //    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
 //    keypad(mapWindow, true);
 
-    initGame(4, menoMapy, 0);
+    initGame(1, menoMapy, 0);
 }
 
 void initColor() {
