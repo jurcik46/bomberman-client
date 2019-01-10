@@ -197,7 +197,6 @@ void loginUser() {
  * @return - navratova hodnota je true ak sa hru podarilo vytvorit a false ak nie
  */
 bool menuNewGame(WINDOW *my_window) {
-    //TODO osetrit prazdne vstupy pri vytvarani hry
     wclear(my_window);
     echo();
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -205,61 +204,76 @@ bool menuNewGame(WINDOW *my_window) {
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
-    mvwprintw(my_window, 6, 1, "Zadaj nazov hry:                     ");
-    wrefresh(my_window);
-    wgetstr(my_window, game.nazovHry);
+
+    //Osetrenie prazdneho vstupu nazvu hry
+    while (strlen(game.nazovHry) == 0) {
+        mvwprintw(my_window, 6, 1, "Zadaj nazov hry:                     ");
+        wrefresh(my_window);
+        wgetstr(my_window, game.nazovHry);
+    }
+
     _Bool isSaved = false;
-    int value = 0;
+    int value = -1;
     int input;
 
 //Osetrenie vstupu pre zadavanie cisla mapy (len INT-y)
     while (!isSaved) {
 
-        mvwprintw(my_window, 8, 1, "Zadaj cislo mapy:                    ");
-        wrefresh(my_window);
-        input = wscanw(my_window, "%d", &value);
-        if (input == EOF) {
-//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
-            isSaved = false;
-            break;
-        } else if (input == 0) {
-            mvwprintw(my_window, 9, 1, "Zadat mozes iba CISLA! ");
+        //Osetrenie prazdneho vstupu pri cisle mapy
+        while (value < 0) {
             mvwprintw(my_window, 8, 1, "Zadaj cislo mapy:                    ");
             wrefresh(my_window);
-            isSaved = false;
-        } else {
-            game.cisloMapy = value;
-            isSaved = true;
+            input = wscanw(my_window, "%d", &value);
+
+            if (input == EOF) {
+//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
+                isSaved = false;
+                break;
+            } else if (input == 0) {
+                mvwprintw(my_window, 9, 1, "Zadat mozes iba CISLA! ");
+                mvwprintw(my_window, 8, 1, "Zadaj cislo mapy:                    ");
+                wrefresh(my_window);
+                isSaved = false;
+            } else {
+                game.cisloMapy = value;
+                isSaved = true;
+            }
         }
     }
 
     isSaved = false;
+    value = -1;
 
 //Osetrenie vstupu pre zadavanie poctu hracov (len INT-y)
     while (!isSaved) {
-        mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4):           ");
-        wrefresh(my_window);
-        input = wscanw(my_window, "%d", &value);
-        if (input == EOF) {
-//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
-            isSaved = false;
-            break;
-        } else if (input == 0) {
-            mvwprintw(my_window, 11, 1, "Zadat mozes iba CISLA! ");
 
+        //Osetrenie prazdneho vstupu pri pocte hracov
+        while (value < 0) {
+            mvwprintw(my_window, 10, 1, "Zadaj pocet hracov(max 4):           ");
             wrefresh(my_window);
-            isSaved = false;
-        } else if (value > 4) {
-            mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4! ");
-            wrefresh(my_window);
-            isSaved = false;
-        } else if (value < 1) {
-            mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1! ");
-            wrefresh(my_window);
-            isSaved = false;
-        } else {
-            game.maxPocetHracov = value;
-            isSaved = true;
+            input = wscanw(my_window, "%d", &value);
+
+            if (input == EOF) {
+//            log_debug("Uzivatel ukoncil zadavanie z klavesnice. ");
+                isSaved = false;
+                break;
+            } else if (input == 0) {
+                mvwprintw(my_window, 11, 1, "Zadat mozes iba CISLA! ");
+
+                wrefresh(my_window);
+                isSaved = false;
+            } else if (value > 4) {
+                mvwprintw(my_window, 11, 1, "MAXIMALNY pocet hracov je 4! ");
+                wrefresh(my_window);
+                isSaved = false;
+            } else if (value < 1) {
+                mvwprintw(my_window, 11, 1, "MINIMALNY pocet hracov je 1! ");
+                wrefresh(my_window);
+                isSaved = false;
+            } else {
+                game.maxPocetHracov = value;
+                isSaved = true;
+            }
         }
     }
 
@@ -274,7 +288,6 @@ bool menuNewGame(WINDOW *my_window) {
             game.admin = true;
 //            log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
-            //TODO vypisat majitela servera a nazov lobby - robil Jano sa mi zda a je hotove!
 //            log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -345,7 +358,8 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     wclear(my_window);
 
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
-    mvwprintw(my_window, 3, 10, "LOBBY --> Name: %s   Id: %d   \n", game.nazovHry, game.gameId);
+    mvwprintw(my_window, 3, 10, "LOBBY --> Name: %s   Id: %d   Players: %d\n", game.nazovHry, game.gameId,
+              game.pocetHracov);
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
@@ -404,7 +418,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
                 i++;
             }
-//            log_debug("Count player %d   POcet %d", count, game.pocetHracov);
+//            log_debug("Count player %d   Pocet %d", count, game.pocetHracov);
 
             if ((enum communication_type) pomT == GET_LOBBY_PLAYER && (enum communication_type) pomR != DONE) {
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,

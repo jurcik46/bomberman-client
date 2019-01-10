@@ -138,6 +138,26 @@ void  vykresliMapu(){
                     printPlayer(y, x, pom[0]);
                     wattroff(mapWindow, COLOR_PAIR(PLAYER_FOUR_PAIR));
                     break;
+                case BOMB_THREE:
+                    wattron(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    break;
+                case BOMB_TWO:
+                    wattron(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    break;
+                case BOMB_ONE:
+                    wattron(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    break;
+                case BOMB_BOOM:
+                    wattron(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    printElement(y, x, pom[0]);
+                    wattroff(mapWindow, COLOR_PAIR(BOMB_PAIR));
+                    break;
                 default:
                     break;
             }
@@ -173,8 +193,6 @@ void initMap(int cisloMapy){
 
 //    zmenavMape(1, 1, PLAYER_ONE);
 //    zmenavMape(hra.mapa.y - 3, hra.mapa.x - 3, PLAYER_ONE);
-
-
 
 //    vykresliMapu();
 //    sleep(20);

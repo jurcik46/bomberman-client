@@ -8,6 +8,13 @@
 #define WALL '#'
 #define EMPTY ' '
 #define BARRIER '8'
+#define BOMB_THREE 51
+#define BOMB_TWO 50
+#define BOMB_ONE 49
+#define BOMB_BOOM '*'
+
+#define NUMBER_THREE 51
+#define NUMBER_ZERO 48
 
 //#define PLAYER_ONE 'h'
 //#define PLAYER_TWO 'j'

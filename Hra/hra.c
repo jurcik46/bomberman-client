@@ -235,7 +235,7 @@ void vytvorBombu(HRAC * hrac,int cisloBomby){
 void *odpocetBomby(void *  bomba) {
 //    log_debug("y:%d x:%d",hra.hraci[((struct bomba*)bomba)->idHRACABOMBY].bomba[0].y_Position,hra.hraci[((struct bomba*)bomba)->idHRACABOMBY].bomba[0].x_Position);
     //log_debug("som v odpovec BOMBY:%d", );
-    for (int a = 3; a >=1 ; a--) {
+    for (int a = NUMBER_THREE; a > NUMBER_ZERO; a--) {
 
         zmenavMape(((struct bomba*)bomba)->y_Position,((struct bomba*)bomba)->x_Position,(char)a);
 //        ((struct bomba*)bomba)->cas=a;
