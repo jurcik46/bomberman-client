@@ -90,8 +90,6 @@ void nacitajMapu(char *menoMapy) {
 }
 
 
-
-
 /**
  * Funkcia na vykreslenie mapy
  * @param mapa
@@ -174,7 +172,7 @@ void initMap(int cisloMapy) {
     char menoMapy[20];
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
-    int startX = 0, startY = 0;
+//    int startX = 0, startY = 0;
 
     refresh();
     if (has_colors() == FALSE) {
@@ -183,19 +181,10 @@ void initMap(int cisloMapy) {
     }
     start_color();
     initColor();
-    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
-    keypad(mapWindow, true);
-
+//    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
+//    keypad(mapWindow, true);
 
     initGame(4, menoMapy, 0);
-//    zistiVelkostMapy(menoMapy);
-//    nacitajMapu(menoMapy);
-
-//    zmenavMape(1, 1, PLAYER_ONE);
-//    zmenavMape(hra.mapa.y - 3, hra.mapa.x - 3, PLAYER_ONE);
-
-//    vykresliMapu();
-//    sleep(20);
 }
 
 void initColor() {

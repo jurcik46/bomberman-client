@@ -136,9 +136,8 @@ void deletM(int m, char ***mat) {
  * @return
  */
 int trafilSomVBombuHracaID(HRAC *hrac) {
-    log_debug("som vo funckii trailbombuhracaID");
-
-    log_debug("%d,", hra.mapa.velkost[hrac->y_Position][hrac->x_Position]);
+//    log_debug("som vo funckii trailbombuhracaID");
+//    log_debug("%d,", hra.mapa.velkost[hrac->y_Position][hrac->x_Position]);
     if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == Vybuch) {
         for (int a = 0; a < POCET_HRACOV; a++) {
             for (int b = 0; b < MAX_POCETBOMB; b++) {
@@ -242,7 +241,7 @@ void pohybHraca(HRAC *hrac) {
             }
             break;
         case ' ':
-            log_debug("som v MEDZERE");
+//            log_debug("som v MEDZERE");
             hrac->smer = 0;
 
             int bombanavytvorenie = MAX_POCETBOMB;
@@ -254,7 +253,7 @@ void pohybHraca(HRAC *hrac) {
                 }
             }
             if (bombanavytvorenie >= 0 && bombanavytvorenie < MAX_POCETBOMB) {
-                log_debug("Vytvaram bombu: %d", bombanavytvorenie);
+//                log_debug("Vytvaram bombu: %d", bombanavytvorenie);
                 vytvorBombu(hrac, bombanavytvorenie);
                 hrac->bomba[bombanavytvorenie].zijeBomba = 1;
                 hrac->statistikahracavhre.pocetUlozenychBomb++;
@@ -396,9 +395,9 @@ void BOOM(BOMBA *bomba, int dole, int hore, int vlavo, int vpravo) {
     zmenavMape(bomba->y_Position, bomba->x_Position + vlavo, Vybuch);
     sleep(1);
     vymazanieBombyZObrazovky(bomba, dole, hore, vlavo, vpravo);
-    log_debug("----%d", a1);
+//    log_debug("----%d", a1);
     if (a1 == 1) {
-        log_debug("som TUUUUU");
+//        log_debug("som TUUUUU");
         zmenavMape(hra.hraci[0].y_Position, hra.hraci[0].y_Position, hra.hraci[0].znak);
 
     }
@@ -414,11 +413,21 @@ void vymazanieBombyZObrazovky(BOMBA *bomba, int dole, int hore, int vlavo, int v
 
 }
 
+void printPlayersToScoreWindow() {
+    int startY = 0;
+    int startX = 1;
+
+    for (int i = 0; i < hra.pocetHracov; i++) {
+        mvwprintw(scoreWindow, startY + 1, startX, "%s", hra.hraci[i].statistikahracavhre.meno);
+        startY++;
+        mvwprintw(scoreWindow, startY + 1, startX, "Zivot: %d/3", hra.hraci[i].statistikahracavhre.pocetUmrti);
+        startY++;
+    }
+    wrefresh(scoreWindow);
+}
+
 void initGame(int pocetHracov, char *cesta, int mojeID) {
     //Inicializacia okna
-//    initscr(); // Initialize the window
-//    noecho(); // Don't echo any keypresses
-//    curs_set(FALSE); // Don't display a cursor
 
     //Nastavim pocetHracov;
     hra.pocetHracov = pocetHracov;
@@ -433,6 +442,17 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     //zistim velkost mapy a nacitaj ju do pola
     zistiVelkostMapy(cesta);
     nacitajMapu(cesta);
+
+    int startX = 0, startY = 0;
+    //vytvorim okno pre mapu
+    refresh();
+    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
+    keypad(mapWindow, true);
+    //vytvorim okno pre score
+    refresh();
+    scoreWindow = newwin(SCORE_WIN_Y, SCORE_WIN_X, startY, hra.mapa.x * 4);
+
+    //TODO nacitaj  nove okno so statistikou
 
     // log_debug("Krok1");
     //funkcia na nastavenie pozici hracov
@@ -500,8 +520,8 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
         }
 //        vykresliMapu();
     }
-    log_debug("HRAC 1 -- %c", hra.hraci[0].znak);
-    log_debug("HRAC 2 -- %c", hra.hraci[1].znak);
+//    log_debug("HRAC 1 -- %c", hra.hraci[0].znak);
+//    log_debug("HRAC 2 -- %c", hra.hraci[1].znak);
 
     pthread_t vlakno2;
     pthread_create(&vlakno2, 0, &delay, &hra.hraci[mojeID]);
@@ -514,9 +534,9 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 //                      hra.hraci[a].statistikahracavhre.pocetTrafenychHracov);
         }
         //sleep(1);
-        //TODO pre istotu osetrit alebo skontrolovat ID v lobby ci ide od 0 alebo 1 ak od 1 tak tu treba odpocitat -1
         pohybHraca(&hra.hraci[mojeID]);
         vykresliMapu();
+        printPlayersToScoreWindow();
     }
 }
 

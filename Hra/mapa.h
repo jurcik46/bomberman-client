@@ -14,7 +14,12 @@
 #include "hra.h"
 #include "gameConstants.h"
 
+#define SCORE_WIN_Y 30
+#define SCORE_WIN_X 50
+
 WINDOW *mapWindow;
+
+WINDOW *scoreWindow;
 
 void zistiVelkostMapy(char *menoMapy);
 
