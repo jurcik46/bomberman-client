@@ -237,8 +237,8 @@ void *odpocetBomby(void *  bomba) {
     //log_debug("som v odpovec BOMBY:%d", );
     for (int a = 3; a >=1 ; a--) {
 
-       // zmenavMape(((struct bomba*)bomba)->y_Position,((struct bomba*)bomba)->x_Position,(char)a);
-        ((struct bomba*)bomba)->cas=a;
+        zmenavMape(((struct bomba*)bomba)->y_Position,((struct bomba*)bomba)->x_Position,(char)a);
+//        ((struct bomba*)bomba)->cas=a;
         sleep(1);
     }
     vybuchBomby(((struct bomba*)bomba));
