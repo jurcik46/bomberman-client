@@ -160,6 +160,7 @@ void downloadMapFromServer(char *data) {
     strcat(fname, data);
     strcat(fname, ".txt");
     fp = fopen(fname, "wb+");
+
     if (NULL == fp) {
         printf("Error opening file");
         sleep(1);
@@ -178,8 +179,8 @@ void downloadMapFromServer(char *data) {
         }
     } while (1);
     fclose(fp);
-    sleep(5);
 }
+
 
 void getPlayerInLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);
