@@ -69,13 +69,8 @@ _Bool socketReady() {
             sleep(10);
             exit(EXIT_FAILURE);
         } else {
-//            sscanf(sock.buffer, "%d ", &pomType);
 //            log_debug("data %s", sock.buffer);
             return true;
-//            communication((enum communication_type) pomType,
-//                          &cSockets.client[i]);
-
-//            send(sd, sock.buffer, BUFFER_SIZE, 0);
         }
     }
 
@@ -105,6 +100,8 @@ enum result_code communication(enum communication_type commuType, char *data) {
         case MAP_DOWNLOAD:
             downloadMapFromServer(data);
             return ZERO;
+        case START:
+            return startGameFromClient(data);
         default:
             log_debug("DEFAULT");
             return ZERO;
@@ -157,11 +154,11 @@ void findGameFromServer(char *data) {
 void downloadMapFromServer(char *data) {
     sprintf(sock.buffer, "%d %d %s", MAP_DOWNLOAD, ZERO, data);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    int pomT, pomR;
     FILE *fp;
     char fname[20] = "../Mapy/";
     strcat(fname, data);
     strcat(fname, ".txt");
-
     fp = fopen(fname, "wb+");
 
     if (NULL == fp) {
@@ -169,9 +166,18 @@ void downloadMapFromServer(char *data) {
         sleep(1);
         exit(EXIT_FAILURE);
     }
-    while (read(sock.sock, sock.buffer, BUFFER_SIZE) > 0) {
-        fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
-    }
+    do {
+        if (socketReady()) {
+            int pomT, pomR;
+            log_debug("Buffer --- %s", sock.buffer);
+            sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+            if (((enum communication_type) pomT == MAP_DOWNLOAD) && ((enum communication_type) pomR == DONE)) {
+                break;
+            }
+
+            fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
+        }
+    } while (1);
     fclose(fp);
 }
 
@@ -210,6 +216,23 @@ void leaveLobby(char *data) {
 
 }
 
+enum result_code startGameFromClient(char *data) {
+    log_debug("Data: %s", data);
+    sprintf(sock.buffer, "%d %d %s", START, ZERO, data);
+    log_debug("Sending to Server for START GAME: %s", sock.buffer);
+
+    send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Sent and Waiting to response for START GAME");
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+    log_debug("Response %s", sock.buffer);
+
+    int pomT, pomR;
+    sscanf(sock.buffer, "%d %d", &pomT, &pomR);
+    if ((enum communication_type) pomT == START) {
+        return (enum result_code) pomR;
+    }
+}
+
 
 enum result_code resultFromRequest() {
     int pomT, pomR;
@@ -218,6 +241,11 @@ enum result_code resultFromRequest() {
 }
 
 char *dataFromRequest() {
+    return sock.buffer;
+}
+
+char *readDataFromSocket() {
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
     return sock.buffer;
 }
 

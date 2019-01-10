@@ -1,9 +1,10 @@
 //
-// Created by sterb on 9. 1. 2019.
+// Created by jurci on 9. 1. 2019.
 //
 
 #ifndef BOMBERMAN_CLIENT_GAMECONSTANTS_H
 #define BOMBERMAN_CLIENT_GAMECONSTANTS_H
+
 
 #define WALL '#'
 #define EMPTY ' '
@@ -22,14 +23,22 @@
 //#define PLAYER_FOUR 'l'
 
 enum color_pairs {
-   PLAYER_ONE_PAIR = 1,
-   PLAYER_TWO_PAIR = 2,
-   PLAYER_THREE_PAIR = 3,
-   PLAYER_FOUR_PAIR = 4,
-   WALL_PAIR = 5,
-   WALL_DESTROY_PAIR = 6,
-   BOMB_PAIR = 7,
-   EMPTY_PAIR = 8
+    PLAYER_ONE_PAIR = 1,
+    PLAYER_TWO_PAIR = 2,
+    PLAYER_THREE_PAIR = 3,
+    PLAYER_FOUR_PAIR = 4,
+    WALL_PAIR = 5,
+    WALL_DESTROY_PAIR = 6,
+    BOMB_PAIR = 7,
+    EMPTY_PAIR = 8
 };
+
+enum gameEnum {
+    IN_GAME,
+    END,
+    NON,
+    SUCCESS
+};
+
 
 #endif //BOMBERMAN_CLIENT_GAMECONSTANTS_H
