@@ -132,7 +132,7 @@ enum Hraci{
 };
 
 enum Prekazky{
-    Vybuch = 89,
+    Vybuch = 42,
     Stena = 35,
     Prazdne = 32
 };
@@ -168,6 +168,7 @@ typedef struct bomba{
     int idHRACABOMBY;
     char znak;
     int zijeBomba;
+    int cas;
 }BOMBA;
 
 /**
