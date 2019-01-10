@@ -29,7 +29,7 @@ void zmenavMape(int py,int px, char c);
 
 void vykresliMapu();
 
-void initMap(int cisloMapy);
+void initMap(int cisloMapy, int pocetHracou);
 
 void initColor();
 

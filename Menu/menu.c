@@ -27,6 +27,11 @@ void initNcurses() {
 }
 
 static _Bool startGame() {
+    wclear(my_window);
+    mvwprintw(my_window, 8, 10, "Downloading map...");
+    wrefresh(my_window);
+    sleep(1);
+    wclear(my_window);
 //    raise(SIGINT);
     char data[BUFFER_SIZE];
     int pom;
@@ -41,7 +46,8 @@ static _Bool startGame() {
 
     sprintf(data, "%d", game.cisloMapy);
 //    communication(MAP_DOWNLOAD, data);
-    initGameSocket(ipAddress, (u_int16_t) port, game);
+//    initGameSocket(ipAddress, (u_int16_t) port, game);
+    initMap(game.cisloMapy, game.pocetHracov);
 }
 
 
@@ -58,11 +64,7 @@ void menu() {
                     if (choice == START_GAME) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d", game.gameId);
-                             wclear(my_window);
-                        mvwprintw(my_window, 8, 10, "Downloading map...");
-                        wrefresh(my_window);
-                        sleep(1);
-                        wclear(my_window);
+
 
                         switch (communication(START, data)) {
                             case OKEJ:
