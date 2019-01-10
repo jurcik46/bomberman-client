@@ -45,6 +45,8 @@ void leaveLobby(char *data);
 
 enum result_code resultFromRequest();
 
+ enum result_code startGameFromClient(char * data);
+
 void downloadMapFromServer(char * data);
 
 char *dataFromRequest();

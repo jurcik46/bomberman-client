@@ -7,6 +7,10 @@
 #include "logging/log.h"
 //#include "communication.h"
 #include "Menu/menu.h"
+#include "logging/log.h"
+#include "communication.h"
+#include "constants.h"
+#include "Hra/gameCommunication.h"
 
 #define LOG_FILE_PATH "logs.log"
 #define ADDRESS "127.0.0.1"

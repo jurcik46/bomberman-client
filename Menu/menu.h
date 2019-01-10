@@ -29,6 +29,7 @@ typedef struct user {
     int id;
     char name[NAME_LENGTH];
     char password[PASSWORD_LENGTH];
+    _Bool amI;
 } User;
 //Struktura pre usera
 
@@ -52,8 +53,11 @@ typedef struct choice {
     _Bool resultFindeGame;
 } CHOICE;
 
+#include "../Hra/gameCommunication.h"
 
 void initNcurses();
+
+static _Bool startGame();
 
 void refreshWindow(WINDOW *window);
 
@@ -78,6 +82,7 @@ void finishChoice(CHOICE *param, pthread_t *thread, Game *lobbyGameArray);
 void *handleUserInput();
 
 void closeMenu();
+
 
 
 #endif
