@@ -2,7 +2,7 @@
 #include "../Menu/menu.h"
 
 
-void zmenavMape(int py,int px, char c){
+void zmenavMape(int py, int px, char c) {
 //    mapa->velkost[(py*2)][(px*4)] = (char)c;
 //    mapa->velkost[(py*2)][(px*4)+1] = (char)c;
 //    mapa->velkost[(py*2)][(px*4)+2] = (char)c;
@@ -21,7 +21,7 @@ void zmenavMape(int py,int px, char c){
  * Funckia na zistenie velkosti mapy
  * @param - nazov suboru, kde je mapa
  */
-void zistiVelkostMapy(char *menoMapy){
+void zistiVelkostMapy(char *menoMapy) {
     FILE *file;
 //    log_debug("Meno mapy pre zistenie %s", menoMapy);
     file = fopen(menoMapy, "r");
@@ -35,15 +35,13 @@ void zistiVelkostMapy(char *menoMapy){
 
     int c;
 
-    hra.mapa.x=0;
-    hra.mapa.y=0;
-    while ((c = fgetc(file)) != EOF)
-    {
+    hra.mapa.x = 0;
+    hra.mapa.y = 0;
+    while ((c = fgetc(file)) != EOF) {
 //        log_debug("C -- %d", c);
         hra.mapa.x++;
 //        log_debug("X - %d", hra.mapa.x);
-        if(c=='\n')
-        {
+        if (c == '\n') {
             hra.mapa.y++;
 //            log_debug("Y - %d", hra.mapa.y);
         }
@@ -57,9 +55,9 @@ void zistiVelkostMapy(char *menoMapy){
  * @param mapa je struktura mapy
  * @param menoMapy nazov subora kde sa nachadza mapa
  */
-void nacitajMapu(char *menoMapy){
+void nacitajMapu(char *menoMapy) {
 
-    FILE * subor;
+    FILE *subor;
     subor = fopen(menoMapy, "r");
     if (NULL == subor) {
         log_debug("Nepodarilo sa otvorit subor.");
@@ -71,38 +69,40 @@ void nacitajMapu(char *menoMapy){
 //   mapa->x=((mapa->x)/(mapa->y+1))*4+1;
 //   mapa->y=(mapa->y+1)*2;
 
-    hra.mapa.x=(hra.mapa.x)/(hra.mapa.y+1)+1;
-    hra.mapa.y=(hra.mapa.y+1);
+    hra.mapa.x = (hra.mapa.x) / (hra.mapa.y + 1) + 1;
+    hra.mapa.y = (hra.mapa.y + 1);
     //printf("%d %d ",mapa->x,mapa->y);
     //log_debug("x:%d y:%d ",mapa->x,mapa->y);
     int px = 0, py = 0;
-    hra.mapa.velkost = createM(hra.mapa.y,hra.mapa.x);
+    hra.mapa.velkost = createM(hra.mapa.y, hra.mapa.x);
     int c;
 
-    while ((c = fgetc(subor)) != EOF)
-    {
-        zmenavMape(py,px,(char)c);
+    while ((c = fgetc(subor)) != EOF) {
+        zmenavMape(py, px, (char) c);
         px++;
-        if(c == '\n'){
+        if (c == '\n') {
             py++;
-            px=0;
+            px = 0;
         }
     }
     //log_debug("x:%d y:%d ",mapa->x,mapa->y);
     fclose(subor);
 }
 
+
+
+
 /**
  * Funkcia na vykreslenie mapy
  * @param mapa
  */
-void  vykresliMapu(){
+void vykresliMapu() {
     char pom[1];
     for (int y = 0; y < hra.mapa.y; y++) {
         for (int x = 0; x < hra.mapa.x; x++) {
             pom[0] = hra.mapa.velkost[y][x];
 
-            switch (pom[0]){
+            switch (pom[0]) {
                 case WALL:
                     wattron(mapWindow, COLOR_PAIR(WALL_PAIR));
                     printElement(y, x, pom[0]);
@@ -170,14 +170,14 @@ void  vykresliMapu(){
  * Funkcia nainicializuje farby + okno pre hru, vytvorí okno a vypiše mapu
  * @param cisloMapy - cislo mapy
  */
-void initMap(int cisloMapy){
+void initMap(int cisloMapy) {
     char menoMapy[20];
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
     int startX = 0, startY = 0;
 
     refresh();
-    if(has_colors() == FALSE) {
+    if (has_colors() == FALSE) {
         log_debug("Konzola/terminal nepodporuje farby!");
         exit(EXIT_FAILURE);
     }
@@ -198,7 +198,7 @@ void initMap(int cisloMapy){
 //    sleep(20);
 }
 
-void initColor(){
+void initColor() {
     init_pair(WALL_PAIR, COLOR_WHITE, COLOR_WHITE);
     init_pair(EMPTY_PAIR, COLOR_BLACK, COLOR_BLACK);
     init_pair(WALL_DESTROY_PAIR, COLOR_YELLOW, COLOR_YELLOW);
@@ -209,28 +209,28 @@ void initColor(){
     init_pair(BOMB_PAIR, COLOR_WHITE, COLOR_RED);
 };
 
-void printElement(int y, int x, char indicator){
+void printElement(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
 
-    mvwprintw(mapWindow,(y * 2), (x * 4), "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2), (x * 4) + 3, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4), "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4) + 3, "%c", pom[0]);
 
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4), "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4), "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
 }
 
-void printPlayer(int y, int x, char indicator){
+void printPlayer(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
 
-    mvwprintw(mapWindow,(y * 2), (x * 4) + 1, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2), (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2), (x * 4) + 2, "%c", pom[0]);
 
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
-    mvwprintw(mapWindow,(y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 1, "%c", pom[0]);
+    mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 2, "%c", pom[0]);
 }

@@ -209,6 +209,8 @@ void pohybHraca(HRAC * hrac);
  * @return
  */
 
+int trafilSomVBombuHracaID(HRAC *hrac);
+
 void *odpocetBomby(void * hra);
 
 void BOOM(BOMBA * bomba,int dole,int hore,int vlavo,int vpravo);
