@@ -4,11 +4,12 @@ WINDOW *my_window;
 int startX, startY;
 int choice;
 bool success;
-Game game;
-Game emptyGame;
+struct game game;
+struct game emptyGame;
 CHOICE param;
 CHOICE paramEmpty;
 User user;
+
 
 /**
  * Funkcia nainicializuje kniznicu ncurses t.j. nastaví obrazovku, pociatocne X a Y hodnoty (rozmery okna) a
@@ -25,6 +26,25 @@ void initNcurses() {
     keypad(my_window, true);
 }
 
+static _Bool startGame() {
+//    raise(SIGINT);
+    char data[BUFFER_SIZE];
+    int pom;
+    char ipAddress[INET_ADDRSTRLEN];
+    int port;
+
+//    if (game.admin)
+    sscanf(dataFromRequest(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
+    log_debug("dataFromRequest    %s", dataFromRequest);
+//    if (!game.admin)
+//        sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
+
+    sprintf(data, "%d", game.cisloMapy);
+//    communication(MAP_DOWNLOAD, data);
+    initGameSocket(ipAddress, (u_int16_t) port, game);
+}
+
+
 void menu() {
     choice = mainMenu(my_window);
     while (choice != EXIT) {
@@ -37,10 +57,17 @@ void menu() {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
                         char data[BUFFER_SIZE];
-                        sprintf(data, "%d", game.cisloMapy);
-                        communication(MAP_DOWNLOAD, data);
-
-                        //TODO HRAAAA
+                        sprintf(data, "%d", game.gameId);
+                        switch (communication(START, data)) {
+                            case OKEJ:
+                                startGame();
+                                break;
+                            case NOT_FOUND:
+                                //TODO hra sa nenasla  na servery a neda sa spustit INFO PRE hraca
+                                break;
+                            default :
+                                break;
+                        }
                     } else if (choice == MAIN_MENU) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d %d %d", game.gameId, user.id, game.admin);
@@ -52,7 +79,7 @@ void menu() {
                 } else {
                     wprintw(my_window, "Nepodarilo sa vytvoriť hru!");
                     wrefresh(my_window);
-                    choice = menuNewGame(my_window);
+                    choice = MENU_NEW_GAME;
                 }
                 break;
             case MENU_FIND_SERVER:
@@ -123,6 +150,7 @@ void loginUser() {
                       "_________________________________________________________________________________________\n");
             mvwprintw(my_window, 7, 5, "Prihlasenie prebehlo USPESNE!\n");
             wrefresh(my_window);
+            user.amI = true;
             sleep(1);
             break;
         case CREATED:
@@ -136,6 +164,7 @@ void loginUser() {
                       "_________________________________________________________________________________________\n");
             mvwprintw(my_window, 7, 5, "Registracia prebehla USPESNE!\n");
             wrefresh(my_window);
+            user.amI = true;
             sleep(1);
 //            log_debug("Acc was created");
             break;
@@ -259,11 +288,13 @@ bool menuNewGame(WINDOW *my_window) {
     log_debug("result %d", result);
     switch (result) {
         case CREATED:
-//            game.users[0] = user;
-//            game.pocetHracov++;
+            game.users[0] = user;
+            game.pocetHracov++;
             game.admin = true;
+            game.users[0].amI = true;
             log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
+//            game.users[game.pocetHracov] = user;
             log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -399,6 +430,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
                        &game.users[game.pocetHracov].id,
                        game.users[game.pocetHracov].name);
+                game.users[count].amI = false;
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
                 i++;
             }
@@ -408,6 +440,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
                        &game.users[count].id,
                        game.users[count].name);
+                game.users[count].amI = false;
 //                log_debug("GET LOBBBY PLAYER EVENT Count player %d   POcet %d", count, game.pocetHracov);
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[count].name);
                 i++;
@@ -437,6 +470,12 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 }
                 sprintf(data, "%d %d", count, game.gameId);
                 communication(GET_LOBBY_PLAYER, data);
+
+            }
+
+            if ((enum communication_type) pomT == START && (enum communication_type) pomR == OKEJ) {
+
+                startGame();
 
             }
         }
@@ -544,8 +583,8 @@ int menuFindServer(WINDOW *my_window) {
     communication(FIND_SERVERS, data);
     int highlight = 0;
 
-    Game *arrayOfGameId = malloc(sizeof(Game));
-    Game *pomPointerArray = arrayOfGameId;
+    struct game *arrayOfGameId = malloc(sizeof(struct game));
+    struct game *pomPointerArray = arrayOfGameId;
     while (1) {
         if (socketReady()) {
             if (resultFromRequest() != DONE) {
@@ -555,7 +594,7 @@ int menuFindServer(WINDOW *my_window) {
                        arrayOfGameId->nazovHry, &arrayOfGameId->cisloMapy,
                        &arrayOfGameId->maxPocetHracov, &pom);
                 count++;
-                pomPointerArray = (Game *) realloc(pomPointerArray, ((count + 1) * sizeof(Game)));
+                pomPointerArray = (struct game *) realloc(pomPointerArray, ((count + 1) * sizeof(struct game)));
                 arrayOfGameId++;
 //                log_debug("%s", dataFromRequest());
                 sprintf(data, "%d", count);
@@ -601,6 +640,8 @@ int menuFindServer(WINDOW *my_window) {
                         sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
+                        game.users[game.pocetHracov] = user;
+                        game.users[game.pocetHracov].amI = true;
                         game.admin = false;
                         game.pocetHracov++;
                         log_debug("");
@@ -650,7 +691,7 @@ int menuFindServer(WINDOW *my_window) {
     }
 }
 
-void finishChoice(CHOICE *param, pthread_t *thread, Game *lobbyGameArray) {
+void finishChoice(CHOICE *param, pthread_t *thread, struct game *lobbyGameArray) {
     pthread_mutex_lock(&param->mutex);
     param->resultFindeGame = true;
     pthread_mutex_unlock(&param->mutex);
