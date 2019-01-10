@@ -27,32 +27,21 @@ void initNcurses() {
 }
 
 static _Bool startGame() {
-
+//    raise(SIGINT);
     char data[BUFFER_SIZE];
     int pom;
     char ipAddress[INET_ADDRSTRLEN];
     int port;
 
-//    if (game.admin) {
-    sprintf(data, "%d", game.gameId);
-    switch (communication(START, data)) {
-        case OKEJ:
-
-            break;
-        case NOT_FOUND:
-            //TODO hra sa nenasla  na servery a neda sa spustit INFO PRE hraca
-            return false;
-        default :
-            return false;
-    }
-//    }
-
-
+//    if (game.admin)
     sscanf(dataFromRequest(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
+    log_debug("dataFromRequest    %s", dataFromRequest);
+//    if (!game.admin)
+//        sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
 
     sprintf(data, "%d", game.cisloMapy);
-    communication(MAP_DOWNLOAD, data);
-    initGameSocket(ipAddress, (u_int16_t) port, &game);
+//    communication(MAP_DOWNLOAD, data);
+    initGameSocket(ipAddress, (u_int16_t) port, game);
 }
 
 
@@ -67,7 +56,18 @@ void menu() {
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
                     if (choice == START_GAME) {
-                        startGame();
+                        char data[BUFFER_SIZE];
+                        sprintf(data, "%d", game.gameId);
+                        switch (communication(START, data)) {
+                            case OKEJ:
+                                startGame();
+                                break;
+                            case NOT_FOUND:
+                                //TODO hra sa nenasla  na servery a neda sa spustit INFO PRE hraca
+                                break;
+                            default :
+                                break;
+                        }
                     } else if (choice == MAIN_MENU) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d %d %d", game.gameId, user.id, game.admin);
@@ -288,11 +288,13 @@ bool menuNewGame(WINDOW *my_window) {
     log_debug("result %d", result);
     switch (result) {
         case CREATED:
-//            game.users[0] = user;
-//            game.pocetHracov++;
+            game.users[0] = user;
+            game.pocetHracov++;
             game.admin = true;
+            game.users[0].amI = true;
             log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
+//            game.users[game.pocetHracov] = user;
             log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -472,6 +474,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             }
 
             if ((enum communication_type) pomT == START && (enum communication_type) pomR == OKEJ) {
+
                 startGame();
 
             }
@@ -637,6 +640,8 @@ int menuFindServer(WINDOW *my_window) {
                         sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
+                        game.users[game.pocetHracov] = user;
+                        game.users[game.pocetHracov].amI = true;
                         game.admin = false;
                         game.pocetHracov++;
                         log_debug("");

@@ -30,7 +30,7 @@ typedef struct gameSocket {
 } GameSocket;
 
 
-void initGameSocket(char *ipAddress, u_int16_t port, Game *g );
+void initGameSocket(char *ipAddress, u_int16_t port, Game g );
 
 void closeSocketGame();
 

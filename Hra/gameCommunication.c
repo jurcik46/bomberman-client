@@ -5,16 +5,16 @@
 #include "gameCommunication.h"
 
 GameSocket gameSocket;
-Game *gameP;
-fd_set socketDs;
-int sd;
-int activity;
+//Game *gameP;
+fd_set socketDsGame;
+int sdGame;
+int activityGame;
 
 struct sockaddr_in serv_addr;
 
-void initGameSocket(char *ipAddress, u_int16_t port, Game *g) {
+void initGameSocket(char *ipAddress, u_int16_t port, Game g) {
     gameSocket.sock = 0;
-    gameP = g;
+    Game gameP = g;
     bzero(&serv_addr, sizeof(serv_addr));
 
     if ((gameSocket.sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -44,21 +44,28 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game *g) {
         exit(EXIT_FAILURE);
     }
 
-    sd = gameSocket.sock;
+    sdGame = gameSocket.sock;
     int myIndex = -1;
-    for (int i = 0; i < gameP->pocetHracov; ++i) {
-        if (gameP->users[i].amI) {
+
+    log_debug("HRAC PRVY    %s  Id  %d   bool %d", gameP.users[0].name, gameP.users[0].id, gameP.users[0].amI);
+    log_debug("HRAC DRUHY    %s  Id  %d   bool %d", gameP.users[1].name, gameP.users[1].id, gameP.users[1].amI);
+
+    for (int i = 0; i < gameP.pocetHracov; ++i) {
+        if (gameP.users[i].amI) {
+            log_debug("som ja podmienka %d", i);
             myIndex = i;
         }
 
     }
+    log_debug("INdex vysledok %d", myIndex);
 
     sprintf(gameSocket.buffer, "%d %d %s %d",
             IN_GAME,
-            gameP->users[myIndex].id,
-            gameP->users[myIndex].name,
-            gameP->admin);
-    log_debug("%s", gameSocket.buffer);
+            gameP.users[myIndex].id,
+            gameP.users[myIndex].name,
+            gameP.admin);
+    log_debug("buffer  pre UDP %s", gameSocket.buffer);
+    sleep(30);
     sendto(gameSocket.sock, gameSocket.buffer, BUFFER_SIZE, 0, (struct sockaddr *) NULL, sizeof(serv_addr));
     log_debug("SLEEEEEEP SKONTROLUJ zbytok");
     sleep(10);
@@ -67,17 +74,17 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game *g) {
 }
 
 _Bool socketReadyGame() {
-    FD_ZERO(&socketDs);
-    FD_SET(sd, &socketDs);
+    FD_ZERO(&socketDsGame);
+    FD_SET(sdGame, &socketDsGame);
     struct timeval tv;
     tv.tv_usec = 1;
 
-    activity = select(sd + 1, &socketDs, NULL, NULL, &tv);
+    activityGame = select(sdGame + 1, &socketDsGame, NULL, NULL, &tv);
 
-    if ((activity < 0) && (errno != EINTR)) {
+    if ((activityGame < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
     }
-    if (sd != 0 && FD_ISSET(sd, &socketDs)) {
+    if (sdGame != 0 && FD_ISSET(sdGame, &socketDsGame)) {
         if (recv(gameSocket.sock, gameSocket.buffer, BUFFER_SIZE, 0) == 0) {
 
             log_fatal("Server disconnected");

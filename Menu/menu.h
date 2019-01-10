@@ -11,6 +11,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <assert.h>
+#include <signal.h>
 
 #include "../logging/log.h"
 #include "../communication.h"
@@ -23,6 +24,9 @@
 #define PASSWORD_LENGTH 50
 #define GAME_NAME_LENGTH 20
 #define RESET_CHOICE -1
+
+
+
 
 typedef struct user {
     int id;

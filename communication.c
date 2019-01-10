@@ -212,7 +212,7 @@ void leaveLobby(char *data) {
 
 }
 
- enum result_code startGameFromClient(char *data) {
+enum result_code startGameFromClient(char *data) {
     log_debug("Data: %s", data);
     sprintf(sock.buffer, "%d %d %s", START, ZERO, data);
     log_debug("Sending to Server for START GAME: %s", sock.buffer);
@@ -237,6 +237,11 @@ enum result_code resultFromRequest() {
 }
 
 char *dataFromRequest() {
+    return sock.buffer;
+}
+
+char *readDataFromSocket() {
+    recv(sock.sock, sock.buffer, BUFFER_SIZE, 0);
     return sock.buffer;
 }
 
