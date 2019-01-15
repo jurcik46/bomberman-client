@@ -62,7 +62,7 @@ void createDirectory() {
             printf("Vytvoril sa subor.\n");
         }
     } else {
-        printf("Nevytvoril sa subor.\n");
+        printf("Subor uz existuje.\n");
     }
 }
 
