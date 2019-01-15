@@ -15,7 +15,8 @@
 #include "Hra/gameCommunication.h"
 
 #define LOG_FILE_PATH "logs.log"
-#define ADDRESS "158.193.102.40"
+//#define ADDRESS "158.193.102.40"
+#define ADDRESS "127.0.0.1"
 #define PORT 8080
 
 
