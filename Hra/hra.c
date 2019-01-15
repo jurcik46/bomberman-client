@@ -1,108 +1,4 @@
-////
-//// Created by sterb on 9. 1. 2019.
-////
-//#include "hra.h"
-//
-///**
-// * Funkcia allokuje pamät pre mapu
-// * @param m - pocet riadkov
-// * @param n - pocet stlpcov
-// * @return - vrati smernik na prvy prvok pola
-// */
-//char** createM(int m, int n) {
-//    char **mat;
-//    mat = malloc(m * sizeof (*mat));
-//    for (int i = 0; i < m; i++) {
-//        mat[i] = calloc(n, sizeof (char));
-//    }
-//    return mat;
-//}
-///**
-// * Uvolnenie pamete pre mapu
-// * @param m
-// * @param mat
-// */
-//void deletM(int m, char ***mat) {
-//    for (int i = 0; i < m; i++) {
-//        free((*mat)[i]);
-//    }
-//    free((*mat));
-//    *mat = NULL;
-//}
-//
-//void pohybHraca(HRAC * hrac) {
-////log_debug("som v pohybHraca");
-//
-//    switch (hrac->smer) {
-//        case 'a':
-//            if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position-1] == ' ') {
-//                if(hra.mapa.velkost[hrac->y_Position][hrac->x_Position]== hrac->znak)
-//                    zmenavMape(hrac->y_Position, hrac->x_Position,  ' ');
-//                hrac->x_Position= (hrac->x_Position-1);
-//
-//                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-//
-//                hrac->smer = 0;
-//            }
-//            break;
-//        case 'w':
-//            hrac->smer = 0;
-//            if (hra.mapa.velkost[hrac->y_Position-1][hrac->x_Position] ==  ' ') {
-//                if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
-//                    zmenavMape(hrac->y_Position, hrac->x_Position,  ' ');
-//                hrac->y_Position--;
-//
-//                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-//            }
-//            break;
-//        case 's':
-//            hrac->smer = 0;
-//            if (hra.mapa.velkost[hrac->y_Position+1][hrac->x_Position] ==  ' ') {
-//                if(hra.mapa.velkost[hrac->y_Position][hrac->x_Position]== hrac->znak)
-//                    zmenavMape(hrac->y_Position, hrac->x_Position,  ' ');
-//                hrac->y_Position++;
-//
-//                zmenavMape( hrac->y_Position, hrac->x_Position, hrac->znak);
-//            }
-//            break;
-//        case 'd':
-//            hrac->smer =0;
-//            if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position+1] == Prazdne) {
-//                if(hra.mapa.velkost[hrac->y_Position][hrac->x_Position]== hrac->znak) {
-//                    zmenavMape( hrac->y_Position, hrac->x_Position, Prazdne);
-//                }
-//                hrac->x_Position++;
-//                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-//                ;
-//            }
-//            break;
-//        case ' ':
-//            //todo zistim ktora bomba je volna
-//            hrac->smer=0;
-//            vytvorBombu(hrac,1);
-//            break;
-//        default:
-//
-//            break;
-//    }
-//}
-//
-///**
-// * Funkcia zistuje ci bolo nieco stlacene
-// * @param input
-// * @return
-// */
-//void *delay(void * hrac) {
-//    do {
-//        hra.hraci[((HRAC*)hrac)->IDhraca].smer = getchar();
-//    } while (1);
-//}
-//
-//
 
-//
-// Created by Phixell on 6. 1. 2019.
-//
 
 #include "hra.h"
 
@@ -189,7 +85,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->pocetZivotov--;
-                //hrac->statistikahracavhre.pocetUmrti++;
+                hrac->statistikahracavhre.pocetUmrti++;
                 hrac->x_Position--;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                 zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
@@ -210,7 +106,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->pocetZivotov--;
-                //hrac->statistikahracavhre.pocetUmrti++;
+                hrac->statistikahracavhre.pocetUmrti--;
                 hrac->y_Position--;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                 zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
@@ -231,7 +127,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->pocetZivotov--;
-                //hrac->statistikahracavhre.pocetUmrti++;
+                hrac->statistikahracavhre.pocetUmrti--;
                 hrac->y_Position++;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                 zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
@@ -251,7 +147,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->pocetZivotov--;
-                //hrac->statistikahracavhre.pocetUmrti++;
+                hrac->statistikahracavhre.pocetUmrti--;
                 hrac->x_Position++;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                 zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
@@ -265,7 +161,7 @@ void pohybHraca(HRAC *hrac) {
 
             int bombanavytvorenie = MAX_POCETBOMB;
             for (int b = 0; b < MAX_POCETBOMB; b++) {
-                //log_debug("Bomba cislo:%d stav:%d", b, hrac->bomba[b].zijeBomba);
+                log_debug("Bomba cislo:%d stav:%d", b, hrac->bomba[b].zijeBomba);
                 if (hrac->bomba[b].zijeBomba == 0) {
 
                     bombanavytvorenie = b;
@@ -273,7 +169,7 @@ void pohybHraca(HRAC *hrac) {
 
             }
             if (bombanavytvorenie >= 0 && bombanavytvorenie < MAX_POCETBOMB) {
-                //log_debug("Vytvaram bombu: %d", bombanavytvorenie);
+                log_debug("Vytvaram bombu: %d", bombanavytvorenie);
                 vytvorBombu(hrac, bombanavytvorenie);
                 hrac->bomba[bombanavytvorenie].zijeBomba = 1;
                 hrac->statistikahracavhre.pocetUlozenychBomb++;
@@ -369,7 +265,7 @@ void vybuchBomby(BOMBA *bomba) {
 }
 
 int trafilaHracaBomba(BOMBA *bomba, HRAC *hrac) {
-    log_debug("som v akehohracatrafila bomba");
+    //log_debug("som v akehohracatrafila bomba");
     if (((bomba->x_Position == hrac->x_Position) && (bomba->y_Position == hrac->y_Position)) ||
         ((bomba->x_Position == hrac->x_Position) &&
          (bomba->y_Position + bomba->bombastrany.hore == hrac->y_Position)) ||
@@ -379,7 +275,7 @@ int trafilaHracaBomba(BOMBA *bomba, HRAC *hrac) {
           bomba->y_Position == hrac->y_Position)) ||
         ((bomba->x_Position + bomba->bombastrany.vpravo == hrac->x_Position) &&
          (bomba->y_Position == hrac->y_Position))) {
-        log_debug("som tu");
+        // log_debug("som tu");
         return 1;
     }
     return 0;
@@ -394,10 +290,10 @@ void BOOM(BOMBA *bomba) {
     zmenavMape(bomba->y_Position + bomba->bombastrany.hore, bomba->x_Position, Vybuch);
     zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vpravo, Vybuch);
     zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vlavo, Vybuch);
-    sleep(1);
+
 
     if (trafilaHracaBomba(bomba, &hra.hraci[0])) {
-        log_debug("bomba trafila hraca1");
+        //log_debug("bomba trafila hraca1");
         hra.hraci[0].pocetZivotov--;
         hra.hraci[0].statistikahracavhre.pocetUmrti--;
         hra.hraci[bomba->idHRACABOMBY].statistikahracavhre.pocetTrafenychHracov++;
@@ -423,7 +319,7 @@ void BOOM(BOMBA *bomba) {
         hra.hraci[bomba->idHRACABOMBY].statistikahracavhre.pocetTrafenychHracov++;
         a4 = 4;
     }
-
+    sleep(1);
     vymazanieBombyZObrazovky(bomba);
 //    zmenavMape(hra.hraci[0].y_Position, hra.hraci[0].x_Position, hra.hraci[0].znak);
     if (a1 == 1) {
@@ -441,11 +337,21 @@ void BOOM(BOMBA *bomba) {
 }
 
 void vymazanieBombyZObrazovky(BOMBA *bomba) {
-    zmenavMape(bomba->y_Position, bomba->x_Position, Prazdne);
-    zmenavMape(bomba->y_Position + bomba->bombastrany.dole, bomba->x_Position, Prazdne);
-    zmenavMape(bomba->y_Position + bomba->bombastrany.hore, bomba->x_Position, Prazdne);
-    zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vpravo, Prazdne);
-    zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vlavo, Prazdne);
+
+    if (hra.mapa.velkost[bomba->y_Position][bomba->x_Position] == Vybuch)
+        zmenavMape(bomba->y_Position, bomba->x_Position, Prazdne);
+
+    if (hra.mapa.velkost[bomba->y_Position + bomba->bombastrany.dole][bomba->x_Position] == Vybuch)
+        zmenavMape(bomba->y_Position + bomba->bombastrany.dole, bomba->x_Position, Prazdne);
+
+    if (hra.mapa.velkost[bomba->y_Position + bomba->bombastrany.hore][bomba->x_Position] == Vybuch)
+        zmenavMape(bomba->y_Position + bomba->bombastrany.hore, bomba->x_Position, Prazdne);
+
+    if (hra.mapa.velkost[bomba->y_Position][bomba->x_Position + bomba->bombastrany.vpravo] == Vybuch)
+        zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vpravo, Prazdne);
+
+    if (hra.mapa.velkost[bomba->y_Position][bomba->x_Position + bomba->bombastrany.vlavo] == Vybuch)
+        zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vlavo, Prazdne);
 
 }
 
@@ -565,16 +471,20 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     pthread_create(&vlakno2, 0, &delay, &hra.hraci[mojeID]);
 
     while (1) {
-        for (int a = 0; a < pocetHracov; a++) {
+//         for (int a = 0; a < pocetHracov; a++) {
 //            log_debug("Hrac_ID: %d Ulozena bomba:%dx Umrtia:%dx Trafenie_Hraca: %dx",
 //                      hra.hraci[a].statistikahracavhre.idHraca,
 //                      hra.hraci[a].statistikahracavhre.pocetUlozenychBomb, hra.hraci[a].statistikahracavhre.pocetUmrti,
 //                      hra.hraci[a].statistikahracavhre.pocetTrafenychHracov);
-        }
-        //sleep(1);
-        pohybHraca(&hra.hraci[mojeID]);
+//         }
+//        sleep(1);
+
         vykresliMapu();
+        pohybHraca(&hra.hraci[mojeID]);
+        //vykresliMapu();
+
         printPlayersToScoreWindow();
+
     }
 }
 
