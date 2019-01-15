@@ -47,7 +47,9 @@ static _Bool startGame() {
     sprintf(data, "%d", game.cisloMapy);
     communication(MAP_DOWNLOAD, data);
 //    initGameSocket(ipAddress, (u_int16_t) port, game);
+    log_debug("%d %d", game.cisloMapy, game.pocetHracov);
     initMap(game.cisloMapy, game.pocetHracov);
+    return true;
 }
 
 
@@ -64,8 +66,6 @@ void menu() {
                     if (choice == START_GAME) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d", game.gameId);
-
-
                         switch (communication(START, data)) {
                             case OKEJ:
                                 startGame();
