@@ -486,8 +486,14 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     int startX = 0, startY = 0;
     //vytvorim okno pre mapu
     refresh();
+    log_debug(" %d  %d  %d", hra.mapa.y, hra.mapa.x, startY);
+
     mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
+    log_debug("sdadas ");
+
     keypad(mapWindow, true);
+    log_debug(" 121223");
+
     //vytvorim okno pre score
     refresh();
     scoreWindow = newwin(SCORE_WIN_Y, SCORE_WIN_X, startY, hra.mapa.x * 4);
@@ -511,7 +517,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
             hra.hraci[a].statistikahracavhre.pocetUmrti = 3;
 
 //            log_debug("hrac cislo: %d ma ID:%d",a,hra.hraci[a].IDhraca);
-            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, hra.hraci[a].znak);
+            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, (char) hra.hraci[a].znak);
         }
         if (a == 1) {
             hra.hraci[a].x_Position = hra.mapa.x - 3;
@@ -526,7 +532,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
             hra.hraci[a].statistikahracavhre.pocetUlozenychBomb = 0;
             hra.hraci[a].statistikahracavhre.pocetUmrti = 3;
 //            log_debug("hrac cislo: %d ma ID:%d",a,hra.hraci[a].IDhraca);
-            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, hra.hraci[a].znak);
+            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, (char) hra.hraci[a].znak);
         }
         if (a == 2) {
             hra.hraci[a].x_Position = 1;
@@ -542,7 +548,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
             hra.hraci[a].statistikahracavhre.pocetUmrti = 3;
 
 //            log_debug("hrac cislo: %d ma ID:%d",a,hra.hraci[a].IDhraca);
-            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, hra.hraci[a].znak);
+            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, (char) hra.hraci[a].znak);
         }
         if (a == 3) {
             hra.hraci[a].x_Position = (hra.mapa.x - 3);
@@ -558,10 +564,12 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
             hra.hraci[a].statistikahracavhre.pocetUmrti = 3;
 
 //            log_debug("hrac cislo: %d ma ID:%d",a,hra.hraci[a].IDhraca);
-            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, hra.hraci[a].znak);
+            zmenavMape(hra.hraci[a].y_Position, hra.hraci[a].x_Position, (char) hra.hraci[a].znak);
         }
 //        vykresliMapu();
     }
+    log_debug("SPUSTAM HRU");
+
 //    log_debug("HRAC 1 -- %c", hra.hraci[0].znak);
 //    log_debug("HRAC 2 -- %c", hra.hraci[1].znak);
 

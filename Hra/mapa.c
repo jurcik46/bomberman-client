@@ -161,6 +161,8 @@ void vykresliMapu() {
                 default:
                     break;
             }
+            wrefresh(mapWindow);
+
         }
     }
     wrefresh(mapWindow);
@@ -175,7 +177,6 @@ void initMap(int cisloMapy, int pocetHracou) {
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
 //    int startX = 0, startY = 0;
-
     refresh();
     if (has_colors() == FALSE) {
         log_debug("Konzola/terminal nepodporuje farby!");
@@ -183,6 +184,7 @@ void initMap(int cisloMapy, int pocetHracou) {
     }
     start_color();
     initColor();
+
 //    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
 //    keypad(mapWindow, true);
 
