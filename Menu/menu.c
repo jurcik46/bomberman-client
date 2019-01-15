@@ -40,12 +40,12 @@ static _Bool startGame() {
 
 //    if (game.admin)
     sscanf(dataFromRequest(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
-    log_debug("dataFromRequest    %s", dataFromRequest);
+//    log_debug("dataFromRequest    %s", dataFromRequest);
 //    if (!game.admin)
 //        sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
 
     sprintf(data, "%d", game.cisloMapy);
-//    communication(MAP_DOWNLOAD, data);
+    communication(MAP_DOWNLOAD, data);
 //    initGameSocket(ipAddress, (u_int16_t) port, game);
     initMap(game.cisloMapy, game.pocetHracov);
 }
