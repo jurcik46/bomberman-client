@@ -47,7 +47,6 @@ static _Bool startGame() {
     sprintf(data, "%d", game.cisloMapy);
     communication(MAP_DOWNLOAD, data);
 //    initGameSocket(ipAddress, (u_int16_t) port, game);
-    log_debug("%d %d", game.cisloMapy, game.pocetHracov);
     initMap(game.cisloMapy, game.pocetHracov);
     return true;
 }
@@ -101,6 +100,7 @@ void menu() {
                     choice = mainMenu(my_window);
                 break;
             case MENU_LEADER_BOARD:
+
                 menuLeaderBoard(my_window);
                 break;
             case MENU_EXIT:
@@ -225,6 +225,7 @@ bool menuNewGame(WINDOW *my_window) {
     wrefresh(my_window);
 
     //Osetrenie prazdneho vstupu nazvu hry
+    strcpy(game.nazovHry, "");
     while (strlen(game.nazovHry) == 0) {
         mvwprintw(my_window, 6, 1, "Zadaj nazov hry:                     ");
         wrefresh(my_window);
@@ -306,10 +307,8 @@ bool menuNewGame(WINDOW *my_window) {
             game.pocetHracov++;
             game.admin = true;
             game.users[0].amI = true;
-            log_debug("%s", dataFromRequest());
             sscanf(dataFromRequest(), "%d %d %d", &game.gameId, &game.gameId, &game.gameId);
 //            game.users[game.pocetHracov] = user;
-            log_debug("Game was created");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
@@ -320,7 +319,6 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return true;
         case SERVICE_UNAVAILABLE:
-            log_debug("Server Full");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
@@ -331,7 +329,6 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return false;
         case NOT_FOUND:
-            log_debug("MAP NOT FOUND");
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "CREATING NEW GAME\n");
@@ -342,7 +339,7 @@ bool menuNewGame(WINDOW *my_window) {
             sleep(1);
             return false;
         default:;
-            log_debug("DEFAULT  ");
+            log_debug("DEFAULT");
             return false;
     }
 }
@@ -359,11 +356,11 @@ void *handleUserInput() {
     _Bool result = param.resultLobby;
     WINDOW *window = param.lobby_Win;
     pthread_mutex_unlock(&param.mutex);
+
     while (!result) {
         noecho();
 
         moznost = wgetch(window);
-//        log_debug("CYKLUS menuLobby");
 
         pthread_mutex_lock(&param.mutex);
         result = param.resultLobby;
@@ -386,10 +383,7 @@ void *handleUserInput() {
 int menuLobby(WINDOW *my_window, int startY, int startX) {
     //TODO osetrit vlakna pre vstupy
     //TODO osetrit vypis pri lobby menu
-    //TODO osetrit pre hraca ak server odpovie ze mapa neexistuje
-    //TODO doplnit do lobby informacie o hre a hracoch (nazov lobby, pocet hracov, kto je admin)
     wclear(my_window);
-
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
     mvwprintw(my_window, 3, 10, "LOBBY --> Name: %s   Id: %d   Players: %d\n", game.nazovHry, game.gameId,
               game.pocetHracov);
@@ -400,7 +394,6 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
     const char *choices[2];
     choices[0] = "Start Game";
     choices[1] = "Leave Game";
-//TODO  START GAME LEN PRE ADMINA - malo by byt hotove ale treba otestovat
     int highlight = 0;
 
     param.mutex = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
@@ -666,7 +659,6 @@ int menuFindServer(WINDOW *my_window) {
                         finishChoice(&param, &userInputThread, pomPointerArray);
                         return JOIN;
                     case SERVICE_UNAVAILABLE:
-                        //TODO full lobby
                         wclear(my_window);
                         mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
                         mvwprintw(my_window, 3, 10, "FINDING GAME\n\t(Press ESC for Exit or double Enter for CHOICE)");
@@ -678,7 +670,6 @@ int menuFindServer(WINDOW *my_window) {
                         sleep(1);
                         return ESC;
                     case NOT_FOUND:
-                        //TODO not FOund
                         wclear(my_window);
                         mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
                         mvwprintw(my_window, 3, 10, "FINDING GAME\n\t(Press ESC for Exit or double Enter for CHOICE)");
@@ -695,10 +686,6 @@ int menuFindServer(WINDOW *my_window) {
                 break;
             case ESC:
                 finishChoice(&param, &userInputThread, pomPointerArray);
-//                sleep(1);
-//                pthread_mutex_lock(&param.mutex);
-//                param.result = true;
-//                pthread_mutex_unlock(&param.mutex);
                 return ESC;
             default:
                 break;

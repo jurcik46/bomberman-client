@@ -27,8 +27,6 @@
 #define RESET_CHOICE -1
 
 
-
-
 typedef struct user {
     int id;
     char name[NAME_LENGTH];
@@ -86,7 +84,5 @@ void finishChoice(CHOICE *param, pthread_t *thread, Game *lobbyGameArray);
 void *handleUserInput();
 
 void closeMenu();
-
-
 
 #endif
