@@ -463,6 +463,7 @@ void printPlayersToScoreWindow() {
 }
 
 void initGame(int pocetHracov, char *cesta, int mojeID) {
+    log_debug("INIT_GAME");
     //Inicializacia okna
 
     //Nastavim pocetHracov;

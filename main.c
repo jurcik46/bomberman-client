@@ -18,6 +18,7 @@
 
 #define LOG_FILE_PATH "logs.log"
 #define ADDRESS "127.0.0.1"
+#define ADDRESS_JANO "158.193.102.40"
 #define PORT 8080
 
 #define FINDING_DIR "../Mapy"
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
     createDirectory();
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);
-    initSocket(ADDRESS, PORT);
+    initSocket(ADDRESS_JANO, PORT);
 
     initNcurses();
 
