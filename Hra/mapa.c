@@ -106,6 +106,7 @@ void vykresliMapu() {
                     printElement(y, x, pom[0]);
                     wattroff(mapWindow, COLOR_PAIR(WALL_PAIR));
                     break;
+
                 case EMPTY:
                     wattron(mapWindow, COLOR_PAIR(EMPTY_PAIR));
                     printElement(y, x, pom[0]);
@@ -159,9 +160,13 @@ void vykresliMapu() {
                 default:
                     break;
             }
+            wrefresh(mapWindow);
         }
+
+
     }
-    wrefresh(mapWindow);
+
+
 }
 
 /**
@@ -217,6 +222,7 @@ void printPlayer(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
 
+    
     mvwprintw(mapWindow, (y * 2), (x * 4) + 1, "%c", pom[0]);
     mvwprintw(mapWindow, (y * 2), (x * 4) + 2, "%c", pom[0]);
 
