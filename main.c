@@ -17,7 +17,6 @@
 #include "Hra/gameCommunication.h"
 
 #define LOG_FILE_PATH "logs.log"
-//#define ADDRESS "158.193.102.40"
 #define ADDRESS "127.0.0.1"
 #define ADDRESS_JANO "158.193.102.40"
 #define PORT 8080
@@ -84,6 +83,6 @@ int main(int argc, char *argv[]) {
 
     //start_color();
     // initColor();
-    // initGame(4, "../Mapy/2.txt", 1);
+    //initGame(4, "../Mapy/2.txt", 1);
     closingApp(logFile);
 }

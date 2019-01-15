@@ -390,17 +390,22 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     log_debug("NACITAVAM MAPU");
 
     int startX = 0, startY = 0;
+    log_debug("Krok1");
     //vytvorim okno pre mapu
     refresh();
+    log_debug("Krok2");
     mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
+    log_debug("Krok3");
     keypad(mapWindow, true);
+
+    log_debug("Krok4");
     //vytvorim okno pre score
     refresh();
     scoreWindow = newwin(SCORE_WIN_Y, SCORE_WIN_X, startY, hra.mapa.x * 4);
-
+    log_debug("Krok5");
     //TODO nacitaj  nove okno so statistikou
 
-    log_debug("Krok1");
+
     //funkcia na nastavenie pozici hracov
     for (int a = 0; a < pocetHracov; a++) {
         if (a == 0) {
