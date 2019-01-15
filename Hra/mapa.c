@@ -161,8 +161,6 @@ void vykresliMapu() {
                 default:
                     break;
             }
-            wrefresh(mapWindow);
-
         }
     }
     wrefresh(mapWindow);
@@ -176,7 +174,6 @@ void initMap(int cisloMapy, int pocetHracou) {
     char menoMapy[20];
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
-//    int startX = 0, startY = 0;
     refresh();
     if (has_colors() == FALSE) {
         log_debug("Konzola/terminal nepodporuje farby!");
@@ -185,12 +182,12 @@ void initMap(int cisloMapy, int pocetHracou) {
     start_color();
     initColor();
 
-//    mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
-//    keypad(mapWindow, true);
-
     initGame(pocetHracou, menoMapy, 0);
 }
 
+/**
+ * Funkcia vytvori farebne pary pre pismo a jeho pozadie
+ */
 void initColor() {
     init_pair(WALL_PAIR, COLOR_WHITE, COLOR_WHITE);
     init_pair(EMPTY_PAIR, COLOR_BLACK, COLOR_BLACK);
@@ -202,6 +199,12 @@ void initColor() {
     init_pair(BOMB_PAIR, COLOR_WHITE, COLOR_RED);
 };
 
+/**
+ * Funkcia vykresli znak do mapy (nacita sa jeden znak zo suboru a vykresli sa ako 4x4)
+ * @param y
+ * @param x
+ * @param indicator
+ */
 void printElement(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
@@ -217,6 +220,9 @@ void printElement(int y, int x, char indicator) {
     mvwprintw(mapWindow, (y * 2) + 1, (x * 4) + 3, "%c", pom[0]);
 }
 
+/**
+ * FUnkcia vykresli hraca do mapy
+ */
 void printPlayer(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
