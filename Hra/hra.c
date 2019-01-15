@@ -9,6 +9,7 @@ char **createM(int m, int n) {
     for (int i = 0; i < m; i++) {
         mat[i] = calloc(n, sizeof(char));
     }
+    log_debug("Alokoval som pamat");
     return mat;
 }
 
@@ -369,6 +370,7 @@ void printPlayersToScoreWindow() {
 }
 
 void initGame(int pocetHracov, char *cesta, int mojeID) {
+    log_debug("INIT_GAME");
     //Inicializacia okna
 
     //Nastavim pocetHracov;
@@ -383,7 +385,9 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
     //zistim velkost mapy a nacitaj ju do pola
     zistiVelkostMapy(cesta);
+    log_debug("ZISTOVANIE VELKOSIT MAPY");
     nacitajMapu(cesta);
+    log_debug("NACITAVAM MAPU");
 
     int startX = 0, startY = 0;
     //vytvorim okno pre mapu
@@ -396,7 +400,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
     //TODO nacitaj  nove okno so statistikou
 
-    // log_debug("Krok1");
+    log_debug("Krok1");
     //funkcia na nastavenie pozici hracov
     for (int a = 0; a < pocetHracov; a++) {
         if (a == 0) {
@@ -469,6 +473,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
     pthread_t vlakno2;
     pthread_create(&vlakno2, 0, &delay, &hra.hraci[mojeID]);
+    log_debug("SPUSTAM HRU");
 
     while (1) {
 //         for (int a = 0; a < pocetHracov; a++) {

@@ -3,6 +3,8 @@
 #include "logging/log.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "logging/log.h"
 //#include "communication.h"
@@ -17,8 +19,11 @@
 #define LOG_FILE_PATH "logs.log"
 //#define ADDRESS "158.193.102.40"
 #define ADDRESS "127.0.0.1"
+#define ADDRESS_JANO "158.193.102.40"
 #define PORT 8080
 
+#define FINDING_DIR "../Mapy"
+#define CREATE_Mapy_dir "../Mapy"
 
 /**
  * Funkcia pomocou ktorej sa inicializuju logy (debug)
@@ -48,13 +53,26 @@ void closingApp(FILE *logFile) {
     fclose(logFile);
 };
 
-//
+void createDirectory() {
+    struct stat st = {0};
+    int resultStatus = stat(FINDING_DIR, &st);
+    printf("Result %d\n", resultStatus);
+
+    if (resultStatus == -1) {
+        if (mkdir(CREATE_Mapy_dir, 0644) == 0) {
+            printf("Vytvoril sa subor.\n");
+        }
+    } else {
+        printf("Nevytvoril sa subor.\n");
+    }
+}
 
 
 int main(int argc, char *argv[]) {
+    createDirectory();
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);
-    initSocket(ADDRESS, PORT);
+    initSocket(ADDRESS_JANO, PORT);
 
     initNcurses();
 
