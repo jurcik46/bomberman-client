@@ -597,7 +597,7 @@ int menuFindServer(WINDOW *my_window) {
 
     wclear(my_window);
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
-    mvwprintw(my_window, 3, 10, "FINDING GAME\n");
+    mvwprintw(my_window, 3, 10, "FINDING GAME\t(Press ESC for Exit or double Enter for CHOICE)");
     mvwprintw(my_window, 4, 1,
               "_________________________________________________________________________________________\n");
     wrefresh(my_window);
@@ -675,7 +675,7 @@ int menuFindServer(WINDOW *my_window) {
                         //TODO full lobby
                         wclear(my_window);
                         mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
-                        mvwprintw(my_window, 3, 10, "FINDING GAME\n");
+                        mvwprintw(my_window, 3, 10, "FINDING GAME\n\t(Press ESC for Exit or double Enter for CHOICE)");
                         mvwprintw(my_window, 4, 1,
                                   "_________________________________________________________________________________________\n");
                         mvwprintw(my_window, 7, 5, "Lobby je PLNE! Neda sa prihlasit do Hry. \n");
@@ -687,7 +687,7 @@ int menuFindServer(WINDOW *my_window) {
                         //TODO not FOund
                         wclear(my_window);
                         mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
-                        mvwprintw(my_window, 3, 10, "FINDING GAME\n");
+                        mvwprintw(my_window, 3, 10, "FINDING GAME\n\t(Press ESC for Exit or double Enter for CHOICE)");
                         mvwprintw(my_window, 4, 1,
                                   "_________________________________________________________________________________________\n");
                         mvwprintw(my_window, 7, 5, "Nie su dostupne ziadne hry! \n");
@@ -719,7 +719,7 @@ void finishChoice(CHOICE *param, pthread_t *thread, struct game *lobbyGameArray)
     pthread_mutex_lock(&param->mutex);
     param->resultFindeGame = true;
     pthread_mutex_unlock(&param->mutex);
-//    pthread_join(*thread, NULL);
+    pthread_join(*thread, NULL);
     pthread_mutex_destroy(&param->mutex);
     free(lobbyGameArray);
 }
@@ -738,7 +738,6 @@ void menuLeaderBoard(WINDOW *my_window) {
     wrefresh(my_window);
     //TODO Treba vytvoriť funkciu pre vypis statistiky z databazy
     //TODO dorobiť nove okno s moznostami vyberu zoradenia statistiky
-    wrefresh(my_window);
 }
 
 /**
