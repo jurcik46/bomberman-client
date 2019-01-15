@@ -163,8 +163,6 @@ void loginUser() {
             break;
         case CREATED:
             sscanf(dataFromRequest(), "%d %d %d", &pom, &pom, &user.id);
-//            mvwprintw(my_window, 10, 1, "Registracia prebehla USPESNE!\n");
-//            sleep(1);
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "LOGIN\n");
@@ -174,12 +172,8 @@ void loginUser() {
             wrefresh(my_window);
             user.amI = true;
             sleep(1);
-//            log_debug("Acc was created");
             break;
         case UNAUTHORIZED:
-//            log_debug("Login failed");
-//            mvwprintw(my_window, 10, 1, "Prihlasenie bolo NEUSPESNE!\n");
-//            sleep(1);
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "LOGIN\n");
@@ -191,9 +185,6 @@ void loginUser() {
             loginUser();
             break;
         case INTERNAL_SERVER_ERROR:
-//            log_debug("Server Error");
-//            mvwprintw(my_window, 10, 1, "Problem pri komunikacii so serverom.\n");
-//            sleep(1);
             wclear(my_window);
             mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
             mvwprintw(my_window, 3, 10, "LOGIN\n");
