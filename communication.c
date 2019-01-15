@@ -169,13 +169,21 @@ void downloadMapFromServer(char *data) {
     do {
         if (socketReady()) {
             int pomT, pomR;
-            log_debug("Buffer --- %s", sock.buffer);
+            log_debug("From server Buffer --- %s", sock.buffer);
             sscanf(sock.buffer, "%d %d", &pomT, &pomR);
             if (((enum communication_type) pomT == MAP_DOWNLOAD) && ((enum communication_type) pomR == DONE)) {
+                log_debug("Accepting data for map from Server %s", sock.buffer);
+                sprintf(sock.buffer, "%d %d", MAP_DOWNLOAD, DONE);
+                log_debug("Sending accept finish data for map to Server %s", sock.buffer);
+                send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
                 break;
             }
 
             fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
+            sprintf(sock.buffer, "%d %d", MAP_DOWNLOAD, OKEJ);
+            log_debug("Sending accept data for map to Server %s", sock.buffer);
+            send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
+
         }
     } while (1);
     fclose(fp);
