@@ -384,6 +384,9 @@ void *handleUserInput() {
  * @return - vracia volbu od uzivatela ci si praje spustit hru alebo hru opustit
  */
 int menuLobby(WINDOW *my_window, int startY, int startX) {
+    //TODO osetrit vlakna pre vstupy
+    //TODO osetrit vypis pri lobby menu
+    //TODO osetrit pre hraca ak server odpovie ze mapa neexistuje
     //TODO doplnit do lobby informacie o hre a hracoch (nazov lobby, pocet hracov, kto je admin)
     wclear(my_window);
 
