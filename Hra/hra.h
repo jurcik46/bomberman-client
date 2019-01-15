@@ -85,6 +85,7 @@ typedef struct hrac{
     int pocetZivotov;
     int IDhraca;
     int cislo_bomby;
+    int frezze;
     STATISTIKAHRACAVHRE statistikahracavhre;
     pthread_mutex_t  *mutex;
 }HRAC;

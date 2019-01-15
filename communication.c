@@ -15,6 +15,7 @@ struct sockaddr_in address;
 struct sockaddr_in serv_addr;
 
 Socket sock;
+ssize_t recevDataCount;
 
 void initSocket(char *ipAddress, u_int16_t port) {
     sock.sock = 0;
@@ -60,7 +61,7 @@ _Bool socketReady() {
         log_error("Select Socket Activity error");
     }
     if (sd != 0 && FD_ISSET(sd, &socketDs)) {
-        if (recv(sock.sock, sock.buffer, BUFFER_SIZE, 0) == 0) {
+        if ((recevDataCount = recv(sock.sock, sock.buffer, BUFFER_SIZE, 0)) == 0) {
 
             log_fatal("Server disconnected");
             //Close the socket and mark as 0 in list for reuse
@@ -144,9 +145,9 @@ enum result_code createGameToServer(char *data) {
 
 
 void findGameFromServer(char *data) {
-//    log_debug("Data: %s", data);
+    log_debug("Data: %s", data);
     sprintf(sock.buffer, "%d %d %s", FIND_SERVERS, ZERO, data);
-//    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
+    log_debug("Sending to Server for FIND GAMES: %s", sock.buffer);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
     memset(sock.buffer, '\0', sizeof(sock.buffer));
 }
@@ -168,7 +169,6 @@ void downloadMapFromServer(char *data) {
     }
     do {
         if (socketReady()) {
-            int pomT, pomR;
             log_debug("From server Buffer --- %s", sock.buffer);
             sscanf(sock.buffer, "%d %d", &pomT, &pomR);
             if (((enum communication_type) pomT == MAP_DOWNLOAD) && ((enum communication_type) pomR == DONE)) {
@@ -179,7 +179,7 @@ void downloadMapFromServer(char *data) {
                 break;
             }
 
-            fwrite(sock.buffer, 1, BUFFER_SIZE, fp);
+            fwrite(sock.buffer, 1, (size_t) recevDataCount, fp);
             sprintf(sock.buffer, "%d %d", MAP_DOWNLOAD, OKEJ);
             log_debug("Sending accept data for map to Server %s", sock.buffer);
             send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
