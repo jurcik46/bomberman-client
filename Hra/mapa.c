@@ -75,6 +75,7 @@ void nacitajMapu(char *menoMapy) {
     //log_debug("x:%d y:%d ",mapa->x,mapa->y);
     int px = 0, py = 0;
     hra.mapa.velkost = createM(hra.mapa.y, hra.mapa.x);
+    log_debug("vytvoril som pamat");
     int c;
 
     while ((c = fgetc(subor)) != EOF) {
@@ -85,8 +86,9 @@ void nacitajMapu(char *menoMapy) {
             px = 0;
         }
     }
+//    log_debug("zatvaram subor %d", fclose(subor));
     //log_debug("x:%d y:%d ",mapa->x,mapa->y);
-    fclose(subor);
+//    fclose(subor);
 }
 
 
