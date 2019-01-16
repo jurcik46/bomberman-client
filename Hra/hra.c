@@ -606,10 +606,12 @@ void *gameCom(void *a) {
         if (socketReadyGame() == true) {
             int pomS, pomT, pomId;
             char pomAction;
-            sscanf(dataFromRequest(), "%d %d %d %c", &pomS, &pomT, &pomId, &pomAction);
+            sscanf(dataFromBuffer(), "%d %d %d %c", &pomS, &pomT, &pomId, &pomAction);
+            log_debug("pomS: %d, pomT: %d, pomID: %d, action: %c", pomS, pomT, pomId, pomAction);
+
             hra.hraci[pomId].smer = pomAction;
             pohybHraca(&hra.hraci[pomId]);
-            log_debug("HRAC: %d , Smer: %c ", hra.hraci[pomId], hra.hraci[pomId].smer);
+            log_debug("HRAC: %d , Smer: %c ", hra.hraci[pomId].IDhraca, hra.hraci[pomId].smer);
 
 
             if (pomId == 100)
