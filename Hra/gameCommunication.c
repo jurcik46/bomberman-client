@@ -98,8 +98,9 @@ enum gameEnum gameCommunication(enum gameEnum commuType, char *data) {
                 -1) {
                 log_debug("Error %s %d ", strerror(errno), errno);
             }
-            memset(gameSocket.buffer, '\0', sizeof(gameSocket.buffer));
             log_debug("Sending To Server %s", gameSocket.buffer);
+            memset(gameSocket.buffer, '\0', sizeof(gameSocket.buffer));
+            log_debug("DELETE Sending To Server %s", gameSocket.buffer);
             break;
         default:
             log_debug("DEFAULT");

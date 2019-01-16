@@ -80,9 +80,11 @@ void pohybHraca(HRAC *hrac) {
                             zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                         hrac->x_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                        if (currentID != hrac->IDhraca) {
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
+                        }
 
-                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -95,8 +97,10 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                            gameCommunication(SEND, data);
+                            if (currentID != hrac->IDhraca) {
+                                sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                                gameCommunication(SEND, data);
+                            }
                         }
                     }
                     break;
@@ -107,8 +111,10 @@ void pohybHraca(HRAC *hrac) {
                             zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                         hrac->y_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                        gameCommunication(SEND, data);
+                        if (currentID != hrac->IDhraca) {
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
+                        }
                         hrac->smer = 0;
 
                     }
@@ -122,8 +128,10 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                            gameCommunication(SEND, data);
+                            if (currentID != hrac->IDhraca) {
+                                sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                                gameCommunication(SEND, data);
+                            }
                         }
                     }
                     break;
@@ -135,10 +143,10 @@ void pohybHraca(HRAC *hrac) {
                         hrac->y_Position++;
 
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                        gameCommunication(SEND, data);
-                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                        gameCommunication(SEND, data);
+                        if (currentID != hrac->IDhraca) {
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
+                        }
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -151,8 +159,10 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                            gameCommunication(SEND, data);
+                            if (currentID != hrac->IDhraca) {
+                                sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                                gameCommunication(SEND, data);
+                            }
                         }
                     }
                     break;
@@ -164,8 +174,10 @@ void pohybHraca(HRAC *hrac) {
                         }
                         hrac->x_Position++;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                        gameCommunication(SEND, data);
+                        if (currentID != hrac->IDhraca) {
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
+                        }
                         hrac->smer = 0;
 
                     }
@@ -179,8 +191,10 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
-                            gameCommunication(SEND, data);
+                            if (currentID != hrac->IDhraca) {
+                                sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                                gameCommunication(SEND, data);
+                            }
 
                         }
                     }
@@ -460,7 +474,7 @@ void acceptFromServer() {
 
 void initGame(int pocetHracov, char *cesta, int mojeID) {
     //Inicializacia okna
-
+    currentID = mojeID;
     //Nastavim pocetHracov;
     hra.pocetHracov = pocetHracov;
 
@@ -576,7 +590,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
         mrtvyHrac(pocetHracov);
         vykresliMapu();
-        pohybHraca(&hra.hraci[mojeID]);
+        pohybHraca(&hra.hraci[currentID]);
         //vykresliMapu();
 
         printPlayersToScoreWindow();

@@ -100,7 +100,7 @@ typedef struct hra{
 
 HRA hra;
 
-
+int currentID;
 
 char** createM(int m, int n);
 
