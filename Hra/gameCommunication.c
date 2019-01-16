@@ -55,19 +55,35 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g, int myIndex) {
 ////    }
     log_debug("Index vysledok %d", myIndex);
 
-    sprintf(gameSocket.buffer, "%d %d %s %d %d",
+    sprintf(gameSocket.buffer,
+            "%d %d %s %d %d  asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddasdasdadasda"
+            "asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            "asddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+            "asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
             IN_GAME,
             gameP.users[myIndex].id,
             gameP.users[myIndex].name,
             gameP.admin, myIndex);
     log_debug("buffer  pre UDP %s", gameSocket.buffer);
-    for (int i = 0; i < 10; ++i) {
+//    usleep(4000);
+//    sleep(4);
+    while (!socketReadyGame()) {
         if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
                    sizeof(serv_addr)) ==
             -1) {
             log_debug("Error %s %d ", strerror(errno), errno);
         }
+        log_debug("seding  %s", gameSocket.buffer);
+
     }
+//    for (int i = 0; i < 30; ++i) {
+//
+//        if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
+//                   sizeof(serv_addr)) ==
+//            -1) {
+//            log_debug("Error %s %d ", strerror(errno), errno);
+//        }
+//    }
 
 //    recvfrom(gameSocket.sock, gameSocket.buffer, sizeof(gameSocket.buffer), 0, (struct sockaddr *) NULL, NULL);
 }
@@ -97,14 +113,14 @@ _Bool socketReadyGame() {
     FD_SET(sdGame, &socketDsGame);
     struct timeval tv;
     tv.tv_usec = 1;
-
+    log_debug("check GAMe Socket");
     activityGame = select(sdGame + 1, &socketDsGame, NULL, NULL, &tv);
 
     if ((activityGame < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
     }
     if (sdGame != 0 && FD_ISSET(sdGame, &socketDsGame)) {
-        if (recv(gameSocket.sock, gameSocket.buffer, BUFFER_SIZE, 0) == 0) {
+        if (recv(gameSocket.sock, gameSocket.buffer, BUFF_SIZE, 0) == 0) {
 
             log_fatal("Server disconnected");
             //Close the socket and mark as 0 in list for reuse
@@ -112,7 +128,8 @@ _Bool socketReadyGame() {
             sleep(10);
             exit(EXIT_FAILURE);
         } else {
-//            log_debug("data %s", sock.buffer);
+            log_debug("sdsadad");
+            //            log_debug("data %s", sock.buffer);
             return true;
         }
     }
