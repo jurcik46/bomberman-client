@@ -18,8 +18,8 @@
 
 #define LOG_FILE_PATH "logs.log"
 #define ADDRESS "127.0.0.1"
-#define ADDRESS_JANO "158.193.102.40"
-#define PORT 8080
+#define ADDRESS_JANO "172.20.50.12"
+#define PORT 9999
 
 #define FINDING_DIR "../Mapy"
 #define CREATE_Mapy_dir "../Mapy"
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     menu();
 
-
+//    initMap(2, 2, 0);
 
     //start_color();
     // initColor();
