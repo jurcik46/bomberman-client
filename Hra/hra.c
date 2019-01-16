@@ -433,6 +433,18 @@ void mrtvyHrac(int pocetHracov) {
     }
 }
 
+
+void sendToServer() {
+
+
+}
+
+void acceptFromServer()
+{
+
+
+}
+
 void initGame(int pocetHracov, char *cesta, int mojeID) {
     log_debug("INIT_GAME");
     //Inicializacia okna

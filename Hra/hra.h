@@ -99,6 +99,8 @@ typedef struct hra{
 
 HRA hra;
 
+
+
 char** createM(int m, int n);
 
 void printPlayersToScoreWindow();

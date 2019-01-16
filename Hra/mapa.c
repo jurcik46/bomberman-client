@@ -187,7 +187,7 @@ void initMap(int cisloMapy, int pocetHracou) {
     start_color();
     initColor();
 
-    initGame(pocetHracou, menoMapy, 3);
+    initGame(pocetHracou, menoMapy, 0);
 }
 
 /**
