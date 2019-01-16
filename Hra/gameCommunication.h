@@ -34,6 +34,8 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g, int  myIndex);
 
 enum gameEnum gameCommunication(enum gameEnum commuType, char *data);
 
+char *dataFromBuffer()  ;
+
 void closeSocketGame();
 
 _Bool socketReadyGame();

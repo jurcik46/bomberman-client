@@ -600,11 +600,28 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
 void *gameCom(void *a) {
 
-    int pomS, pomT, pomId, pomAction;
-    scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
+    while (1) {
+        if (socketReadyGame()) {
+            int pomS, pomT, pomId, pomAction;
+            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
 
-    hra.hraci[pomId].smer = pomAction;
-    pohybHraca(&hra.hraci[pomId]);
+            hra.hraci[pomId].smer = pomAction;
+            pohybHraca(&hra.hraci[pomId]);
+//            switch (pomT) {
+//                case MOVE:
+//
+//                    break;
+//                default:
+//                    break;
+//            }
+            log_debug("Druhe vlakno  Preslo  %s", dataFromRequest());
+
+        }
+    }
+//    int pomS, pomT, pomId, pomAction;
+//    scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
+//    hra.hraci[pomId].smer = pomAction;
+//    pohybHraca(&hra.hraci[pomId]);
     pthread_exit(0);
 }
 
