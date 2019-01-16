@@ -101,6 +101,7 @@ void pohybHraca(HRAC *hrac) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
+                            hrac->smer = 0;
                         }
                     }
                     break;
@@ -132,6 +133,7 @@ void pohybHraca(HRAC *hrac) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
+                            hrac->smer = 0;
                         }
                     }
                     break;
@@ -163,6 +165,7 @@ void pohybHraca(HRAC *hrac) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
+                            hrac->smer = 0;
                         }
                     }
                     break;
@@ -195,7 +198,7 @@ void pohybHraca(HRAC *hrac) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
-
+                            hrac->smer = 0;
                         }
                     }
                     break;
@@ -218,8 +221,12 @@ void pohybHraca(HRAC *hrac) {
                         vytvorBombu(hrac, bombanavytvorenie);
                         hrac->bomba[bombanavytvorenie].zijeBomba = 1;
                         hrac->statistikahracavhre.pocetUlozenychBomb++;
+                        if (currentID == hrac->IDhraca) {
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
+                        }
                     }
-
+                    hrac->smer = 0;
 
                     break;
                 default:
