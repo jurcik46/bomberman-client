@@ -61,7 +61,8 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g, int myIndex) {
             gameP.users[myIndex].name,
             gameP.admin, myIndex);
     log_debug("buffer  pre UDP %s", gameSocket.buffer);
-    for (int i = 0; i < 10; ++i) {
+    sleep(1);
+    for (int i = 0; i < 30; ++i) {
         if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
                    sizeof(serv_addr)) ==
             -1) {
