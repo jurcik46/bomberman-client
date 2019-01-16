@@ -491,6 +491,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
             }
 
             if ((enum communication_type) pomT == START && (enum communication_type) pomR == OKEJ) {
+                pthread_cancel(userInputThread);
                 startGame();
             }
         }

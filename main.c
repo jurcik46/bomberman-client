@@ -18,7 +18,7 @@
 
 #define LOG_FILE_PATH "logs.log"
 #define ADDRESS "127.0.0.1"
-#define ADDRESS_JANO "172.20.50.12"
+#define ADDRESS_JANO "172.20.10.12"
 #define PORT 9999
 
 #define FINDING_DIR "../Mapy"

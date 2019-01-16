@@ -623,9 +623,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 void *gameCom(void *a) {
 
     while (1) {
-//        sleep(10);
-//        hra.hraci[1].smer = 'b';
-//        pohybHraca(&hra.hraci[1]);
+
         if (socketReadyGame() == true) {
             int pomS = 0, pomT = 0, pomId = 0;
             char pomAction;
