@@ -44,11 +44,12 @@ static _Bool startGame() {
 //    if (!game.admin)
 //    sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
     for (int i = 0; i < game.pocetHracov; ++i) {
-        if (game.users[i].index != -1) {
+        if (strlen(game.users[i].password) > 0) {
             index = game.users[i].index;
             break;
         }
     }
+
     log_debug("Index %d ", index);
     sprintf(data, "%d", game.cisloMapy);
     communication(MAP_DOWNLOAD, data);
