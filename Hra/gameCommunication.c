@@ -61,18 +61,13 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g, int myIndex) {
             gameP.users[myIndex].name,
             gameP.admin, myIndex);
     log_debug("buffer  pre UDP %s", gameSocket.buffer);
-    sleep(3);
-    if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
-               sizeof(serv_addr)) ==
-        -1) {
-        log_debug("Error %s %d ", strerror(errno), errno);
+    for (int i = 0; i < 10; ++i) {
+        if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
+                   sizeof(serv_addr)) ==
+            -1) {
+            log_debug("Error %s %d ", strerror(errno), errno);
+        }
     }
-
-
-
-
-
-
 
 //    recvfrom(gameSocket.sock, gameSocket.buffer, sizeof(gameSocket.buffer), 0, (struct sockaddr *) NULL, NULL);
 }
