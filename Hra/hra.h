@@ -101,7 +101,6 @@ typedef struct hra{
 HRA hra;
 
 
-#include "gameCommunication.h"
 
 char** createM(int m, int n);
 

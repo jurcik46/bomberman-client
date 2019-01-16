@@ -37,18 +37,22 @@ static _Bool startGame() {
     int pom;
     char ipAddress[INET_ADDRSTRLEN];
     int port;
-
+    int index = -1;
 //    if (game.admin)
     sscanf(dataFromRequest(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
 //    log_debug("dataFromRequest    %s", dataFromRequest);
 //    if (!game.admin)
 //    sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
     for (int i = 0; i < game.pocetHracov; ++i) {
-
+        if (game.users[i].index != -1) {
+            index = game.users[i].index;
+            break;
+        }
     }
+    log_debug("Index %d ", index);
     sprintf(data, "%d", game.cisloMapy);
     communication(MAP_DOWNLOAD, data);
-    initGameSocket(ipAddress, (u_int16_t) port, game);
+    initGameSocket(ipAddress, (u_int16_t) port, game, index);
     log_debug("%d %d", game.cisloMapy, game.pocetHracov);
     initMap(game.cisloMapy, game.pocetHracov);
     return true;
@@ -444,7 +448,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                        &game.users[game.pocetHracov].id,
                        game.users[game.pocetHracov].name);
                 game.users[count].amI = false;
-                game.users[count].index = 0;
+                game.users[count].index = -1;
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
                 i++;
             }
@@ -454,7 +458,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                        &game.users[count].id,
                        game.users[count].name);
                 if (count != game.users[count].index) {
-                    game.users[count].index = 0;
+                    game.users[count].index = -1;
                 }
                 game.users[count].amI = false;
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[count].name);
