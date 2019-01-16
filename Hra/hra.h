@@ -134,4 +134,7 @@ int trafilaHracaBomba(BOMBA *bomba, HRAC * HRAC);
 
 void vybuchBomby(BOMBA * bomba);
 
+void *gameCom(void * a);
+
+
 #endif //BOMBERMAN_CLIENT_HRA_H

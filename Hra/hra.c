@@ -110,6 +110,7 @@ void pohybHraca(HRAC *hrac) {
                         sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                         gameCommunication(SEND, data);
                         hrac->smer = 0;
+
                     }
                     if (hrac->smer != 0) {
                         if (hra.mapa.velkost[hrac->y_Position - 1][hrac->x_Position] == Vybuch) {
@@ -166,6 +167,7 @@ void pohybHraca(HRAC *hrac) {
                         sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                         gameCommunication(SEND, data);
                         hrac->smer = 0;
+
                     }
                     if (hrac->smer != 0) {
                         if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position + 1] == Vybuch) {
@@ -179,6 +181,7 @@ void pohybHraca(HRAC *hrac) {
                             hrac->frezze = 1;
                             sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                             gameCommunication(SEND, data);
+
                         }
                     }
                     break;
@@ -559,6 +562,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     pthread_create(&vlakno2, 0, &delay, &hra.hraci[mojeID]);
     log_debug("SPUSTAM HRU");
     //todo ak hrac trafi bombu
+    pthread_t vlak5;
 
     while (1) {
 //         for (int a = 0; a < pocetHracov; a++) {
@@ -575,24 +579,35 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
         //vykresliMapu();
 
         printPlayersToScoreWindow();
-        if (socketReadyGame()) {
-            int pomS, pomT, pomId, pomAction;
-            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
-
-            hra.hraci[pomId].smer = pomAction;
-            pohybHraca(&hra.hraci[pomId]);
-//            switch (pomT) {
-//                case MOVE:
+        pthread_create(vlak5, 0, &gameCom, NULL);
+//        if (socketReadyGame()) {
+//            int pomS, pomT, pomId, pomAction;
+//            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
 //
-//                    break;
-//                default:
-//                    break;
-//            }
-        }
+//            hra.hraci[pomId].smer = pomAction;
+//            pohybHraca(&hra.hraci[pomId]);
+////            switch (pomT) {
+////                case MOVE:
+////
+////                    break;
+////                default:
+////                    break;
+////            }
+//        }
         //TODO ak ma hrac 0 zivotov furt ma poziciu kde umrel
 
 
     }
+}
+
+void *gameCom(void *a) {
+
+    int pomS, pomT, pomId, pomAction;
+    scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
+
+    hra.hraci[pomId].smer = pomAction;
+    pohybHraca(&hra.hraci[pomId]);
+    pthread_exit(0);
 }
 
 
