@@ -194,7 +194,6 @@ void getPlayerInLobby(char *data) {
     sprintf(sock.buffer, "%d %d %s", GET_LOBBY_PLAYER, ZERO, data);
     send(sock.sock, sock.buffer, BUFFER_SIZE, 0);
     memset(sock.buffer, '\0', sizeof(sock.buffer));
-
 }
 
 
