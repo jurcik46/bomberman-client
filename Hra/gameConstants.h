@@ -37,7 +37,7 @@ enum gameEnum {
     IN_GAME,
     END,
     NON,
-    SUCCESS
+    SUCCESS,
 };
 
 

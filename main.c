@@ -59,10 +59,10 @@ void createDirectory() {
 
     if (resultStatus == -1) {
         if (mkdir(CREATE_Mapy_dir, 0644) == 0) {
-            printf("Vytvoril sa subor.\n");
+//            printf("Vytvoril sa subor.\n");
         }
     } else {
-        printf("Subor uz existuje.\n");
+//        printf("Subor uz existuje.\n");
     }
 }
 

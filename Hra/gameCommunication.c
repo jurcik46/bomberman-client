@@ -21,20 +21,17 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g) {
         printf("\n Socket creation error \n");
         exit(EXIT_FAILURE);
     }
-    bzero(&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_addr.s_addr = inet_addr(ipAddress);
-    serv_addr.sin_port = htons(port);
-    serv_addr.sin_family = AF_INET;
-
-//    gameSocket.sock = socket(AF_INET, SOCK_DGRAM, 0);
-
-
-    if (inet_pton(AF_INET, ipAddress, &serv_addr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, ipAddress, &serv_addr.sin_addr.s_addr) <= 0) {
         log_error("Invalid address/ Address not supported ");
         printf("Adresa Game servera nie je dostupna! Adresa servera neexistuje! \n");
         sleep(1);
         exit(EXIT_FAILURE);
     }
+
+    log_debug("%s  %d", ipAddress, port);
+    serv_addr.sin_addr.s_addr = inet_addr(ipAddress);
+    serv_addr.sin_port = htons(port);
+    serv_addr.sin_family = AF_INET;
 
     // connect to server
     if (connect(gameSocket.sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
@@ -57,21 +54,35 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g) {
         }
 
     }
-    log_debug("INdex vysledok %d", myIndex);
+    log_debug("Index vysledok %d", myIndex);
 
     sprintf(gameSocket.buffer, "%d %d %s %d",
             IN_GAME,
-            gameP.users[myIndex].id,
-            gameP.users[myIndex].name,
+            gameP.users[0].id,
+            gameP.users[0].name,
             gameP.admin);
     log_debug("buffer  pre UDP %s", gameSocket.buffer);
-    sleep(30);
-    sendto(gameSocket.sock, gameSocket.buffer, BUFFER_SIZE, 0, (struct sockaddr *) NULL, sizeof(serv_addr));
-    log_debug("SLEEEEEEP SKONTROLUJ zbytok");
-    sleep(10);
-    // waiting for response
+    if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
+               sizeof(serv_addr)) ==
+        -1) {
+        log_debug("Error %s %d ", strerror(errno), errno);
+    }
+
 //    recvfrom(gameSocket.sock, gameSocket.buffer, sizeof(gameSocket.buffer), 0, (struct sockaddr *) NULL, NULL);
 }
+
+enum gameEnum gameCommunication(enum gameEnum commuType, char *data) {
+    switch (commuType) {
+        case LOGIN:
+            log_debug("LOGIN");
+//            return loginToServer(data);
+            break;
+        default:
+            log_debug("DEFAULT");
+            return ZERO;
+    }
+}
+
 
 _Bool socketReadyGame() {
     FD_ZERO(&socketDsGame);

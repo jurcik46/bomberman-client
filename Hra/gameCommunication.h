@@ -21,16 +21,18 @@
 #include "../communication.h"
 #include "../constants.h"
 
-#define BUFf_SIZE 100
+#define BUFF_SIZE 100
 
 typedef struct gameSocket {
     int sock;
-    char buffer[BUFf_SIZE];
+    char buffer[BUFF_SIZE];
 //    pthread_mutex_t mutex;
 } GameSocket;
 
 
 void initGameSocket(char *ipAddress, u_int16_t port, Game g );
+
+enum gameEnum gameCommunication(enum gameEnum commuType, char *data);
 
 void closeSocketGame();
 
