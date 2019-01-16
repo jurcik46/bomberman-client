@@ -107,7 +107,8 @@ void pohybHraca(HRAC *hrac) {
                             zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                         hrac->y_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-
+                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -135,6 +136,8 @@ void pohybHraca(HRAC *hrac) {
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                         sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                         gameCommunication(SEND, data);
+                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -160,6 +163,8 @@ void pohybHraca(HRAC *hrac) {
                         }
                         hrac->x_Position++;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
