@@ -85,6 +85,8 @@ typedef struct hrac{
     int pocetZivotov;
     int IDhraca;
     int cislo_bomby;
+    int frezze;
+    int mrtvy;
     STATISTIKAHRACAVHRE statistikahracavhre;
     pthread_mutex_t  *mutex;
 }HRAC;
@@ -96,6 +98,8 @@ typedef struct hra{
 }HRA;
 
 HRA hra;
+
+
 
 char** createM(int m, int n);
 
