@@ -187,7 +187,7 @@ void initMap(int cisloMapy, int pocetHracou) {
     start_color();
     initColor();
 
-    initGame(pocetHracou, menoMapy, 0);
+    initGame(pocetHracou, menoMapy, 3);
 }
 
 /**
@@ -232,7 +232,7 @@ void printPlayer(int y, int x, char indicator) {
     char pom[1];
     pom[0] = indicator;
 
-    
+
     mvwprintw(mapWindow, (y * 2), (x * 4) + 1, "%c", pom[0]);
     mvwprintw(mapWindow, (y * 2), (x * 4) + 2, "%c", pom[0]);
 

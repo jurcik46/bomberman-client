@@ -71,18 +71,19 @@ int main(int argc, char *argv[]) {
     createDirectory();
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);
-    initSocket(ADDRESS, PORT);
+    //initSocket(ADDRESS, PORT);
 
     initNcurses();
 
-    loginUser();
+    // loginUser();
 
-    menu();
+    //menu();
 
 
 
     //start_color();
     // initColor();
     //initGame(4, "../Mapy/2.txt", 1);
+    initMap(2, 4);
     closingApp(logFile);
 }
