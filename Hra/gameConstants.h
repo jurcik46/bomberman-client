@@ -38,6 +38,7 @@ enum gameEnum {
     END,
     NON,
     SUCCESS,
+    SEND
 };
 
 

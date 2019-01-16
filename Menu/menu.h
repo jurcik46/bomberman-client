@@ -32,6 +32,7 @@ typedef struct user {
     char name[NAME_LENGTH];
     char password[PASSWORD_LENGTH];
     _Bool amI;
+    int index;
 } User;
 //Struktura pre usera
 

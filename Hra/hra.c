@@ -557,7 +557,11 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
         //vykresliMapu();
 
         printPlayersToScoreWindow();
+        if (socketReadyGame()) {
 
+
+
+        }
         //TODO ak ma hrac 0 zivotov furt ma poziciu kde umrel
 
 

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
+
 #include "../logging/log.h"
 #include "mapa.h"
 #define POCET_HRACOV 4
@@ -100,6 +101,7 @@ typedef struct hra{
 HRA hra;
 
 
+#include "gameCommunication.h"
 
 char** createM(int m, int n);
 

@@ -12,7 +12,7 @@ int activityGame;
 
 struct sockaddr_in serv_addr;
 
-void initGameSocket(char *ipAddress, u_int16_t port, Game g) {
+void initGameSocket(char *ipAddress, u_int16_t port, Game g, int myIndex) {
     gameSocket.sock = 0;
     Game gameP = g;
     bzero(&serv_addr, sizeof(serv_addr));
@@ -42,24 +42,23 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g) {
     }
 
     sdGame = gameSocket.sock;
-    int myIndex = -1;
 
     log_debug("HRAC PRVY    %s  Id  %d   bool %d", gameP.users[0].name, gameP.users[0].id, gameP.users[0].amI);
     log_debug("HRAC DRUHY    %s  Id  %d   bool %d", gameP.users[1].name, gameP.users[1].id, gameP.users[1].amI);
 
-    for (int i = 0; i < gameP.pocetHracov; ++i) {
-        if (gameP.users[i].amI) {
-            log_debug("som ja podmienka %d", i);
-            myIndex = i;
-        }
-
-    }
+//    for (int i = 0; i < gameP.pocetHracov; ++i) {
+//        if (gameP.users[i].amI) {
+//            log_debug("som ja podmienka %d", i);
+//            myIndex = i;
+//        }
+//
+//    }
     log_debug("Index vysledok %d", myIndex);
 
     sprintf(gameSocket.buffer, "%d %d %s %d",
             IN_GAME,
-            gameP.users[0].id,
-            gameP.users[0].name,
+            gameP.users[myIndex].id,
+            gameP.users[myIndex].name,
             gameP.admin);
     log_debug("buffer  pre UDP %s", gameSocket.buffer);
     if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
@@ -76,6 +75,13 @@ enum gameEnum gameCommunication(enum gameEnum commuType, char *data) {
         case LOGIN:
             log_debug("LOGIN");
 //            return loginToServer(data);
+            break;
+        case SEND:
+            if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
+                       sizeof(serv_addr)) ==
+                -1) {
+                log_debug("Error %s %d ", strerror(errno), errno);
+            }
             break;
         default:
             log_debug("DEFAULT");

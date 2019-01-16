@@ -43,7 +43,9 @@ static _Bool startGame() {
 //    log_debug("dataFromRequest    %s", dataFromRequest);
 //    if (!game.admin)
 //    sscanf(readDataFromSocket(), "%d %d %s %d", &pom, &pom, ipAddress, &port);
+    for (int i = 0; i < game.pocetHracov; ++i) {
 
+    }
     sprintf(data, "%d", game.cisloMapy);
     communication(MAP_DOWNLOAD, data);
     initGameSocket(ipAddress, (u_int16_t) port, game);
@@ -303,6 +305,7 @@ bool menuNewGame(WINDOW *my_window) {
     log_debug("result %d", result);
     switch (result) {
         case CREATED:
+            user.index = 0;
             game.users[0] = user;
             game.pocetHracov++;
             game.admin = true;
@@ -441,6 +444,7 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                        &game.users[game.pocetHracov].id,
                        game.users[game.pocetHracov].name);
                 game.users[count].amI = false;
+                game.users[count].index = 0;
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
                 i++;
             }
@@ -449,6 +453,9 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
                        &game.users[count].id,
                        game.users[count].name);
+                if (count != game.users[count].index) {
+                    game.users[count].index = 0;
+                }
                 game.users[count].amI = false;
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[count].name);
                 i++;
@@ -640,9 +647,11 @@ int menuFindServer(WINDOW *my_window) {
                         sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
                                &game.gameId, game.nazovHry, &game.cisloMapy, &game.pocetHracov,
                                &game.maxPocetHracov);
+                        user.index = game.pocetHracov;
                         game.users[game.pocetHracov] = user;
                         game.users[game.pocetHracov].amI = true;
                         game.admin = false;
+
                         game.pocetHracov++;
                         finishChoice(&param, &userInputThread, pomPointerArray);
                         return JOIN;

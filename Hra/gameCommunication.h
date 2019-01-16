@@ -15,9 +15,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <errno.h>
+#include "../Menu/menu.h"
 #include "gameConstants.h"
 #include "../logging/log.h"
-#include "../Menu/menu.h"
 #include "../communication.h"
 #include "../constants.h"
 
@@ -30,7 +30,7 @@ typedef struct gameSocket {
 } GameSocket;
 
 
-void initGameSocket(char *ipAddress, u_int16_t port, Game g );
+void initGameSocket(char *ipAddress, u_int16_t port, Game g, int  myIndex);
 
 enum gameEnum gameCommunication(enum gameEnum commuType, char *data);
 
