@@ -561,6 +561,7 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
     log_debug("SPUSTAM HRU");
     //todo ak hrac trafi bombu
     pthread_t vlak5;
+    pthread_create(&vlak5, 0, &gameCom, NULL);
 
     while (1) {
 //         for (int a = 0; a < pocetHracov; a++) {
@@ -577,7 +578,6 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
         //vykresliMapu();
 
         printPlayersToScoreWindow();
-        pthread_create(vlak5, 0, &gameCom, NULL);
 //        if (socketReadyGame()) {
 //            int pomS, pomT, pomId, pomAction;
 //            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
