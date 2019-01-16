@@ -603,13 +603,18 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 void *gameCom(void *a) {
 
     while (1) {
-        if (socketReadyGame()) {
-            int pomS, pomT, pomId, pomAction;
-            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
-
+        if (socketReadyGame() == true) {
+            int pomS, pomT, pomId;
+            char pomAction;
+            sscanf(dataFromRequest(), "%d %d %d %c", &pomS, &pomT, &pomId, &pomAction);
             hra.hraci[pomId].smer = pomAction;
             pohybHraca(&hra.hraci[pomId]);
-//            switch (pomT) {
+            log_debug("HRAC: %d , Smer: %c ", hra.hraci[pomId], hra.hraci[pomId].smer);
+
+
+            if (pomId == 100)
+                break;
+            //            switch (pomT) {
 //                case MOVE:
 //
 //                    break;

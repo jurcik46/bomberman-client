@@ -112,9 +112,9 @@ _Bool socketReadyGame() {
     FD_SET(sdGame, &socketDsGame);
     struct timeval tv;
     tv.tv_usec = 10;
-    log_debug("check GAMe Socket before");
+//    log_debug("check GAMe Socket before");
     activityGame = select(sdGame + 1, &socketDsGame, NULL, NULL, &tv);
-    log_debug("check GAMe Socket after");
+//    log_debug("check GAMe Socket after");
 
     if ((activityGame < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
@@ -129,7 +129,8 @@ _Bool socketReadyGame() {
             sleep(10);
             exit(EXIT_FAILURE);
         } else {
-            log_debug("sdsadad");
+//            log_debug("sdsadad");
+            log_debug("Buffer %s", gameSocket.buffer);
             //            log_debug("data %s", sock.buffer);
             return true;
         }
