@@ -80,7 +80,7 @@ void pohybHraca(HRAC *hrac) {
                             zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                         hrac->x_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        if (currentID != hrac->IDhraca) {
+                        if (currentID == hrac->IDhraca) {
                             sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                             gameCommunication(SEND, data);
                         }
@@ -97,7 +97,7 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            if (currentID != hrac->IDhraca) {
+                            if (currentID == hrac->IDhraca) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
@@ -111,7 +111,7 @@ void pohybHraca(HRAC *hrac) {
                             zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                         hrac->y_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        if (currentID != hrac->IDhraca) {
+                        if (currentID == hrac->IDhraca) {
                             sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                             gameCommunication(SEND, data);
                         }
@@ -128,7 +128,7 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            if (currentID != hrac->IDhraca) {
+                            if (currentID == hrac->IDhraca) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
@@ -143,7 +143,7 @@ void pohybHraca(HRAC *hrac) {
                         hrac->y_Position++;
 
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        if (currentID != hrac->IDhraca) {
+                        if (currentID == hrac->IDhraca) {
                             sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                             gameCommunication(SEND, data);
                         }
@@ -159,7 +159,7 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            if (currentID != hrac->IDhraca) {
+                            if (currentID == hrac->IDhraca) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
@@ -174,7 +174,7 @@ void pohybHraca(HRAC *hrac) {
                         }
                         hrac->x_Position++;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-                        if (currentID != hrac->IDhraca) {
+                        if (currentID == hrac->IDhraca) {
                             sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                             gameCommunication(SEND, data);
                         }
@@ -191,7 +191,7 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
-                            if (currentID != hrac->IDhraca) {
+                            if (currentID == hrac->IDhraca) {
                                 sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
                                 gameCommunication(SEND, data);
                             }
