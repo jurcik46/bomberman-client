@@ -168,7 +168,7 @@ void vykresliMapu() {
  * Funkcia nainicializuje farby + okno pre hru, vytvorí okno a vypiše mapu
  * @param cisloMapy - cislo mapy
  */
-void initMap(int cisloMapy, int pocetHracou) {
+void initMap(int cisloMapy, int pocetHracou, int index) {
     char menoMapy[20];
     sprintf(menoMapy, "%s%d", "../Mapy/", cisloMapy);
     strcat(menoMapy, ".txt");
@@ -180,7 +180,7 @@ void initMap(int cisloMapy, int pocetHracou) {
     start_color();
     initColor();
 
-    initGame(pocetHracou, menoMapy, 0);
+    initGame(pocetHracou, menoMapy, index);
 }
 
 /**

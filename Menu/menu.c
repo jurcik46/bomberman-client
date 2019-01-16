@@ -57,7 +57,7 @@ static _Bool startGame() {
     log_debug("%d %d", game.cisloMapy, game.pocetHracov);
     delwin(param.lobby_Win);
     delwin(my_window);
-    initMap(game.cisloMapy, game.pocetHracov);
+    initMap(game.cisloMapy, game.pocetHracov, index);
     return true;
 }
 
