@@ -1,5 +1,7 @@
 #include "hra.h"
+#include "gameCommunication.h"
 
+char data[50];
 
 char **createM(int m, int n) {
     char **mat;
@@ -79,6 +81,8 @@ void pohybHraca(HRAC *hrac) {
                         hrac->x_Position--;
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
 
+                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -91,6 +95,8 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
                         }
                     }
                     break;
@@ -114,6 +120,8 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
                         }
                     }
                     break;
@@ -125,7 +133,8 @@ void pohybHraca(HRAC *hrac) {
                         hrac->y_Position++;
 
                         zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
-
+                        sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                        gameCommunication(SEND, data);
                         hrac->smer = 0;
                     }
                     if (hrac->smer != 0) {
@@ -138,6 +147,8 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
                         }
                     }
                     break;
@@ -161,6 +172,8 @@ void pohybHraca(HRAC *hrac) {
                             hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
                             zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
                             hrac->frezze = 1;
+                            sprintf(data, "%d %d %c", MOVE, hrac->IDhraca, hrac->smer);
+                            gameCommunication(SEND, data);
                         }
                     }
                     break;
@@ -558,9 +571,18 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
         printPlayersToScoreWindow();
         if (socketReadyGame()) {
+            int pomS, pomT, pomId, pomAction;
+            scanf(dataFromRequest(), "%d %d %d %d", &pomS, &pomT, &pomId, &pomAction);
 
-
-
+            hra.hraci[pomId].smer = pomAction;
+            pohybHraca(&hra.hraci[pomId]);
+//            switch (pomT) {
+//                case MOVE:
+//
+//                    break;
+//                default:
+//                    break;
+//            }
         }
         //TODO ak ma hrac 0 zivotov furt ma poziciu kde umrel
 

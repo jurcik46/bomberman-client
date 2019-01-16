@@ -55,7 +55,7 @@ static _Bool startGame() {
     communication(MAP_DOWNLOAD, data);
     initGameSocket(ipAddress, (u_int16_t) port, game, index);
     log_debug("%d %d", game.cisloMapy, game.pocetHracov);
-    initMap(game.cisloMapy, game.pocetHracov);
+    initMap(game.cisloMapy, game.pocetHracov, index);
     return true;
 }
 

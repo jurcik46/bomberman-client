@@ -112,15 +112,17 @@ _Bool socketReadyGame() {
     FD_ZERO(&socketDsGame);
     FD_SET(sdGame, &socketDsGame);
     struct timeval tv;
-    tv.tv_usec = 1;
-    log_debug("check GAMe Socket");
+    tv.tv_usec = 10;
+    log_debug("check GAMe Socket before");
     activityGame = select(sdGame + 1, &socketDsGame, NULL, NULL, &tv);
+    log_debug("check GAMe Socket after");
 
     if ((activityGame < 0) && (errno != EINTR)) {
         log_error("Select Socket Activity error");
     }
     if (sdGame != 0 && FD_ISSET(sdGame, &socketDsGame)) {
-        if (recv(gameSocket.sock, gameSocket.buffer, BUFF_SIZE, 0) == 0) {
+        if (recvfrom(gameSocket.sock, gameSocket.buffer, sizeof(gameSocket.buffer), 0, (struct sockaddr *) NULL,
+                     NULL) == 0) {
 
             log_fatal("Server disconnected");
             //Close the socket and mark as 0 in list for reuse
@@ -135,6 +137,10 @@ _Bool socketReadyGame() {
     }
 
     return false;
+}
+
+char *dataFromBuffer() {
+    return gameSocket.buffer;
 }
 
 void closeSocketGame() {
