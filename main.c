@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     createDirectory();
     FILE *logFile = fopen(LOG_FILE_PATH, "w+");
     loggerInit(logFile);
-    initSocket(ADDRESS, PORT);
+    initSocket(ADDRESS_JANO, PORT);
 
     initNcurses();
 
