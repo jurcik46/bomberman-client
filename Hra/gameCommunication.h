@@ -21,7 +21,7 @@
 #include "../communication.h"
 #include "../constants.h"
 
-#define BUFF_SIZE 100
+#define BUFF_SIZE 2000
 
 typedef struct gameSocket {
     int sock;
