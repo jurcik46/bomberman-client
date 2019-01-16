@@ -56,10 +56,7 @@ void initGameSocket(char *ipAddress, u_int16_t port, Game g, int myIndex) {
     log_debug("Index vysledok %d", myIndex);
 
     sprintf(gameSocket.buffer,
-            "%d %d %s %d %d  asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddasdasdadasda"
-            "asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-            "asddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
-            "asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "%d %d %s %d %d ",
             IN_GAME,
             gameP.users[myIndex].id,
             gameP.users[myIndex].name,
@@ -95,11 +92,13 @@ enum gameEnum gameCommunication(enum gameEnum commuType, char *data) {
 //            return loginToServer(data);
             break;
         case SEND:
+            sprintf(gameSocket.buffer, "%d %s", SEND, data);
             if (sendto(gameSocket.sock, &gameSocket.buffer, BUFF_SIZE, 0, (struct sockaddr *) NULL,
                        sizeof(serv_addr)) ==
                 -1) {
                 log_debug("Error %s %d ", strerror(errno), errno);
             }
+            log_debug("Sending To Server %s", gameSocket.buffer);
             break;
         default:
             log_debug("DEFAULT");
