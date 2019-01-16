@@ -155,13 +155,10 @@ void vykresliMapu() {
                 default:
                     break;
             }
-            wrefresh(mapWindow);
+//            wrefresh(mapWindow);
         }
-
-
     }
-
-
+    wrefresh(mapWindow);
 }
 
 /**
