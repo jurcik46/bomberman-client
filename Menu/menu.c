@@ -62,6 +62,7 @@ void menu() {
                 }
                 if (success) {
                     choice = menuLobby(my_window, startY, startX);
+                    log_debug("Return from menuLOBBY: %d", choice);//1 na prvy krat
                     if (choice == START_GAME) {
                         char data[BUFFER_SIZE];
                         sprintf(data, "%d", game.gameId);
@@ -81,6 +82,7 @@ void menu() {
                         communication(LEAVE_LOBBY, data);
                         game = emptyGame;
                         choice = mainMenu(my_window);
+                        success = false;
                     }
                     success = false;
                 } else {
@@ -91,6 +93,7 @@ void menu() {
                 break;
             case MENU_FIND_SERVER:
                 choice = menuFindServer(my_window);
+                log_debug("Choice v MENU_FIND_SERVER %d", choice);
                 if (choice == JOIN) {
                     success = true;
                     choice = MENU_NEW_GAME;
@@ -381,7 +384,7 @@ void *handleUserInput() {
  * @return - vracia volbu od uzivatela ci si praje spustit hru alebo hru opustit
  */
 int menuLobby(WINDOW *my_window, int startY, int startX) {
-    //TODO osetrit vlakna pre vstupy
+    //TODO osetrit vlakna pre vstupy - malo by byt fixnute ale treba otestovať
     //TODO osetrit vypis pri lobby menu
     wclear(my_window);
     mvwprintw(my_window, 1, 40, "BOMBERMAN\n");
@@ -434,8 +437,8 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
 
         if (socketReady()) {
             int pomT, pomR;
+            log_debug("pomT: %d pomR: %d", pomT, pomR);
             sscanf(dataFromRequest(), "%d %d", &pomT, &pomR);
-
             if ((enum communication_type) pomT == JOIN_LOBBY && (enum communication_type) pomR == CREATED) {
                 game.pocetHracov++;
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
@@ -445,14 +448,12 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[game.pocetHracov].name);
                 i++;
             }
-//            log_debug("Count player %d   POcet %d", count, game.pocetHracov);
 
             if ((enum communication_type) pomT == GET_LOBBY_PLAYER && (enum communication_type) pomR != DONE) {
                 sscanf(dataFromRequest(), "%d %d %d %s", &pomT, &pomR,
                        &game.users[count].id,
                        game.users[count].name);
                 game.users[count].amI = false;
-//                log_debug("GET LOBBBY PLAYER EVENT Count player %d   POcet %d", count, game.pocetHracov);
                 mvwprintw(my_window, i + 6, 1, "%s", game.users[count].name);
                 i++;
                 count++;
@@ -469,10 +470,6 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                     game = emptyGame;
                     return highlight;
                 }
-
-
-//                log_debug(" LEAVe LOBBY EVENT Count player %d   POcet %d", count, game.pocetHracov);
-
                 game.pocetHracov--;
                 i = 0;
                 count = 0;
@@ -481,18 +478,16 @@ int menuLobby(WINDOW *my_window, int startY, int startX) {
                 }
                 sprintf(data, "%d %d", count, game.gameId);
                 communication(GET_LOBBY_PLAYER, data);
-
             }
 
             if ((enum communication_type) pomT == START && (enum communication_type) pomR == OKEJ) {
-
                 startGame();
-
             }
         }
 
         pthread_mutex_lock(&param.mutex);
         int choice = param.choice;
+        param.choice = RESET_CHOICE;
         pthread_mutex_unlock(&param.mutex);
 
         switch (choice) {
@@ -533,7 +528,7 @@ int lobbyChoice(CHOICE *param, pthread_t *thread) {
     delwin(param->lobby_Win);
     param->resultLobby = true;
     pthread_mutex_unlock(&param->mutex);
-//    pthread_join(*thread, NULL);
+    pthread_cancel(*thread);
     pthread_mutex_destroy(&param->mutex);
 }
 
@@ -553,7 +548,6 @@ void *handleEsc() {
     while (!result) {
         noecho();
         value = wgetch(window);
-//        log_debug("cyklus FINDserver");
         pthread_mutex_lock(&param.mutex);
         result = param.resultFindeGame;
         param.choice = value;
@@ -594,6 +588,7 @@ int menuFindServer(WINDOW *my_window) {
     communication(FIND_SERVERS, data);
     int highlight = 0;
 
+    //TODO dat niekde free pre arrayOfGameId
     struct game *arrayOfGameId = malloc(sizeof(struct game));
     struct game *pomPointerArray = arrayOfGameId;
     while (1) {
@@ -609,12 +604,13 @@ int menuFindServer(WINDOW *my_window) {
                 arrayOfGameId++;
 //                log_debug("%s", dataFromRequest());
                 sprintf(data, "%d", count);
+                log_debug("FINDING GAME: count: %d", count);
                 communication(FIND_SERVERS, data);
             } else {
+                count = 0;
             }
 //            wrefresh(my_window);
         }
-
 
         for (int i = 0; i < count; i++) {
             if (i == highlight)
@@ -628,10 +624,6 @@ int menuFindServer(WINDOW *my_window) {
         int choice = param.choice;
         param.choice = RESET_CHOICE;
         pthread_mutex_unlock(&param.mutex);
-        int ch = 0;
-//        log_debug("Count %d", count);
-//        log_debug("");
-//        sleep(2);
         switch (choice) {
             case KEY_UP:
                 highlight--;
@@ -644,8 +636,11 @@ int menuFindServer(WINDOW *my_window) {
                     highlight = count - 1;
                 break;
             case ENTER:
+                count = 0;
+                log_debug("Stlacil som enter kokot: ");
                 sprintf(data, "%d", pomPointerArray[highlight].gameId);
                 enum result_code result = communication(JOIN_LOBBY, data);
+
                 switch (result) {
                     case OKEJ:
                         sscanf(dataFromRequest(), "%d %d %d %s %d %d %d", &game.pocetHracov, &game.pocetHracov,
@@ -655,7 +650,6 @@ int menuFindServer(WINDOW *my_window) {
                         game.users[game.pocetHracov].amI = true;
                         game.admin = false;
                         game.pocetHracov++;
-                        log_debug("");
                         finishChoice(&param, &userInputThread, pomPointerArray);
                         return JOIN;
                     case SERVICE_UNAVAILABLE:
@@ -700,7 +694,8 @@ void finishChoice(CHOICE *param, pthread_t *thread, struct game *lobbyGameArray)
     pthread_mutex_lock(&param->mutex);
     param->resultFindeGame = true;
     pthread_mutex_unlock(&param->mutex);
-    pthread_join(*thread, NULL);
+    pthread_cancel(*thread);
+//    pthread_join(*thread, NULL);
     pthread_mutex_destroy(&param->mutex);
     free(lobbyGameArray);
 }
