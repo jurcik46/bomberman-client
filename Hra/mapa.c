@@ -58,25 +58,18 @@ void zistiVelkostMapy(char *menoMapy) {
 void nacitajMapu(char *menoMapy) {
 
     FILE *subor;
-    subor = fopen(menoMapy, "r");
-    if (NULL == subor) {
-        log_debug("Nepodarilo sa otvorit subor.");
-        printf("Error opening file");
-        sleep(1);
-        exit(EXIT_FAILURE);
-    }
-
-//   mapa->x=((mapa->x)/(mapa->y+1))*4+1;
-//   mapa->y=(mapa->y+1)*2;
+    int px = 0, py = 0, c = 0;
 
     hra.mapa.x = (hra.mapa.x) / (hra.mapa.y + 1) + 1;
     hra.mapa.y = (hra.mapa.y + 1);
-    //printf("%d %d ",mapa->x,mapa->y);
-    //log_debug("x:%d y:%d ",mapa->x,mapa->y);
-    int px = 0, py = 0;
     hra.mapa.velkost = createM(hra.mapa.y, hra.mapa.x);
-    log_debug("vytvoril som pamat");
-    int c;
+
+    subor = fopen(menoMapy, "r");
+
+    if (subor == NULL) {
+        log_debug("Nepodarilo sa otvorit subor.");
+        exit(EXIT_FAILURE);
+    }
 
     while ((c = fgetc(subor)) != EOF) {
         zmenavMape(py, px, (char) c);

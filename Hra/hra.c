@@ -76,7 +76,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->x_Position--;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
 
             }
@@ -87,7 +87,7 @@ void pohybHraca(HRAC *hrac) {
                 //hrac->statistikahracavhre.pocetUmrti++;
                 hrac->x_Position--;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
             }
 
@@ -98,7 +98,7 @@ void pohybHraca(HRAC *hrac) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->y_Position--;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
             }
             if (hra.mapa.velkost[hrac->y_Position - 1][hrac->x_Position] == Vybuch) {
@@ -108,7 +108,7 @@ void pohybHraca(HRAC *hrac) {
                 //hrac->statistikahracavhre.pocetUmrti++;
                 hrac->y_Position--;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
             }
             break;
@@ -119,7 +119,7 @@ void pohybHraca(HRAC *hrac) {
                     zmenavMape(hrac->y_Position, hrac->x_Position, ' ');
                 hrac->y_Position++;
 
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
             }
             if (hra.mapa.velkost[hrac->y_Position + 1][hrac->x_Position] == Vybuch) {
@@ -129,7 +129,7 @@ void pohybHraca(HRAC *hrac) {
                 //hrac->statistikahracavhre.pocetUmrti++;
                 hrac->y_Position++;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
 
             }
             break;
@@ -140,7 +140,7 @@ void pohybHraca(HRAC *hrac) {
                     zmenavMape(hrac->y_Position, hrac->x_Position, Prazdne);
                 }
                 hrac->x_Position++;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);;
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);;
             }
             if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position + 1] == Vybuch) {
                 if (hra.mapa.velkost[hrac->y_Position][hrac->x_Position] == hrac->znak)
@@ -149,7 +149,7 @@ void pohybHraca(HRAC *hrac) {
                 //hrac->statistikahracavhre.pocetUmrti++;
                 hrac->x_Position++;
                 hra.hraci[trafilSomVBombuHracaID(hrac)].statistikahracavhre.pocetTrafenychHracov++;
-                zmenavMape(hrac->y_Position, hrac->x_Position, hrac->znak);
+                zmenavMape(hrac->y_Position, hrac->x_Position, (char) hrac->znak);
                 hrac->smer = 0;
             }
             break;
@@ -322,16 +322,16 @@ void BOOM(BOMBA *bomba) {
     vymazanieBombyZObrazovky(bomba);
 //    zmenavMape(hra.hraci[0].y_Position, hra.hraci[0].x_Position, hra.hraci[0].znak);
     if (a1 == 1) {
-        zmenavMape(hra.hraci[0].y_Position, hra.hraci[0].x_Position, hra.hraci[0].znak);
+        zmenavMape(hra.hraci[0].y_Position, hra.hraci[0].x_Position, (char) hra.hraci[0].znak);
     }
     if (a2 == 2) {
-        zmenavMape(hra.hraci[1].y_Position, hra.hraci[1].x_Position, hra.hraci[1].znak);
+        zmenavMape(hra.hraci[1].y_Position, hra.hraci[1].x_Position, (char) hra.hraci[1].znak);
     }
     if (a3 == 3) {
-        zmenavMape(hra.hraci[2].y_Position, hra.hraci[2].x_Position, hra.hraci[2].znak);
+        zmenavMape(hra.hraci[2].y_Position, hra.hraci[2].x_Position, (char) hra.hraci[2].znak);
     }
     if (a4 == 4) {
-        zmenavMape(hra.hraci[3].y_Position, hra.hraci[3].x_Position, hra.hraci[3].znak);
+        zmenavMape(hra.hraci[3].y_Position, hra.hraci[3].x_Position, (char) hra.hraci[3].znak);
     }
 }
 
@@ -341,7 +341,6 @@ void vymazanieBombyZObrazovky(BOMBA *bomba) {
     zmenavMape(bomba->y_Position + bomba->bombastrany.hore, bomba->x_Position, Prazdne);
     zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vpravo, Prazdne);
     zmenavMape(bomba->y_Position, bomba->x_Position + bomba->bombastrany.vlavo, Prazdne);
-
 }
 
 void printPlayersToScoreWindow() {
@@ -358,7 +357,6 @@ void printPlayersToScoreWindow() {
 }
 
 void initGame(int pocetHracov, char *cesta, int mojeID) {
-    log_debug("INIT_GAME");
     //Inicializacia okna
 
     //Nastavim pocetHracov;
@@ -373,26 +371,16 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
 
     //zistim velkost mapy a nacitaj ju do pola
     zistiVelkostMapy(cesta);
-    log_debug("ZISTOVANIE VELKOSIT MAPY");
     nacitajMapu(cesta);
-    log_debug("NACITAVAM MAPU");
 
     int startX = 0, startY = 0;
     //vytvorim okno pre mapu
     refresh();
-    log_debug(" %d  %d  %d", hra.mapa.y, hra.mapa.x, startY);
-
     mapWindow = newwin(hra.mapa.y * 2, hra.mapa.x * 4, startY, startX);
-    log_debug("sdadas ");
-
     keypad(mapWindow, true);
-    log_debug(" 121223");
-
     //vytvorim okno pre score
     refresh();
     scoreWindow = newwin(SCORE_WIN_Y, SCORE_WIN_X, startY, hra.mapa.x * 4);
-
-    //TODO nacitaj  nove okno so statistikou
 
     log_debug("Krok1");
     //funkcia na nastavenie pozici hracov
@@ -462,8 +450,6 @@ void initGame(int pocetHracov, char *cesta, int mojeID) {
         }
 //        vykresliMapu();
     }
-    log_debug("SPUSTAM HRU");
-
 //    log_debug("HRAC 1 -- %c", hra.hraci[0].znak);
 //    log_debug("HRAC 2 -- %c", hra.hraci[1].znak);
 

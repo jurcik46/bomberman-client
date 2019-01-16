@@ -79,4 +79,5 @@ int main(int argc, char *argv[]) {
 
     menu();
     closingApp(logFile);
+    exit(SUCCESS);
 }
