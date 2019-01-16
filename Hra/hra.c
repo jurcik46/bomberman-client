@@ -604,7 +604,7 @@ void *gameCom(void *a) {
 
     while (1) {
         if (socketReadyGame() == true) {
-            int pomS, pomT, pomId;
+            int pomS = 0, pomT = 0, pomId = 0;
             char pomAction;
             sscanf(dataFromBuffer(), "%d %d %d %c", &pomS, &pomT, &pomId, &pomAction);
             log_debug("pomS: %d, pomT: %d, pomID: %d, action: %c", pomS, pomT, pomId, pomAction);
