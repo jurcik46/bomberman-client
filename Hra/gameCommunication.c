@@ -139,6 +139,8 @@ _Bool socketReadyGame() {
 }
 
 char *dataFromBuffer() {
+    recvfrom(gameSocket.sock, gameSocket.buffer, sizeof(gameSocket.buffer), 0, (struct sockaddr *) NULL,
+             NULL);
     return gameSocket.buffer;
 }
 
