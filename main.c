@@ -3,78 +3,88 @@
 #include "logging/log.h"
 #include <unistd.h>
 #include <stdlib.h>
-#define DELAY 30000
+#include <sys/stat.h>
+#include <sys/types.h>
 
-void nacitajMapu(){
-    FILE * vstup;
-    if ((vstup = fopen("mapa.txt", "r")) == NULL)
-    {
-    int riadok,stlpec;
-    while();
+#include "logging/log.h"
+//#include "communication.h"
+#include "Menu/menu.h"
+#include "Hra/mapa.h"
+#include "Hra/hra.h"
+#include "logging/log.h"
+#include "communication.h"
+#include "constants.h"
+#include "Hra/gameCommunication.h"
 
-}
+#define LOG_FILE_PATH "logs.log"
+#define ADDRESS "127.0.0.1"
+#define ADDRESS_JANO "172.20.10.12"
+#define PORT 9999
+
+#define FINDING_DIR "../Mapy"
+#define CREATE_Mapy_dir "../Mapy"
 
 /**
- * alokovanie pamete pre mapu
- * @param m riadok
- * @param n stlpec
- * @return smernik dvojrozmerne pole
+ * Funkcia pomocou ktorej sa inicializuju logy (debug)
+ * @param logFile - subor ktory sluzi na logy (debug)
  */
-char** createM(int m, int n) {
-    char **mat;
-    mat = malloc(m * sizeof (*mat));
-    for (int i = 0; i < m; i++) {
-        mat[i] = calloc(n, sizeof (char));
-    }
-    return mat;
-}
+void loggerInit(FILE *logFile) {
 
-int main() {
-
-    log_set_quiet(0);
-    log_set_level(LOG_DEBUG);
-    FILE *logFile = fopen("logs.log","w+");
-    log_set_fp(logFile);
-
-    if (logFile == NULL){
+    if (logFile == NULL) {
         printf("Error! opening file");
         // Program exits if the file pointer returns NULL.
-        return 1;
+        exit(EXIT_FAILURE);
     }
-
-//    log_trace(const char *fmt, ...);
-//    log_debug(const char *fmt, ...);
-//    log_info(const char *fmt, ...);
-//    log_warn(const char *fmt, ...);
-//    log_error(const char *fmt, ...);
-//    log_fatal(const char *fmt, ...);
-
-    log_debug("Hello %s", "world");
-    log_info("Hello %s", "world");
-    log_warn("Hello %s", "world");
-    log_error("Hello %s", "world");
-
-
-    initscr();			/* Start curses mode 		  */
-    printw("Hello Wdsadasdorld !!!");	/* Print Hello World		  */
-    refresh();			/* Print it on to the real screen */
-    getch();			/* Wait for user input */
-    endwin();
-
-    fclose(logFile);
-    return 0;
-/**
- * Uvolnenie pamete pre mapu
- * @param m
- * @param mat
- */
-
-void deletM(int m, char*** mat) {
-    for (int i = 0; i < m; i++) {
-        free((*mat)[i]);
-    }
-    free((*mat));
-    *mat = NULL;
-
+    log_set_quiet(5);
+    log_set_level(LOG_DEBUG);
+    log_set_fp(logFile);
 }
 
+/**
+ * Funkcia ukoncuje aplikaciu.
+ * Zatvara vytvoreny socket, maže vytvorene okna a ukoncuje ich.
+ * @param logFile - subor ktory sluzi na logy (debug)
+ */
+void closingApp(FILE *logFile) {
+    closeSocket();
+    closeMenu();
+    endwin();
+    fclose(logFile);
+};
+
+void createDirectory() {
+    struct stat st = {0};
+    int resultStatus = stat(FINDING_DIR, &st);
+    printf("Result %d\n", resultStatus);
+
+    if (resultStatus == -1) {
+        if (mkdir(CREATE_Mapy_dir, 0644) == 0) {
+//            printf("Vytvoril sa subor.\n");
+        }
+    } else {
+//        printf("Subor uz existuje.\n");
+    }
+}
+
+
+int main(int argc, char *argv[]) {
+    createDirectory();
+    FILE *logFile = fopen(LOG_FILE_PATH, "w+");
+    loggerInit(logFile);
+    initSocket(ADDRESS_JANO, PORT);
+
+    initNcurses();
+
+    loginUser();
+
+    menu();
+
+//    initMap(2, 2, 0);
+
+    //start_color();
+    // initColor();
+    //initGame(4, "../Mapy/2.txt", 1);
+
+    closingApp(logFile);
+    exit(SUCCESS);
+}
